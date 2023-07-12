@@ -41,7 +41,10 @@
  */
 //#include "okapi/api.hpp"
 //#include "pros/api_legacy.h"
+#include "pros/motors.hpp"
+
 #include "EZ-Template/api.hpp"
+#include "EZ-Template/Catapult.hpp"
 #include "autons.hpp"
 
 // More includes here...
