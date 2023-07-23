@@ -10,6 +10,7 @@ private:
     pros::Rotation CataRotationSensor;
 
 public:
+
     Catapult(int8_t const CataPort, uint8_t const RotationPort);
 
     // Updated function signature with targetAngle and angleRange arguments

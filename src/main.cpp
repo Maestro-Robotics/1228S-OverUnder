@@ -1,4 +1,5 @@
 #include "main.h"
+#include "Intake.hpp"
 #include "pros/rtos.hpp"
 
 
@@ -156,7 +157,8 @@ void autonomous() {
 void opcontrol() {
 	Drivetrain const drivetrain(8, 9 ,10 ,18 , 19,20);
     Catapult const catapult(2, 5);
-	Subsystems subsystems(drivetrain, catapult);
+    Intake const intake(1);
+	Subsystems subsystems(drivetrain, catapult, intake);
 
 	while (true){
 		subsystems.update();
