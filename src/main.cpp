@@ -1,56 +1,98 @@
 #include "main.h"
+#include "pros/rtos.hpp"
 
 
-/////
-// For instalattion, upgrading, documentations and tutorials, check out website!
-// https://ez-robotics.github.io/EZ-Template/
-/////
+// drivetrain motors
+pros::Motor LeftMotor1{ 8, pros::E_MOTOR_GEARSET_06, true};
+pros::Motor LeftMotor2{ 9, pros::E_MOTOR_GEARSET_06 };
+pros::Motor LeftMotor3{ 10, pros::E_MOTOR_GEARSET_06 };
+pros::Motor RightMotor1{ 18, pros::E_MOTOR_GEARSET_06, true};
+pros::Motor RightMotor2{ 19, pros::E_MOTOR_GEARSET_06, true};
+pros::Motor RightMotor3{ 20, pros::E_MOTOR_GEARSET_06 };
+ 
+// drivetrain motor groups
+pros::MotorGroup left_side_motors({LeftMotor1, LeftMotor1, LeftMotor3});
+pros::MotorGroup right_side_motors({RightMotor1, RightMotor2, RightMotor3});
+ 
+lemlib::Drivetrain_t drivetrain {
+    &left_side_motors, // left drivetrain motors
+    &right_side_motors, // right drivetrain motors
+    12.58, // track width
+    4, // wheel diameter
+    343 // wheel rpm
+};
 
 
-// Chassis constructor
-Drive chassis (
-  // Left Chassis Ports (negative port will reverse it!)
-  //   the first port is the sensored port (when trackers are not used!)
-  {8, -9, -10}
+// left tracking wheel encoder
+pros::ADIEncoder vert_enc({ 17, 'A', 'B' }, true); // ports A and B, reversed
 
-  // Right Chassis Ports (negative port will reverse it!)
-  //   the first port is the sensored port (when trackers are not used!)
-  ,{18, 19, -20}
+// back tracking wheel encoder
+pros::ADIEncoder hori_enc({17 , 'C', 'D'}, true); // ports C and D, reversed
+ 
+// left tracking wheel
+lemlib::TrackingWheel VerticalTracker(&vert_enc, 2.75, -0.1); // 2.75" wheel diameter, -0.1" offset from tracking center
+// back tracking wheel
+lemlib::TrackingWheel HorizontalTracker(&hori_enc, 2.75, 5); // 2.75" wheel diameter, 5" offset from tracking center
+ 
+// inertial sensor
+pros::Imu inertial_sensor(7); 
+ 
+// odometry struct
+lemlib::OdomSensors_t sensors {
+    &VerticalTracker, // vertical tracking wheel 1
+    nullptr, 
+    &HorizontalTracker, // horizontal tracking wheel 1
+    nullptr, 
+    &inertial_sensor // inertial sensor
+};
+ 
+// forward/backward PID
+lemlib::ChassisController_t lateralController {
+    8, // kP
+    30, // kD
+    1, // smallErrorRange
+    100, // smallErrorTimeout
+    3, // largeErrorRange
+    500, // largeErrorTimeout
+    5 // slew rate
+};
+ 
+// turning PID
+lemlib::ChassisController_t angularController {
+    4, // kP
+    40, // kD
+    1, // smallErrorRange
+    100, // smallErrorTimeout
+    3, // largeErrorRange
+    500, // largeErrorTimeout
+    40 // slew rate
+};
+ 
+ 
+// create the chassis
+lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensors);
 
-  // IMU Port
-  ,7
 
-  // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
-  //    (or tracking wheel diameter)
-  ,4
-
-  // Cartridge RPM
-  //   (or tick per rotation if using tracking wheels)
-  ,600
-
-  // External Gear Ratio (MUST BE DECIMAL)
-  //    (or gear ratio of tracking wheel)
-  // eg. if your drive is 84:36 where the 36t is powered, your RATIO would be 2.333.
-  // eg. if your drive is 36:60 where the 60t is powered, your RATIO would be 0.6.
-  ,0.571
-
-  // Uncomment if using tracking wheels
-  
-  // Left Tracking Wheel Ports (negative port will reverse it!)
-  ,{1, 2} // 3 wire encoder
-  // ,8 // Rotation sensor
-
-  // Right Tracking Wheel Ports (negative port will reverse it!)
-  ,{-3, -4} // 3 wire encoder
-   // Rotation sensor
+void AllianceZoneAuton1(){
+    chassis.moveTo(10, 0, 1000, 50);
+}
 
 
-  // Uncomment if tracking wheels are plugged into a 3 wire expander
-  // 3 Wire Port Expander Smart Port
-  ,1
-);
-
-
+/**
+ * A callback function for LLEMU's center button.
+ *
+ * When this callback is fired, it will toggle line 2 of the LCD text between
+ * "I was pressed!" and nothing.
+ */
+void on_center_button() {
+	static bool pressed = false;
+	pressed = !pressed;
+	if (pressed) {
+		pros::lcd::set_text(2, "I was pressed!");
+	} else {
+		pros::lcd::clear_line(2);
+	}
+}
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -59,50 +101,16 @@ Drive chassis (
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-  // Print our branding over your terminal :D
-  ez::print_ez_template();
-  
-  pros::delay(500); // Stop the user from doing anything while legacy ports configure.
-
-  // Configure your chassis controls
-  chassis.toggle_modify_curve_with_controller(true); // Enables modifying the controller curve with buttons on the joysticks
-  chassis.set_active_brake(0.1); // Sets the active brake kP. We recommend 0.1.
-  chassis.set_curve_default(0, 0); // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)  
-  default_constants(); // Set the drive to your own constants from autons.cpp!
-  exit_condition_defaults(); // Set the exit conditions to your own constants from autons.cpp!
-
-  // These are already defaulted to these buttons, but you can change the left/right curve buttons here!
-  // chassis.set_left_curve_buttons (pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT); // If using tank, only the left side is used. 
-  // chassis.set_right_curve_buttons(pros::E_CONTROLLER_DIGITAL_Y,    pros::E_CONTROLLER_DIGITAL_A);
-
-  // Autonomous Selector using LLEMU
-  ez::as::auton_selector.add_autons({
-    Auton("Combine all 3 movements", combining_movements),
-    Auton("Example Drive\n\nDrive forward and come back.", drive_example),
-    Auton("Example Turn\n\nTurn 3 times.", turn_example),
-    Auton("Drive and Turn\n\nDrive forward, turn, come back. ", drive_and_turn),
-    Auton("Drive and Turn\n\nSlow down during drive.", wait_until_change_speed),
-    Auton("Swing Example\n\nSwing, drive, swing.", swing_example),
-    Auton("Interference\n\nAfter driving forward, robot performs differently if interfered or not.", interfered_example),
-  });
-
-  // Initialize chassis and auton selector
-  chassis.initialize();
-  ez::as::initialize();
+	chassis.calibrate(); // calibrate the chassis
+    chassis.setPose(0, 0, 0); // X: 0, Y: 0, Heading: 0
 }
-
-
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {
-  // . . .
-}
-
-
+void disabled() {}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -113,11 +121,7 @@ void disabled() {
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {
-  // . . .
-}
-
-
+void competition_initialize() {}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -131,15 +135,8 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
-  chassis.reset_pid_targets(); // Resets PID targets to 0
-  chassis.reset_gyro(); // Reset gyro position to 0
-  chassis.reset_drive_sensor(); // Reset drive sensors to 0
-  chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
-
-  ez::as::auton_selector.call_selected_auton(); // Calls selected auton from autonomous selector.
+	AllianceZoneAuton1();
 }
-
-
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -154,22 +151,17 @@ void autonomous() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
+
+
 void opcontrol() {
-  // This is preference to what you like to drive on.
-  chassis.set_drive_brake(MOTOR_BRAKE_COAST);
+	Drivetrain const drivetrain(8, 9 ,10 ,18 , 19,20);
+    Catapult const catapult(2, 5);
+	Subsystems subsystems(drivetrain, catapult);
 
-  while (true) {
-
-    // chassis.tank(); // Tank control
-    chassis.arcade_standard(ez::SPLIT); // Standard split arcade
-    // chassis.arcade_standard(ez::SINGLE); // Standard single arcade
-    // chassis.arcade_flipped(ez::SPLIT); // Flipped split arcade
-    // chassis.arcade_flipped(ez::SINGLE); // Flipped single arcade
-
-    // . . .
-    // Put more user control code here!
-    // . . .
-
-    pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
-  }
+	while (true){
+		subsystems.update();
+		pros::delay(1);
 }
+	}
+
+
