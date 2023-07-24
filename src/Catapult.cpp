@@ -3,14 +3,10 @@
 #include <iostream>
 #include <string>
 #include "Catapult.hpp"
-#include "main.h"
-#include "pros/llemu.hpp"
 #include "pros/rtos.hpp"
 
 
-Catapult::Catapult(int8_t const CataPort, uint8_t const RotationPort) : CataMotor{ CataPort }, CataRotationSensor{ RotationPort } {
-    std::printf("constructor");
-}
+Catapult::Catapult(int8_t const CataPort, uint8_t const RotationPort, uint8_t const DistancePort) : CataMotor{ CataPort }, CataRotationSensor{ RotationPort} ,CataDistanceSensor{DistancePort} {}
 
 void Catapult::SpinToTarget(int targetAngle, int angleRange) {
     const int timeout = 3000; // set timeout to 3 seconds
@@ -18,7 +14,7 @@ void Catapult::SpinToTarget(int targetAngle, int angleRange) {
 
     //std::printf("abs = %d\n",std::abs(CataRotationSensor.get_angle() - targetAngle));
 
-     CataMotor.move_velocity(150);
+     CataMotor.move_velocity(160);
 
     // Loop until the rotation sensor reaches the desired range of the target angle
     while (std::abs(CataRotationSensor.get_angle() - targetAngle) > angleRange) {
@@ -31,6 +27,7 @@ void Catapult::SpinToTarget(int targetAngle, int angleRange) {
             break;
 
         }
+        pros::delay(10);
     
     }
     CataMotor.move_velocity(0);
@@ -39,13 +36,26 @@ void Catapult::SpinToTarget(int targetAngle, int angleRange) {
 
 void Catapult::CataSpinToPosition(int positiontype){
     if (positiontype == 0){
-        CataMotor.move_velocity(150);
+        CataMotor.move_velocity(160);
         pros::Task::delay(300);
         SpinToTarget(35400, 250);
     }
 
     else {
         SpinToTarget(260, 5);
+    }
+}
+
+void Catapult::MatchLoadSkills(int range, double buffer){
+    int now = 0;
+
+    while (range < now){
+        if (CataDistanceSensor.get() < buffer){
+            pros::delay(100);
+            CataSpinToPosition(0);
+            now += 1;
+        }
+        pros::delay(1);
     }
 }
 

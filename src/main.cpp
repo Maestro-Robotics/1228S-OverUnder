@@ -156,7 +156,7 @@ void autonomous() {
 
 void opcontrol() {
 	Drivetrain const drivetrain(8, 9 ,10 ,18 , 19,20);
-    Catapult const catapult(2, 5);
+    Catapult const catapult(2, 5, 16);
     Intake const intake(1);
 	Subsystems subsystems(drivetrain, catapult, intake);
 
