@@ -16,7 +16,7 @@ public:
     Catapult(int8_t const CataPort, uint8_t const RotationPort, uint8_t const DistancePort);
 
     // Updated function signature with targetAngle and angleRange arguments
-    void SpinToTarget(int targetAngle, int angleRange);
-    void CataSpinToPosition(int positiontype);
+    void SpinToTarget(int targetAngle, int angleRange, int velocity);
+    void CataSpinToPosition(int positiontype, int velocity);
     void MatchLoadSkills(int range, double buffer);
 };

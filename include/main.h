@@ -44,6 +44,9 @@
 #include "lemlib/api.hpp"
 #include "Subsystems.hpp"
 #include "Drivetrain.hpp"
+#include "Pistons.hpp"
+#include "EZ-Template/api.hpp"
+#include "autons.hpp"
 
 
 //#include "okapi/api.hpp"

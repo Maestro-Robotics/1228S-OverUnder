@@ -2,28 +2,37 @@
 #include <iostream>
 #include "Subsystems.hpp"
 
-Subsystems::Subsystems(Drivetrain drivetrain, Catapult catapult, Intake intake) 
-    : Bot_Drivetrain(drivetrain)
-	, Bot_Catapult(catapult)
-	, Bot_Intake(intake) {}
+Subsystems::Subsystems(Catapult catapult, Intake intake, Pistons pistons) 
+    : Bot_Catapult(catapult)
+	, Bot_Intake(intake)
+	, Bot_Pistons(pistons) {}
 
-void Subsystems::update_Drivetrain() {
-	Bot_Drivetrain.update(Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
-	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-		Bot_Drivetrain.next_reference_frame();
+// void Subsystems::update_Drivetrain() {
+// 	Bot_Drivetrain.update(Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
+// 	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+// 		Bot_Drivetrain.next_reference_frame();
 
-}
-}
+// }
+// }
 
 void Subsystems::update_Catapult(){
 
     if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){
-		// CataActive = true;
-		// Bot_Intake.toggle(false, true);
-        Bot_Catapult.CataSpinToPosition(0);
-		// CataActive = false;
-		// Bot_Intake.toggle(false, false);
+		CataActive = true;
+		Bot_Intake.toggle(false, true);
+        Bot_Catapult.CataSpinToPosition(0, 170);
+		CataActive = false;
+		Bot_Intake.toggle(false, false);
     }
+
+	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
+		int i = 0;
+
+		while(i<22){
+			Bot_Catapult.CataSpinToPosition(0, 190);
+			i++;		
+		}
+	}
 }
 
 void Subsystems::update_Intake(){
@@ -36,8 +45,16 @@ void Subsystems::update_Intake(){
 	}
 }
 
+void Subsystems::update_Pistons(){
+	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
+		Bot_Pistons.LiftWheel();
+		Bot_Pistons.InitialLaunch();
+	}
+}
+
 void Subsystems::update() {
-    update_Drivetrain();
+    // update_Drivetrain();
 	update_Catapult();
 	update_Intake();
+	update_Pistons();
 }

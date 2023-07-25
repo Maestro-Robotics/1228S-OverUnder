@@ -2,97 +2,106 @@
 #include "Intake.hpp"
 #include "pros/rtos.hpp"
 
+const int DRIVE_SPEED = 120; // This is 110/127 (around 87% of max speed).  We don't suggest making this 127.
+                             // If this is 127 and the robot tries to heading correct, it's only correcting by
+                             // making one side slower.  When this is 87%, it's correcting by making one side
+                             // faster and one side slower, giving better heading correction.
+const int TURN_SPEED  = 90;
+const int SWING_SPEED = 90;
 
-// drivetrain motors
-pros::Motor LeftMotor1{ 8, pros::E_MOTOR_GEARSET_06, true};
-pros::Motor LeftMotor2{ 9, pros::E_MOTOR_GEARSET_06 };
-pros::Motor LeftMotor3{ 10, pros::E_MOTOR_GEARSET_06 };
-pros::Motor RightMotor1{ 18, pros::E_MOTOR_GEARSET_06, true};
-pros::Motor RightMotor2{ 19, pros::E_MOTOR_GEARSET_06, true};
-pros::Motor RightMotor3{ 20, pros::E_MOTOR_GEARSET_06 };
- 
-// drivetrain motor groups
-pros::MotorGroup left_side_motors({LeftMotor1, LeftMotor1, LeftMotor3});
-pros::MotorGroup right_side_motors({RightMotor1, RightMotor2, RightMotor3});
- 
-lemlib::Drivetrain_t drivetrain {
-    &left_side_motors, // left drivetrain motors
-    &right_side_motors, // right drivetrain motors
-    12.58, // track width
-    4, // wheel diameter
-    343 // wheel rpm
-};
+/////
+// For instalattion, upgrading, documentations and tutorials, check out website!
+// https://ez-robotics.github.io/EZ-Template/
+/////
 
 
-// left tracking wheel encoder
-pros::ADIEncoder vert_enc({ 17, 'A', 'B' }, true); // ports A and B, reversed
+// Chassis constructor
+Drive chassis (
+  // Left Chassis Ports (negative port will reverse it!)
+  //   the first port is the sensored port (when trackers are not used!)
+  {8, -9, -10}
 
-// back tracking wheel encoder
-pros::ADIEncoder hori_enc({17 , 'C', 'D'}, true); // ports C and D, reversed
- 
-// left tracking wheel
-lemlib::TrackingWheel VerticalTracker(&vert_enc, 2.75, -0.1); // 2.75" wheel diameter, -0.1" offset from tracking center
-// back tracking wheel
-lemlib::TrackingWheel HorizontalTracker(&hori_enc, 2.75, 5); // 2.75" wheel diameter, 5" offset from tracking center
- 
-// inertial sensor
-pros::Imu inertial_sensor(7); 
- 
-// odometry struct
-lemlib::OdomSensors_t sensors {
-    &VerticalTracker, // vertical tracking wheel 1
-    nullptr, 
-    &HorizontalTracker, // horizontal tracking wheel 1
-    nullptr, 
-    &inertial_sensor // inertial sensor
-};
- 
-// forward/backward PID
-lemlib::ChassisController_t lateralController {
-    8, // kP
-    30, // kD
-    1, // smallErrorRange
-    100, // smallErrorTimeout
-    3, // largeErrorRange
-    500, // largeErrorTimeout
-    5 // slew rate
-};
- 
-// turning PID
-lemlib::ChassisController_t angularController {
-    4, // kP
-    40, // kD
-    1, // smallErrorRange
-    100, // smallErrorTimeout
-    3, // largeErrorRange
-    500, // largeErrorTimeout
-    40 // slew rate
-};
- 
- 
-// create the chassis
-lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensors);
+  // Right Chassis Ports (negative port will reverse it!)
+  //   the first port is the sensored port (when trackers are not used!)
+  ,{18, 19, -20}
+
+  // IMU Port
+  ,7
+
+  // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
+  //    (or tracking wheel diameter)
+  ,4
+
+  // Cartridge RPM
+  //   (or tick per rotation if using tracking wheels)
+  ,600
+
+  // External Gear Ratio (MUST BE DECIMAL)
+  //    (or gear ratio of tracking wheel)
+  // eg. if your drive is 84:36 where the 36t is powered, your RATIO would be 2.333.
+  // eg. if your drive is 36:60 where the 60t is powered, your RATIO would be 0.6.
+  ,0.571
+
+  // Uncomment if using tracking wheels
+  
+  // Left Tracking Wheel Ports (negative port will reverse it!)
+  ,{-1, -2} // 3 wire encoder
+  // ,8 // Rotation sensor
+
+  // Right Tracking Wheel Ports (negative port will reverse it!)
+  ,{-3, -4} // 3 wire encoder
+   // Rotation sensor
 
 
-void AllianceZoneAuton1(){
-    chassis.moveTo(10, 0, 1000, 50);
-}
+  // Uncomment if tracking wheels are plugged into a 3 wire expander
+  // 3 Wire Port Expander Smart Port
+  ,17
+);
+
+void combining_movements(Catapult catapult, Intake intake, Pistons pistons) {
+    pistons.InitialLaunch();
+    intake.toggle(true, false);
+
+  chassis.set_drive_pid(36, DRIVE_SPEED, true);
+chassis.wait_drive();
+
+  chassis.set_drive_pid(-36, DRIVE_SPEED, true);
+chassis.wait_drive();
+
+intake.toggle(true, true);
+  
+  chassis.set_turn_pid(-90, TURN_SPEED);
+chassis.wait_drive();  
+
+  chassis.set_drive_pid(28, DRIVE_SPEED, true);
+chassis.wait_drive();  
+
+  chassis.set_turn_pid(180, TURN_SPEED);
+  chassis.wait_until(180);
+
+  catapult.CataSpinToPosition(0, 175);
+  chassis.wait_drive();
+
+    chassis.set_drive_pid(-10, DRIVE_SPEED, true);
+chassis.wait_drive();
+
+  intake.toggle(false, false);
+
+    chassis.set_turn_pid(270, TURN_SPEED);
+chassis.wait_until(270);
+
+chassis.set_drive_pid(28, DRIVE_SPEED, true);
+chassis.wait_drive();
+
+  chassis.set_turn_pid(-45, TURN_SPEED);
+    chassis.wait_drive();
 
 
-/**
- * A callback function for LLEMU's center button.
- *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
- */
-void on_center_button() {
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
-	} else {
-		pros::lcd::clear_line(2);
-	}
+
+
+
+
+
 }
 
 /**
@@ -102,10 +111,28 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	chassis.calibrate(); // calibrate the chassis
-    chassis.setPose(0, 0, 0); // X: 0, Y: 0, Heading: 0
-}
+  // Print our branding over your terminal :D
+  ez::print_ez_template();
+  
+  pros::delay(500); // Stop the user from doing anything while legacy ports configure.
 
+  // Configure your chassis controls
+  chassis.toggle_modify_curve_with_controller(true); // Enables modifying the controller curve with buttons on the joysticks
+  chassis.set_active_brake(0.1); // Sets the active brake kP. We recommend 0.1.
+  chassis.set_curve_default(0, 0); // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)  
+  default_constants(); // Set the drive to your own constants from autons.cpp!
+  exit_condition_defaults(); // Set the exit conditions to your own constants from autons.cpp!
+
+  // These are already defaulted to these buttons, but you can change the left/right curve buttons here!
+  // chassis.set_left_curve_buttons (pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT); // If using tank, only the left side is used. 
+  // chassis.set_right_curve_buttons(pros::E_CONTROLLER_DIGITAL_Y,    pros::E_CONTROLLER_DIGITAL_A);
+
+  // Autonomous Selector using LLEM
+
+  // Initialize chassis and auton selector
+  chassis.initialize();
+  ez::as::initialize();
+}
 /**
  * Runs while the robot is in the disabled state of Field Management System or
  * the VEX Competition Switch, following either autonomous or opcontrol. When
@@ -136,7 +163,16 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	AllianceZoneAuton1();
+    Catapult const catapult(2, 5, 16);
+    Intake const intake(1);
+    Pistons const pistons('A', 'B', 'C');
+
+    chassis.reset_pid_targets(); // Resets PID targets to 0
+  chassis.reset_gyro(); // Reset gyro position to 0
+  chassis.reset_drive_sensor(); // Reset drive sensors to 0
+  chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
+
+    combining_movements(catapult, intake, pistons);
 }
 
 /**
@@ -155,12 +191,14 @@ void autonomous() {
 
 
 void opcontrol() {
-	Drivetrain const drivetrain(8, 9 ,10 ,18 , 19,20);
+    chassis.set_drive_brake(MOTOR_BRAKE_COAST);
     Catapult const catapult(2, 5, 16);
     Intake const intake(1);
-	Subsystems subsystems(drivetrain, catapult, intake);
+    Pistons const pistons('A', 'B', 'C');
+	Subsystems subsystems(catapult, intake, pistons);
 
 	while (true){
+        chassis.arcade_standard(ez::SPLIT);
 		subsystems.update();
 		pros::delay(1);
 }
