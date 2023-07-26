@@ -5,7 +5,6 @@
 #include "Catapult.hpp"
 #include "pros/rtos.hpp"
 
-
 Catapult::Catapult(int8_t const CataPort, uint8_t const RotationPort, uint8_t const DistancePort) : CataMotor{ CataPort }, CataRotationSensor{ RotationPort} ,CataDistanceSensor{DistancePort} {}
 
 void Catapult::SpinToTarget(int targetAngle, int angleRange, int velocity) {
@@ -14,22 +13,26 @@ void Catapult::SpinToTarget(int targetAngle, int angleRange, int velocity) {
 
     //std::printf("abs = %d\n",std::abs(CataRotationSensor.get_angle() - targetAngle));
 
-     CataMotor.move_velocity(velocity);
+    CataMotor.move_velocity(velocity);
 
     // Loop until the rotation sensor reaches the desired range of the target angle
     while (std::abs(CataRotationSensor.get_angle() - targetAngle) > angleRange) {
 
+        //chassis.print("CataRotationSensor.get_angle() : %d\n",CataRotationSensor.get_angle());
+        
+        chassis.arcade_standard(ez::SPLIT);
+
          //std::printf("get_angle() : %d\n",CataRotationSensor.get_angle());
-         //std::printf("abs = %d\n",std::abs(CataRotationSensor.get_angle() - targetAngle));
+         std::printf("abs = %d\n",std::abs(CataRotationSensor.get_angle() - targetAngle));
  
         // if (pros::millis() - start_time > timeout) {
         //     std::printf("Spin motor timeout reached");
         //     break;
 
-        pros::delay(10);
+            pros::delay(10);
         }
         
-    CataMotor.move_velocity(0);
+        CataMotor.move_velocity(0);
     }
     
 
@@ -40,9 +43,7 @@ void Catapult::CataSpinToPosition(int positiontype, int velocity){
         CataMotor.move_velocity(velocity);
         pros::Task::delay(300);
         SpinToTarget(35400, 260, velocity);
-    }
-
-    else {
+    } else {
         SpinToTarget(260, 5, velocity);
     }
 }

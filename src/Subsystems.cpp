@@ -50,6 +50,10 @@ void Subsystems::update_Pistons(){
 		Bot_Pistons.LiftWheel();
 		Bot_Pistons.InitialLaunch();
 	}
+
+	if (Bot_Controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+		Bot_Pistons.ChangeAngle();
+	}
 }
 
 void Subsystems::update() {

@@ -165,7 +165,7 @@ void competition_initialize() {}
 void autonomous() {
     Catapult const catapult(2, 5, 16);
     Intake const intake(1);
-    Pistons const pistons('A', 'B', 'C');
+    Pistons const pistons('A', 'B', 'C', 'D');
 
     chassis.reset_pid_targets(); // Resets PID targets to 0
   chassis.reset_gyro(); // Reset gyro position to 0
@@ -194,7 +194,7 @@ void opcontrol() {
     chassis.set_drive_brake(MOTOR_BRAKE_COAST);
     Catapult const catapult(2, 5, 16);
     Intake const intake(1);
-    Pistons const pistons('A', 'B', 'C');
+    Pistons const pistons('A', 'B', 'C', 'D');
 	Subsystems subsystems(catapult, intake, pistons);
 
 	while (true){
