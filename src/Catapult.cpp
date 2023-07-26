@@ -23,7 +23,7 @@ void Catapult::SpinToTarget(int targetAngle, int angleRange, int velocity) {
         chassis.arcade_standard(ez::SPLIT);
 
          //std::printf("get_angle() : %d\n",CataRotationSensor.get_angle());
-         std::printf("abs = %d\n",std::abs(CataRotationSensor.get_angle() - targetAngle));
+         //std::printf("abs = %d\n",std::abs(CataRotationSensor.get_angle() - targetAngle));
  
         // if (pros::millis() - start_time > timeout) {
         //     std::printf("Spin motor timeout reached");
@@ -42,7 +42,7 @@ void Catapult::CataSpinToPosition(int positiontype, int velocity){
     if (positiontype == 0){
         CataMotor.move_velocity(velocity);
         pros::Task::delay(300);
-        SpinToTarget(35400, 260, velocity);
+        SpinToTarget(35400, 270, velocity);
     } else {
         SpinToTarget(260, 5, velocity);
     }
