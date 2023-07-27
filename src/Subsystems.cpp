@@ -52,7 +52,7 @@ void Subsystems::update_Pistons(){
 	}
 
 	if (Bot_Controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-		Bot_Pistons.ChangeAngle();
+		Bot_Pistons.ChangeAngle(true);
 	}
 }
 

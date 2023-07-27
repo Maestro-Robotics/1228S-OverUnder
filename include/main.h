@@ -45,8 +45,11 @@
 #include "Subsystems.hpp"
 #include "Drivetrain.hpp"
 #include "Pistons.hpp"
-#include "EZ-Template/api.hpp"
-#include "autons.hpp"
+#include "Intake.hpp"
+#include "Catapult.hpp"
+
+//#include "EZ-Template/api.hpp"
+//#include "autons.hpp"
 
 
 //#include "okapi/api.hpp"

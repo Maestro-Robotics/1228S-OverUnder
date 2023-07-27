@@ -13,5 +13,5 @@ void Pistons::LiftWheel(){
     LiftTrackingWheel.set_value(true);
 }
 
-void Pistons::ChangeAngle(){
-    CatapultAngleChange.set_value(true);}
+void Pistons::ChangeAngle(bool tf){
+    CatapultAngleChange.set_value(tf);}

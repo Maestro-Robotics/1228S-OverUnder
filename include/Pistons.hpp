@@ -14,6 +14,6 @@ class Pistons{
 
         void InitialLaunch();
         void LiftWheel();
-        void ChangeAngle();
+        void ChangeAngle(bool tf);
 
 };
