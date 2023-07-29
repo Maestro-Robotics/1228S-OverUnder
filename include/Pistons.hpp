@@ -12,7 +12,7 @@ class Pistons{
     public:
         Pistons(uint8_t const CatapultAngleChange, uint8_t const LiftTrackingWheel, uint8_t const ExpandIntake1, uint8_t const ExpandIntake2);
 
-        void InitialLaunch();
+        void InitialLaunch(bool boolean);
         void LiftWheel();
         void ChangeAngle(bool tf);
 

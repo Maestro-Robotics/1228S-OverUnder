@@ -20,7 +20,7 @@ void Subsystems::update_Catapult(){
     if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){
 		CataActive = true;
 		Bot_Intake.toggle(false, true);
-        Bot_Catapult.CataSpinToPosition(0, 170);
+        Bot_Catapult.CataSpinToPosition(0, 150);
 		CataActive = false;
 		Bot_Intake.toggle(false, false);
     }
@@ -29,7 +29,12 @@ void Subsystems::update_Catapult(){
 		int i = 0;
 
 		while(i<22){
-			Bot_Catapult.CataSpinToPosition(0, 190);
+			
+			if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
+				break;
+			}
+
+			Bot_Catapult.CataSpinToPosition(0, 170);
 			i++;		
 		}
 	}
@@ -48,7 +53,7 @@ void Subsystems::update_Intake(){
 void Subsystems::update_Pistons(){
 	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
 		Bot_Pistons.LiftWheel();
-		Bot_Pistons.InitialLaunch();
+		Bot_Pistons.InitialLaunch(true);
 	}
 
 	if (Bot_Controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
