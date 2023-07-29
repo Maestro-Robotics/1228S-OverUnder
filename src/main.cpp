@@ -76,10 +76,10 @@ void combining_movements(Catapult catapult, Intake intake, Pistons pistons) {
   pistons.InitialLaunch(false);
   intake.toggle(false, true);
 
-  chassis.set_drive_pid(10, 127, false);
+  chassis.set_drive_pid(8, 127, false);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(-10, DRIVE_SPEED, true);
+  chassis.set_drive_pid(-8, DRIVE_SPEED, true);
   chassis.wait_drive();
 
   chassis.set_turn_pid(45, TURN_SPEED);
@@ -92,7 +92,7 @@ chassis.wait_drive();
   pistons.InitialLaunch(true);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(48, DRIVE_SPEED, true);
+  chassis.set_drive_pid(55, DRIVE_SPEED, true);
   intake.toggle(false, false);
   chassis.wait_drive();
 
@@ -105,9 +105,32 @@ chassis.wait_drive();
   pistons.InitialLaunch(false);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(15, DRIVE_SPEED, true);
+  chassis.set_drive_pid(18, DRIVE_SPEED, true);
   intake.toggle(false, true);
   chassis.wait_drive();
+
+  chassis.set_drive_pid(-15, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(-125, TURN_SPEED);
+  pistons.InitialLaunch(true);
+  intake.toggle(false, false);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(30, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-30, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(45, TURN_SPEED);
+  intake.toggle(false, true);
+  pistons.InitialLaunch(false);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(10, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
 
 
 // intake.toggle(true, true);
@@ -168,6 +191,10 @@ void initialize() {
   // chassis.set_right_curve_buttons(pros::E_CONTROLLER_DIGITAL_Y,    pros::E_CONTROLLER_DIGITAL_A);
 
   // Autonomous Selector using LLEM
+  
+  chassis.set_exit_condition(chassis.turn_exit,  50, 3,  500, 7,   300, 500);
+  chassis.set_exit_condition(chassis.swing_exit, 100, 3,  500, 7,   500, 500);
+  chassis.set_exit_condition(chassis.drive_exit, 50,  50, 300, 150, 300, 500);
 
 
   // Initialize chassis and auton selector
