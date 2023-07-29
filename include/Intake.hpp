@@ -14,5 +14,4 @@ public:
 	void set_on(bool const value);
 	void toggle(bool const reverse, bool off);
 	int32_t reverse_velocity(int32_t const velocity) const;
-
 };

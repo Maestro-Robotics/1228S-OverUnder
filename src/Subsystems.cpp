@@ -15,9 +15,9 @@ Subsystems::Subsystems(Catapult catapult, Intake intake, Pistons pistons)
 // }
 // }
 
-void Subsystems::update_Catapult(){
+void Subsystems::update_Catapult() {
 
-    if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){
+    if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) {
 		CataActive = true;
 		Bot_Intake.toggle(false, true);
         Bot_Catapult.CataSpinToPosition(0, 150);
@@ -25,12 +25,11 @@ void Subsystems::update_Catapult(){
 		Bot_Intake.toggle(false, false);
     }
 
-	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
+	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
 		int i = 0;
 
-		while(i<22){
-			
-			if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
+		while(i<22) {
+			if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
 				break;
 			}
 
@@ -42,21 +41,20 @@ void Subsystems::update_Catapult(){
 
 void Subsystems::update_Intake(){
 
-	if((Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) && CataActive == false){
+	if((Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) && CataActive == false) {
 		Bot_Intake.toggle(false, false);
-	}
-	else if((Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) && CataActive == false){
+	} else if((Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) && CataActive == false) {
 		Bot_Intake.toggle(true, false);
 	}
 }
 
-void Subsystems::update_Pistons(){
-	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
+void Subsystems::update_Pistons() {
+	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
 		Bot_Pistons.LiftWheel();
 		Bot_Pistons.InitialLaunch(true);
 	}
 
-	if (Bot_Controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+	if (Bot_Controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
 		Bot_Pistons.ChangeAngle(true);
 	}
 }

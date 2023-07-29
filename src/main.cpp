@@ -70,7 +70,7 @@ void combining_movements(Catapult catapult, Intake intake, Pistons pistons) {
   intake.toggle(true, false);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(-3, DRIVE_SPEED, true);
+  chassis.set_drive_pid(-3, DRIVE_SPEED, false);
   chassis.wait_drive();
 
   pistons.InitialLaunch(false);
@@ -79,7 +79,7 @@ void combining_movements(Catapult catapult, Intake intake, Pistons pistons) {
   chassis.set_drive_pid(8, 127, false);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(-8, DRIVE_SPEED, true);
+  chassis.set_drive_pid(-8, DRIVE_SPEED, false);
   chassis.wait_drive();
 
   chassis.set_turn_pid(45, TURN_SPEED);
@@ -100,7 +100,7 @@ chassis.wait_drive();
   intake.toggle(true, true);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(5, DRIVE_SPEED, true);
+  chassis.set_drive_pid(5, DRIVE_SPEED, false);
   intake.toggle(true, false);
   pistons.InitialLaunch(false);
   chassis.wait_drive();
@@ -126,13 +126,16 @@ chassis.wait_drive();
   chassis.set_turn_pid(45, TURN_SPEED);
   pistons.InitialLaunch(false);
   intake.toggle(false, true);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(5, DRIVE_SPEED, false);
+  pistons.InitialLaunch(true);
   intake.toggle(true, false);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(10, DRIVE_SPEED, true);
+  pistons.InitialLaunch(false);
+  chassis.set_drive_pid(10, DRIVE_SPEED, false);
   chassis.wait_drive();
-
-
 
 // intake.toggle(true, true);
   
@@ -161,13 +164,6 @@ chassis.wait_drive();
 
 //   chassis.set_turn_pid(-45, TURN_SPEED);
 //     chassis.wait_drive();
-
-
-
-
-
-
-
 }
 
 /**
@@ -195,7 +191,7 @@ void initialize() {
   
   chassis.set_exit_condition(chassis.turn_exit,  50, 3,  500, 7,   200, 200);
   chassis.set_exit_condition(chassis.swing_exit, 100, 3,  500, 7,   500, 500);
-  chassis.set_exit_condition(chassis.drive_exit, 50,  50, 300, 150, 200, 200);
+  chassis.set_exit_condition(chassis.drive_exit, 50,  50, 500, 150, 200, 200);
 
 
   // Initialize chassis and auton selector
@@ -232,15 +228,14 @@ void competition_initialize() {}
  */
 void autonomous() {
 
-      Catapult catapult(2, 5, 16);
+    Catapult catapult(2, 5, 16);
     Intake intake(1);
     Pistons pistons('A', 'B', 'C', 'D');
 
-
     chassis.reset_pid_targets(); // Resets PID targets to 0
-  chassis.reset_gyro(); // Reset gyro position to 0
-  chassis.reset_drive_sensor(); // Reset drive sensors to 0
-  chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
+    chassis.reset_gyro(); // Reset gyro position to 0
+    chassis.reset_drive_sensor(); // Reset drive sensors to 0
+    chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
 
     combining_movements(catapult, intake, pistons);
 }
@@ -265,13 +260,13 @@ void opcontrol() {
     Catapult const catapult(2, 5, 16);
     Intake const intake(1);
     Pistons const pistons('A', 'B', 'C', 'D');
-	Subsystems subsystems(catapult, intake, pistons);
+	  Subsystems subsystems(catapult, intake, pistons);
 
-	while (true){
-        chassis.arcade_standard(ez::SPLIT);
-		subsystems.update();
-		pros::delay(1);
-}
+    while (true) {
+      chassis.arcade_standard(ez::SPLIT);
+      subsystems.update();
+      pros::delay(1);
+    }
 	}
 
 

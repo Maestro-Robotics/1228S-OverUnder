@@ -18,10 +18,9 @@ void Intake::toggle(bool const reverse, bool off) {
 	}
 
 	m_reverse = reverse;
-    if (off){
+    if (off) {
         set_on(false);
-    }
-    else{
+    } else {
         set_on(!m_on);
     }
 }
