@@ -124,8 +124,9 @@ chassis.wait_drive();
   chassis.wait_drive();
 
   chassis.set_turn_pid(45, TURN_SPEED);
-  intake.toggle(false, true);
   pistons.InitialLaunch(false);
+  intake.toggle(false, true);
+  intake.toggle(true, false);
   chassis.wait_drive();
 
   chassis.set_drive_pid(10, DRIVE_SPEED, true);
@@ -192,9 +193,9 @@ void initialize() {
 
   // Autonomous Selector using LLEM
   
-  chassis.set_exit_condition(chassis.turn_exit,  50, 3,  500, 7,   300, 500);
+  chassis.set_exit_condition(chassis.turn_exit,  50, 3,  500, 7,   200, 200);
   chassis.set_exit_condition(chassis.swing_exit, 100, 3,  500, 7,   500, 500);
-  chassis.set_exit_condition(chassis.drive_exit, 50,  50, 300, 150, 300, 500);
+  chassis.set_exit_condition(chassis.drive_exit, 50,  50, 300, 150, 200, 200);
 
 
   // Initialize chassis and auton selector
