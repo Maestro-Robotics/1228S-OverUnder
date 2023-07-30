@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "FarSide1228MoA23",
+    "project_name": "GoalSide(2)1228MoA23",
     "target": "v5",
     "templates": {
       "EZ-Template": {
