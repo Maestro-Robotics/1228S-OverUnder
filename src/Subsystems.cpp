@@ -20,22 +20,13 @@ void Subsystems::update_Catapult() {
     if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) {
 		CataActive = true;
 		Bot_Intake.toggle(false, true);
-        Bot_Catapult.CataSpinToPosition(0, 150);
+        Bot_Catapult.CataSpinToPosition(0, 180);
 		CataActive = false;
 		Bot_Intake.toggle(false, false);
     }
 
 	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-		int i = 0;
-
-		while(i<22) {
-			if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-				break;
-			}
-
-			Bot_Catapult.CataSpinToPosition(0, 170);
-			i++;		
-		}
+		Bot_Catapult.MatchLoadSkills(22, 30);
 	}
 }
 

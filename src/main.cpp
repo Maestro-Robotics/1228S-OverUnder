@@ -136,7 +136,6 @@ void GoalSideAuton1(Catapult catapult, Intake intake, Pistons pistons) {
   chassis.set_drive_pid(10, DRIVE_SPEED, false);
   chassis.wait_drive();
 }
-
 void GoalSideAuton2(Catapult catapult, Intake intake, Pistons pistons){
   chassis.set_drive_pid(42, DRIVE_SPEED, true);
   chassis.wait_drive();
@@ -276,7 +275,52 @@ void FarSideAuton(Catapult catapult, Intake intake, Pistons pistons) {
 
   chassis.set_drive_pid(70, 127, true);
 }
+void Skills(Catapult catapult, Intake intake, Pistons pistons){
+  chassis.set_drive_pid(-8, DRIVE_SPEED, false);
+  chassis.wait_drive();
 
+  chassis.set_drive_pid(45, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(-45, TURN_SPEED);
+  chassis.wait_drive(); 
+
+  chassis.set_drive_pid(42, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(-90, TURN_SPEED);
+
+  pistons.InitialLaunch(true);
+  intake.toggle(true, false);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-3, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  pistons.InitialLaunch(false);
+  intake.toggle(false, true);
+
+  chassis.set_drive_pid(10, 127, false);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-8, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(-270, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(28, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(-340, TURN_SPEED);
+  chassis.wait_drive();
+
+  pistons.InitialLaunch(true);
+  catapult.MatchLoadSkills(22, 30);
+
+
+
+}
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -298,13 +342,13 @@ void initialize() {
   // chassis.set_left_curve_buttons (pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT); // If using tank, only the left side is used. 
   // chassis.set_right_curve_buttons(pros::E_CONTROLLER_DIGITAL_Y,    pros::E_CONTROLLER_DIGITAL_A);
 // Set exit conditions for chassis.turn_exit
-  chassis.set_exit_condition(chassis.turn_exit,  125, 3,  125, 7,   125, 125);
+  chassis.set_exit_condition(chassis.turn_exit,  140, 3,  140, 7,   140, 140);
 
   // Set exit conditions for chassis.swing_exit
-  chassis.set_exit_condition(chassis.swing_exit, 125, 3,  125, 7,   125, 125);
+  chassis.set_exit_condition(chassis.swing_exit, 140, 3,  140, 7,   150, 150);
 
   // Set exit conditions for chassis.drive_exit
-  chassis.set_exit_condition(chassis.drive_exit, 125, 50, 125, 150, 125, 125);
+  chassis.set_exit_condition(chassis.drive_exit, 140, 50, 140, 140, 140, 140);
 
   // Initialize chassis and auton selector
   chassis.initialize();
@@ -351,7 +395,8 @@ void autonomous() {
 
     //GoalSideAuton1(catapult, intake, pistons);
     //FarSideAuton(catapult, intake, pistons);
-    GoalSideAuton2(catapult, intake, pistons);
+    //GoalSideAuton2(catapult, intake, pistons);
+    Skills(catapult, intake, pistons);
 }
 
 /**

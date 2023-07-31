@@ -66,10 +66,10 @@ void Catapult::CataSpinToPosition(int positiontype, int velocity) {
 void Catapult::MatchLoadSkills(int range, double buffer) {
     int now = 0;
 
-    while (range < now) {
+    while (range > now) {
         if (CataDistanceSensor.get() < buffer) {
             pros::delay(100);
-            CataSpinToPosition(0, 200);
+            CataSpinToPosition(0, 120);
             now += 1;
         }
         pros::delay(1);
