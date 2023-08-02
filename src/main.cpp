@@ -403,11 +403,79 @@ void Skills(Catapult catapult, Intake intake, Pistons pistons){
   chassis.wait_drive();
 
 
+}
+void SkillsMatchOnly(Catapult catapult, Intake intake, Pistons pistons) {
+  pistons.LiftWheel();
 
+  chassis.set_drive_pid(-10, DRIVE_SPEED, false);
+  chassis.wait_drive();
 
+  chassis.set_drive_pid(45, DRIVE_SPEED, false);
+  chassis.wait_drive();
 
+  chassis.set_turn_pid(-45, TURN_SPEED);
+  chassis.wait_drive(); 
 
+  chassis.set_drive_pid(42, DRIVE_SPEED, false);
+  chassis.wait_drive();
 
+  chassis.set_turn_pid(-90, TURN_SPEED);
+
+  pistons.InitialLaunch(true);
+  intake.toggle(true, false);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-3, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  pistons.InitialLaunch(false);
+  intake.toggle(false, true);
+
+  chassis.set_drive_pid(10, 127, false);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-8, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(-270, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(8, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(-340, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(3, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  pistons.InitialLaunch(true);
+  catapult.MatchLoadSkills(22, 40);
+  catapult.CataSpinToPosition(0, 140);
+
+  chassis.set_turn_pid(-343, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-50, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(-90, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(80, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(-45, TURN_SPEED);
+    chassis.wait_drive();
+
+    chassis.set_drive_pid(60, DRIVE_SPEED, true);
+    chassis.wait_drive();
+
+    chassis.set_turn_pid(-30, TURN_SPEED);
+    chassis.wait_drive();
+
+    catapult.MatchLoadSkills(22, 40);
+   
 }
 
 void displayAutonomousSelection(int selection) {
@@ -558,6 +626,11 @@ void autonomous() {
     chassis.reset_drive_sensor(); // Reset drive sensors to 0
     chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
 
+
+    Catapult catapult(2, 5, 16);
+    Intake intake(1);
+    Pistons pistons('A', 'B', 'C', 'D');
+
     int potValue = selector.get_value();
     
     // Determine the autonomous routine based on potValue
@@ -573,8 +646,8 @@ void autonomous() {
         selectedAutonomous = 4;
     }
 
-    runSelectedAutonomous(4);
-
+//    runSelectedAutonomous(4);
+SkillsMatchOnly(catapult, intake, pistons);
 
 }
 
