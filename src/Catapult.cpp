@@ -55,23 +55,29 @@ void Catapult::SpinToTarget(int targetAngle, int angleRange, int velocity) {
 
 void Catapult::CataSpinToPosition(int positiontype, int velocity) {
     if (positiontype == 0) {
-        SpinToTarget(35250, 300, velocity);
+        SpinToTarget(35200, 350, velocity);
     } else if (positiontype == 1) {
         SpinToTarget(34000, 160, velocity);
     } else {
         SpinToTarget(260, 5, velocity);
     }
 }
-
 void Catapult::MatchLoadSkills(int range, double buffer) {
     int now = 0;
+    unsigned long startTime = pros::millis(); // Get the start time in milliseconds
 
     while (range > now) {
         if (CataDistanceSensor.get() < buffer) {
-            pros::delay(100);
-            CataSpinToPosition(0, 120);
+            pros::delay(25);
+            CataSpinToPosition(0, 150);
             now += 1;
         }
+
+        if (pros::millis() - startTime >= 24000) {
+            // Exit the loop if 24 seconds have passed
+            break;
+        }
+
         pros::delay(1);
     }
 }

@@ -1,19 +1,16 @@
 #include "main.h"
 #include "Intake.hpp"
 #include "pros/rtos.hpp"
+#include "pros/apix.h" // Include the LVGL library
 
-const int DRIVE_SPEED = 120; // This is 110/127 (around 87% of max speed).  We don't suggest making this 127.
+const int DRIVE_SPEED = 127; // This is 110/127 (around 87% of max speed).  We don't suggest making this 127.
                              // If this is 127 and the robot tries to heading correct, it's only correcting by
                              // making one side slower.  When this is 87%, it's correcting by making one side
                              // faster and one side slower, giving better heading correction.
 const int TURN_SPEED  = 90;
 const int SWING_SPEED = 90;
 
-/////
-// For instalattion, upgrading, documentations and tutorials, check out website!
-// https://ez-robotics.github.io/EZ-Template/
-/////
-
+lv_obj_t *label; // Declare a global pointer for the label widget
 
 // Chassis constructor
 Drive chassis (
@@ -75,7 +72,7 @@ void GoalSideAuton1(Catapult catapult, Intake intake, Pistons pistons) {
   pistons.InitialLaunch(false);
   intake.toggle(false, true);
 
-  chassis.set_drive_pid(8, 127, false);
+  chassis.set_drive_pid(10, 127, false);
   chassis.wait_drive();
 
   chassis.set_drive_pid(-8, DRIVE_SPEED, false);
@@ -91,7 +88,7 @@ void GoalSideAuton1(Catapult catapult, Intake intake, Pistons pistons) {
   pistons.InitialLaunch(true);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(55, DRIVE_SPEED, true);
+  chassis.set_drive_pid(60, DRIVE_SPEED, true);
   intake.toggle(false, false);
   chassis.wait_drive();
 
@@ -119,7 +116,7 @@ void GoalSideAuton1(Catapult catapult, Intake intake, Pistons pistons) {
   chassis.set_drive_pid(30, DRIVE_SPEED, true);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(-30, DRIVE_SPEED, true);
+  chassis.set_drive_pid(-25, DRIVE_SPEED, true);
   chassis.wait_drive();
 
   chassis.set_turn_pid(45, TURN_SPEED);
@@ -127,13 +124,13 @@ void GoalSideAuton1(Catapult catapult, Intake intake, Pistons pistons) {
   intake.toggle(false, true);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(5, DRIVE_SPEED, false);
+  chassis.set_drive_pid(3, DRIVE_SPEED, false);
   pistons.InitialLaunch(true);
   intake.toggle(true, false);
   chassis.wait_drive();
 
   pistons.InitialLaunch(false);
-  chassis.set_drive_pid(10, DRIVE_SPEED, false);
+  chassis.set_drive_pid(20, DRIVE_SPEED, false);
   chassis.wait_drive();
 }
 void GoalSideAuton2(Catapult catapult, Intake intake, Pistons pistons){
@@ -276,7 +273,9 @@ void FarSideAuton(Catapult catapult, Intake intake, Pistons pistons) {
   chassis.set_drive_pid(70, 127, true);
 }
 void Skills(Catapult catapult, Intake intake, Pistons pistons){
-  chassis.set_drive_pid(-8, DRIVE_SPEED, false);
+    pistons.LiftWheel();
+
+  chassis.set_drive_pid(-10, DRIVE_SPEED, false);
   chassis.wait_drive();
 
   chassis.set_drive_pid(45, DRIVE_SPEED, false);
@@ -309,18 +308,188 @@ void Skills(Catapult catapult, Intake intake, Pistons pistons){
   chassis.set_turn_pid(-270, TURN_SPEED);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(28, DRIVE_SPEED, true);
+  chassis.set_drive_pid(8, DRIVE_SPEED, false);
   chassis.wait_drive();
 
   chassis.set_turn_pid(-340, TURN_SPEED);
   chassis.wait_drive();
 
   pistons.InitialLaunch(true);
-  catapult.MatchLoadSkills(22, 30);
+  catapult.MatchLoadSkills(22, 40);
+  catapult.CataSpinToPosition(0, 140);
+
+  chassis.set_turn_pid(-343, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-50, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(-90, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(5, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(-0, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-15, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  intake.toggle(false, false);
+  chassis.set_turn_pid(-70, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(38, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  pros::delay(400);
+
+  chassis.set_turn_pid(-360, TURN_SPEED);
+  chassis.wait_drive();
+
+  catapult.CataSpinToPosition(0, 140);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-20, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(10, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(-90, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(20, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(-0, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-15, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(15, DRIVE_SPEED, true, true);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(-45, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(60, DRIVE_SPEED, true);
+  chassis.wait_until(60);
+
+  chassis.set_turn_pid(-30, TURN_SPEED);
+  chassis.wait_drive();
+
+  catapult.MatchLoadSkills(22, 40);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(-0, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-5, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(-315, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-20, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(-0, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-20, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+
+
+
 
 
 
 }
+
+void displayAutonomousSelection(int selection) {
+    // Update the controller LCD
+    pros::lcd::set_text(1, "Selected Autonomous:");
+    switch (selection) {
+        case 1:
+            pros::lcd::set_text(2, "Routine 1");
+            break;
+        case 2:
+            pros::lcd::set_text(2, "Routine 2");
+            break;
+        case 3:
+            pros::lcd::set_text(2, "Routine 3");
+            break;
+        case 4:
+            pros::lcd::set_text(2, "Routine 4");
+            break;
+        default:
+            pros::lcd::set_text(2, "Invalid Selection");
+            break;
+    }
+
+    // Create a new LVGL screen
+    lv_obj_t *screen = lv_obj_create(NULL, NULL);
+    lv_scr_load(screen);
+
+    // Create a label widget to display the selected autonomous
+    label = lv_label_create(screen, NULL);
+    lv_label_set_text(label, "Selected Autonomous:");
+    lv_obj_align(label, NULL, LV_ALIGN_IN_TOP_MID, 0, 10);
+
+    // Update the label text based on the selected autonomous
+    switch (selection) {
+        case 1:
+            lv_label_set_text(label, "Selected Autonomous: Routine 1");
+            break;
+        case 2:
+            lv_label_set_text(label, "Selected Autonomous: Routine 2");
+            break;
+        case 3:
+            lv_label_set_text(label, "Selected Autonomous: Routine 3");
+            break;
+        case 4:
+            lv_label_set_text(label, "Selected Autonomous: SKILLS");
+            break;
+        default:
+            lv_label_set_text(label, "Selected Autonomous: Invalid Selection");
+            break;
+    }
+}
+
+void runSelectedAutonomous(int selection) {
+    // Display the selected autonomous
+    displayAutonomousSelection(selection);
+
+    
+    Catapult catapult(2, 5, 16);
+    Intake intake(1);
+    Pistons pistons('A', 'B', 'C', 'D');
+
+    // Run the chosen autonomous routine
+    switch (selection) {
+        case 1:
+            GoalSideAuton1(catapult, intake, pistons);
+            break;
+        case 2:
+            GoalSideAuton2(catapult, intake, pistons);
+            break;
+        case 3:
+            FarSideAuton(catapult, intake, pistons);
+            break;
+        case 4:
+            Skills(catapult, intake, pistons);
+            break;
+        default:
+            // If an invalid selection is made, do nothing or display an error message.
+            break;
+    }
+}
+
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -341,14 +510,12 @@ void initialize() {
   // These are already defaulted to these buttons, but you can change the left/right curve buttons here!
   // chassis.set_left_curve_buttons (pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT); // If using tank, only the left side is used. 
   // chassis.set_right_curve_buttons(pros::E_CONTROLLER_DIGITAL_Y,    pros::E_CONTROLLER_DIGITAL_A);
-// Set exit conditions for chassis.turn_exit
-  chassis.set_exit_condition(chassis.turn_exit,  140, 3,  140, 7,   140, 140);
 
-  // Set exit conditions for chassis.swing_exit
-  chassis.set_exit_condition(chassis.swing_exit, 140, 3,  140, 7,   150, 150);
+  lv_init();
 
-  // Set exit conditions for chassis.drive_exit
-  chassis.set_exit_condition(chassis.drive_exit, 140, 50, 140, 140, 140, 140);
+  chassis.set_exit_condition(chassis.turn_exit,  50, 3,  500, 7,   250, 250);
+  chassis.set_exit_condition(chassis.swing_exit, 100, 3,  500, 7,   500, 500);
+  chassis.set_exit_condition(chassis.drive_exit, 50,  50, 300, 150, 250, 250);
 
   // Initialize chassis and auton selector
   chassis.initialize();
@@ -384,19 +551,31 @@ void competition_initialize() {}
  */
 void autonomous() {
 
-    Catapult catapult(2, 5, 16);
-    Intake intake(1);
-    Pistons pistons('A', 'B', 'C', 'D');
+    pros::ADIAnalogIn selector ('E');
 
     chassis.reset_pid_targets(); // Resets PID targets to 0
     chassis.reset_gyro(); // Reset gyro position to 0
     chassis.reset_drive_sensor(); // Reset drive sensors to 0
     chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
 
-    //GoalSideAuton1(catapult, intake, pistons);
-    //FarSideAuton(catapult, intake, pistons);
-    //GoalSideAuton2(catapult, intake, pistons);
-    Skills(catapult, intake, pistons);
+    int potValue = selector.get_value();
+    
+    // Determine the autonomous routine based on potValue
+    int selectedAutonomous = 1;
+
+    if (0 < potValue < 1024) {
+        selectedAutonomous = 1;
+    } else if (1024 < potValue < 2048) {
+        selectedAutonomous = 2;
+    } else if (2048 < potValue < 3072) {
+        selectedAutonomous = 3;
+    } else {
+        selectedAutonomous = 4;
+    }
+
+    runSelectedAutonomous(4);
+
+
 }
 
 /**
