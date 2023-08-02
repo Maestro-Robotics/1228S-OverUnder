@@ -2,7 +2,6 @@
 
 #include "pros/misc.hpp"
 
-#include "Drivetrain.hpp"
 #include "Catapult.hpp"
 #include "Intake.hpp"
 #include "Pistons.hpp"

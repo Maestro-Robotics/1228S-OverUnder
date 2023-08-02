@@ -41,9 +41,7 @@
  */
 
 #include "pros./motors.hpp"
-#include "lemlib/api.hpp"
 #include "Subsystems.hpp"
-#include "Drivetrain.hpp"
 #include "Pistons.hpp"
 #include "Intake.hpp"
 #include "Catapult.hpp"

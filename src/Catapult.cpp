@@ -5,13 +5,15 @@
 #include "Catapult.hpp"
 #include "pros/rtos.hpp"
 
+// Constructor for Catapult class
 Catapult::Catapult(int8_t const CataPort, uint8_t const RotationPort, uint8_t const DistancePort) : CataMotor{ CataPort }, CataRotationSensor{ RotationPort }, CataDistanceSensor{ DistancePort } {}
 
 // Constants for PID control
-const double kP = 5; // Proportional gain
-const double kI = 0.8; // Integral gain
+const double kP = 5;    // Proportional gain
+const double kI = 0.8;  // Integral gain
 const double kD = 2.00; // Derivative gain
 
+// Function to control the catapult and spin it to the target angle
 void Catapult::SpinToTarget(int targetAngle, int angleRange, int velocity) {
     const int timeout = 3000; // set timeout to 3 seconds
     uint32_t start_time = pros::millis();
@@ -19,6 +21,7 @@ void Catapult::SpinToTarget(int targetAngle, int angleRange, int velocity) {
     // Variables for PID control
     double error, lastError = 0, integral = 0, derivative;
 
+    // Start spinning the catapult motor at the desired velocity
     CataMotor.move_velocity(velocity);
     pros::Task::delay(300);
 
@@ -39,6 +42,7 @@ void Catapult::SpinToTarget(int targetAngle, int angleRange, int velocity) {
         // Update motor velocity
         CataMotor.move_velocity(static_cast<int>(output));
 
+        // Check for timeout
         if (pros::millis() - start_time > timeout) {
             std::printf("Spin motor timeout reached");
             break;
@@ -50,22 +54,30 @@ void Catapult::SpinToTarget(int targetAngle, int angleRange, int velocity) {
         pros::delay(1);
     }
 
+    // Stop the catapult motor
     CataMotor.move_velocity(0);
 }
 
+// Function to spin the catapult to a pre-defined position based on positiontype
 void Catapult::CataSpinToPosition(int positiontype, int velocity) {
     if (positiontype == 0) {
+        // Spin to the target angle with a larger angle range
         SpinToTarget(35200, 350, velocity);
     } else if (positiontype == 1) {
+        // Spin to the target angle with a smaller angle range
         SpinToTarget(34000, 160, velocity);
     } else {
+        // Spin to a specific target angle with a very small angle range
         SpinToTarget(260, 5, velocity);
     }
 }
+
+// Function to spin the catapult and load skills in a match
 void Catapult::MatchLoadSkills(int range, double buffer) {
     int now = 0;
     unsigned long startTime = pros::millis(); // Get the start time in milliseconds
 
+    // Loop until the desired range is reached
     while (range > now) {
         if (CataDistanceSensor.get() < buffer) {
             pros::delay(25);
@@ -73,8 +85,8 @@ void Catapult::MatchLoadSkills(int range, double buffer) {
             now += 1;
         }
 
+        // Check if the match time has exceeded 24 seconds and exit the loop if true
         if (pros::millis() - startTime >= 24000) {
-            // Exit the loop if 24 seconds have passed
             break;
         }
 
