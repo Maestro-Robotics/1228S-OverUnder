@@ -15,6 +15,8 @@ const double kD = 2.00; // Derivative gain
 
 // Function to control the catapult and spin it to the target angle
 void Catapult::SpinToTarget(int targetAngle, int angleRange, int velocity) {
+    
+    chassis.arcade_standard(ez::SPLIT);
     const int timeout = 3000; // set timeout to 3 seconds
     uint32_t start_time = pros::millis();
 

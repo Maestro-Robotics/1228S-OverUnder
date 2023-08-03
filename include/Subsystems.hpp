@@ -14,6 +14,7 @@ class Subsystems {
         Pistons Bot_Pistons;
 
         bool CataActive = false;
+         bool intakeToggle = false; 
 
         void update_Catapult();
         void update_Intake();

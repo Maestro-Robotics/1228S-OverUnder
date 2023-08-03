@@ -42,14 +42,16 @@ void Subsystems::update_Catapult() {
 // Update function for the Intake subsystem
 void Subsystems::update_Intake() {
 
-    // Check if the L1 button is pressed and toggle the intake on (in the forward direction)
-	if ((Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) && CataActive == false) {
-		Bot_Intake.toggle(false, false);
-	} 
+	 // Check if the L1 button is pressed and toggle the intake on (in the forward direction)
+    if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1) && CataActive == false) {
+        intakeToggle = !intakeToggle; // Toggle the intake state
+        Bot_Intake.toggle(false, !intakeToggle); // Toggle the intake with the current reverse setting
+    } 
     // Check if the L2 button is pressed and toggle the intake on (in the reverse direction)
-    else if ((Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) && CataActive == false) {
-		Bot_Intake.toggle(true, false);
-	}
+    else if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2) && CataActive == false) {
+        intakeToggle = !intakeToggle; // Toggle the intake state
+        Bot_Intake.toggle(true, !intakeToggle); // Toggle the intake with the current reverse setting
+    }
 }
 
 // Update function for the Pistons subsystem

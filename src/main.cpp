@@ -60,6 +60,8 @@ Drive chassis (
 
 // Function to execute the Goal Side Autonomous 1 routine
 void GoalSideAuton1(Catapult catapult, Intake intake, Pistons pistons) {
+  pistons.LiftWheel();
+
   // Move forward to a specific target position
   chassis.set_drive_pid(42, DRIVE_SPEED, true);
   chassis.wait_drive();
@@ -102,7 +104,7 @@ void GoalSideAuton1(Catapult catapult, Intake intake, Pistons pistons) {
   chassis.wait_drive();
 
   // Move forward to a specific target position and toggle the intake
-  chassis.set_drive_pid(60, DRIVE_SPEED, true);
+  chassis.set_drive_pid(50, DRIVE_SPEED, true);
   intake.toggle(false, false);
   chassis.wait_drive();
 
@@ -144,7 +146,7 @@ void GoalSideAuton1(Catapult catapult, Intake intake, Pistons pistons) {
   chassis.set_turn_pid(45, TURN_SPEED);
   pistons.InitialLaunch(false);
   intake.toggle(false, true);
-  chassis.wait_drive();
+  chassis.wait_until(45);
 
   // Move forward to a specific target position and launch the catapult
   chassis.set_drive_pid(3, DRIVE_SPEED, false);
@@ -248,27 +250,27 @@ void GoalSideAuton2(Catapult catapult, Intake intake, Pistons pistons) {
 
 // Function to execute the Far Side Autonomous routine
 void FarSideAuton(Catapult catapult, Intake intake, Pistons pistons) {
-  // Move forward to a specific target position
-  chassis.set_drive_pid(40, DRIVE_SPEED, true);
-  chassis.wait_drive();
+   // Lift the wheel using the pistons
+  pistons.LiftWheel();
 
   // Move backward to a specific target position
-  chassis.set_drive_pid(-40, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Toggle the intake
-  intake.toggle(true, true);
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(225, TURN_SPEED);
+  chassis.set_drive_pid(-8, DRIVE_SPEED, false);
   chassis.wait_drive();
 
   // Move forward to a specific target position
-  chassis.set_drive_pid(42, DRIVE_SPEED, true);
+  chassis.set_drive_pid(45, DRIVE_SPEED, false);
   chassis.wait_drive();
 
   // Turn to a specific angle
-  chassis.set_turn_pid(270, TURN_SPEED);
+  chassis.set_turn_pid(45, TURN_SPEED);
+  chassis.wait_drive();
+
+  // Move forward to a specific target position
+  chassis.set_drive_pid(42, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  // Turn to a specific angle
+  chassis.set_turn_pid(90, TURN_SPEED);
 
   // Launch the catapult and toggle the intake
   pistons.InitialLaunch(true);
@@ -291,8 +293,8 @@ void FarSideAuton(Catapult catapult, Intake intake, Pistons pistons) {
   chassis.set_drive_pid(-8, DRIVE_SPEED, false);
   chassis.wait_drive();
 
-  // Turn to a specific angle
-  chassis.set_turn_pid(359, TURN_SPEED);
+// Turn to a specific angle
+  chassis.set_turn_pid(0, TURN_SPEED);
   chassis.wait_drive();
 
   // Move forward to a specific target position
@@ -680,59 +682,24 @@ void SkillsMatchOnly(Catapult catapult, Intake intake, Pistons pistons) {
 }
 
 
-void displayAutonomousSelection(int selectedAutonomous) {
-    // Update the controller LCD
-    pros::lcd::set_text(1, "Selected Autonomous:");
-    switch (selectedAutonomous) {
-        case 1:
-            pros::lcd::set_text(2, "Close Side Rush");
-            break;
-        case 2:
-            pros::lcd::set_text(2, "Close Side Safer");
-            break;
-        case 3:
-            pros::lcd::set_text(2, "Far Side");
-            break;
-        case 4:
-            pros::lcd::set_text(2, "SKILLS");
-            break;
-        case 5:
-            pros::lcd::set_text(2, "SKILLS MATCH ONLY");
-            break;
-        default:
-            pros::lcd::set_text(2, "Invalid Selection");
-            break;
-    }
+void intake_control_task(void* param) {
+    Intake* intake = static_cast<Intake*>(param); // Cast the parameter back to Intake*
 
-    // Create a new LVGL screen
-    lv_obj_t *screen = lv_obj_create(NULL, NULL);
-    lv_scr_load(screen);
+    pros::Optical optical_sensor(15);
 
-    // Create a label widget to display the selected autonomous
-    lv_obj_t *label = lv_label_create(screen, NULL);
-    lv_label_set_text(label, "Selected Autonomous:");
-    lv_obj_align(label, NULL, LV_ALIGN_IN_TOP_MID, 0, 10);
+    // Debug print to indicate task has started
+    printf("Intake Control Task started\n");
 
-    // Update the label text based on the selected autonomous
-    switch (selectedAutonomous) {
-        case 1:
-            lv_label_set_text(label, "Selected Autonomous: Close Side Rush");
-            break;
-        case 2:
-            lv_label_set_text(label, "Selected Autonomous: Close Side Safer");
-            break;
-        case 3:
-            lv_label_set_text(label, "Selected Autonomous: Far Side");
-            break;
-        case 4:
-            lv_label_set_text(label, "Selected Autonomous: SKILLS");
-            break;
-        case 5:
-            lv_label_set_text(label, "Selected Autonomous: SKILLS MATCH ONLY");
-            break;
-        default:
-            lv_label_set_text(label, "Selected Autonomous: Invalid Selection");
-            break;
+    while (true) {
+        int hue = optical_sensor.get_hue();
+        printf("Hue: %d\n", hue);
+
+        if (hue > 100 && hue < 138) {
+            printf("Green detected\n");
+            intake->toggle(false, true);
+        }
+
+        pros::delay(1); // Adjust the delay as needed
     }
 }
 
@@ -749,22 +716,6 @@ void initialize() {
   pros::delay(500); // Stop the user from doing anything while legacy ports configure.
   lv_init();
 
-  pros::ADIAnalogIn selector('E');     
-  // Determine the selected autonomous based on potentiometer value
-  int potValue = selector.get_value();
-  int selectedAutonomous = 1; // Default to Routine 1  
-  if (potValue > 3072) {
-      selectedAutonomous = 5; // Routine 5 (SKILLS MATCH ONLY)
-  } else if (potValue > 2304) {
-      selectedAutonomous = 4; // Routine 4 (SKILLS)
-  } else if (potValue > 1536) {
-      selectedAutonomous = 3; // Routine 3
-  } else if (potValue > 768) {
-      selectedAutonomous = 2; // Routine 2
-  }    
-  // Display the selected autonomous on the controller's LCD
-  displayAutonomousSelection(selectedAutonomous);  
-
   // Configure your chassis controls
   chassis.toggle_modify_curve_with_controller(true); // Enables modifying the controller curve with buttons on the joysticks
   chassis.set_active_brake(0.1); // Sets the active brake kP. We recommend 0.1.
@@ -777,7 +728,9 @@ void initialize() {
   chassis.set_exit_condition(chassis.swing_exit, 100, 3,  500, 7,   500, 500);
   chassis.set_exit_condition(chassis.drive_exit, 50,  50, 300, 150, 250, 250);
 
-  // Initialize chassis and auton selector
+  
+
+  // Initialize chassis
   chassis.initialize();
 }
 /**
@@ -810,58 +763,26 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
+    pros::ADIAnalogIn selector('E');
 
-    pros::ADIAnalogIn selector ('E');
-
-    chassis.reset_pid_targets(); // Resets PID targets to 0
-    chassis.reset_gyro(); // Reset gyro position to 0
-    chassis.reset_drive_sensor(); // Reset drive sensors to 0
-    chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
-
+    chassis.reset_pid_targets();
+    chassis.reset_gyro();
+    chassis.reset_drive_sensor();
+    chassis.set_drive_brake(MOTOR_BRAKE_HOLD);
 
     Catapult catapult(2, 5, 16);
     Intake intake(1);
     Pistons pistons('A', 'B', 'C', 'D');
-    
-    // Get the potentiometer value to determine the selected autonomous
-    int potValue = selector.get_value();
-    int selectedAutonomous = 1; // Default to Routine 1
 
-    if (potValue > 3072) {
-        selectedAutonomous = 5; // Routine 5 (SKILLS MATCH ONLY)
-    } else if (potValue > 2304) {
-        selectedAutonomous = 4; // Routine 4 (SKILLS)
-    } else if (potValue > 1536) {
-        selectedAutonomous = 3; // Routine 3
-    } else if (potValue > 768) {
-        selectedAutonomous = 2; // Routine 2
-    }
+    GoalSideAuton1(catapult, intake, pistons);
+    //GoalSideAuton2(catapult, intake, pistons);
 
-    // Display the selected autonomous on the controller's LCD and the screen
-    displayAutonomousSelection(selectedAutonomous);
+    //FarSideAuton(catapult, intake, pistons);
 
-    // Run the selected autonomous
-    switch (selectedAutonomous) {
-        case 1:
-            GoalSideAuton1(catapult, intake, pistons);
-            break;
-        case 2:
-            GoalSideAuton2(catapult, intake, pistons);
-            break;
-        case 3:
-            FarSideAuton(catapult, intake, pistons);
-            break;
-        case 4:
-            Skills(catapult, intake, pistons);
-            break;
-        case 5:
-            SkillsMatchOnly(catapult, intake, pistons);
-            break;
-        default:
-            // If an invalid selection is made, do nothing or display an error message.
-            break;
-    }
+    //Skills(catapult, intake, pistons);
+    //SkillsMatchOnly(catapult, intake, pistons);
 }
+
 
 
 /**
@@ -879,18 +800,22 @@ void autonomous() {
  */
 
 
+
+
 void opcontrol() {
-    
-    Catapult const catapult(2, 5, 16);
-    Intake const intake(1);
-    Pistons const pistons('A', 'B', 'C', 'D');
-	  Subsystems subsystems(catapult, intake, pistons);
+    Catapult catapult(2, 5, 16);
+    Intake intake(1);
+    Pistons pistons('A', 'B', 'C', 'D');
+    Subsystems subsystems(catapult, intake, pistons);
+
+    pros::Task intake_task(intake_control_task, &intake, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Intake Control Task");
+
 
     while (true) {
-      chassis.arcade_standard(ez::SPLIT);
-      subsystems.update();
-      pros::delay(1);
+
+        // Update other subsystems and drive control
+        chassis.arcade_standard(ez::SPLIT);
+        subsystems.update();
+        pros::delay(20); // Adjust the delay as needed
     }
-	}
-
-
+}
