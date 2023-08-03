@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "GoalSideRush",
+    "project_name": "122SMoA",
     "target": "v5",
     "templates": {
       "EZ-Template": {
@@ -354,7 +354,7 @@
       }
     },
     "upload_options": {
-      "icon": "alien",
+      "icon": "X",
       "slot": 1
     }
   }

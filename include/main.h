@@ -46,12 +46,15 @@
 #include "Intake.hpp"
 #include "Catapult.hpp"
 
-//#include "EZ-Template/api.hpp"
+#include "EZ-Template/api.hpp"
+#include "autons.hpp"
 //#include "autons.hpp"
 
 
 //#include "okapi/api.hpp"
 //#include "pros/api_legacy.h"
+
+extern bool GoalSide;
 
 /**
  * If you find doing pros::Motor() to be tedious and you'd prefer just to do
@@ -70,6 +73,7 @@
  * that they can be called from user code (i.e. calling autonomous from a
  * button press in opcontrol() for testing purposes).
  */
+
 #ifdef __cplusplus
 extern "C" {
 #endif

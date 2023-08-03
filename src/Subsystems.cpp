@@ -8,6 +8,9 @@ bool r2Pressed = false;
 // Define a boolean variable to keep track of the state of initial launch for the Pistons
 bool initialLaunchState = false;
 
+int ToggleGoalSide = 0;
+
+bool GoalSide = true;
 // Constructor for the Subsystems class, initializing the subsystem objects
 Subsystems::Subsystems(Catapult catapult, Intake intake, Pistons pistons) 
     : Bot_Catapult(catapult)
@@ -52,6 +55,16 @@ void Subsystems::update_Intake() {
         intakeToggle = !intakeToggle; // Toggle the intake state
         Bot_Intake.toggle(true, !intakeToggle); // Toggle the intake with the current reverse setting
     }
+
+	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
+		ToggleGoalSide++;
+
+		if (ToggleGoalSide == 4){
+			GoalSide = !GoalSide;
+			Bot_Pistons.ChangeAngle(GoalSide);
+			ToggleGoalSide = 0;
+		}
+	}
 }
 
 // Update function for the Pistons subsystem

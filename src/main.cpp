@@ -5,15 +5,9 @@
 #include "pros/rtos.hpp"
 #include "pros/apix.h" // Include the LVGL library
 
-// Define constants for drive and turn speeds
-const int DRIVE_SPEED = 127; // This is 110/127 (around 87% of max speed). We don't suggest making this 127.
-                             // If this is 127 and the robot tries to heading correct, it's only correcting by
-                             // making one side slower. When this is 87%, it's correcting by making one side
-                             // faster and one side slower, giving better heading correction.
-const int TURN_SPEED  = 90;
-const int SWING_SPEED = 90;
-
 lv_obj_t *label; // Declare a global pointer for the label widget
+
+bool COLOR_DETECTED = false;
 
 // Chassis constructor
 Drive chassis (
@@ -58,629 +52,6 @@ Drive chassis (
   ,17
 );
 
-// Function to execute the Goal Side Autonomous 1 routine
-void GoalSideAuton1(Catapult catapult, Intake intake, Pistons pistons) {
-  pistons.LiftWheel();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(42, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-45, TURN_SPEED);
-
-  // Launch the catapult and toggle the intake
-  pistons.InitialLaunch(true);
-  intake.toggle(true, false);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-3, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Retract the catapult and toggle the intake
-  pistons.InitialLaunch(false);
-  intake.toggle(false, true);
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(10, 127, false);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-8, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(45, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-25, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Turn to a specific angle and launch the catapult
-  chassis.set_turn_pid(-60, TURN_SPEED);
-  pistons.InitialLaunch(true);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position and toggle the intake
-  chassis.set_drive_pid(50, DRIVE_SPEED, true);
-  intake.toggle(false, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle and toggle the intake
-  chassis.set_turn_pid(45, TURN_SPEED);
-  intake.toggle(true, true);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position and toggle the intake
-  chassis.set_drive_pid(5, DRIVE_SPEED, false);
-  intake.toggle(true, false);
-  pistons.InitialLaunch(false);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position and toggle the intake
-  chassis.set_drive_pid(18, DRIVE_SPEED, true);
-  intake.toggle(false, true);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-15, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Turn to a specific angle and launch the catapult
-  chassis.set_turn_pid(-125, TURN_SPEED);
-  pistons.InitialLaunch(true);
-  intake.toggle(false, false);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(30, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-25, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Turn to a specific angle and retract the catapult
-  chassis.set_turn_pid(45, TURN_SPEED);
-  pistons.InitialLaunch(false);
-  intake.toggle(false, true);
-  chassis.wait_until(45);
-
-  // Move forward to a specific target position and launch the catapult
-  chassis.set_drive_pid(3, DRIVE_SPEED, false);
-  pistons.InitialLaunch(true);
-  intake.toggle(true, false);
-  chassis.wait_drive();
-
-  // Retract the catapult and move forward to a specific target position
-  pistons.InitialLaunch(false);
-  chassis.set_drive_pid(20, DRIVE_SPEED, false);
-  chassis.wait_drive();
-}
-
-// Function to execute the Goal Side Autonomous 2 routine
-void GoalSideAuton2(Catapult catapult, Intake intake, Pistons pistons) {
-  // Move forward to a specific target position
-  chassis.set_drive_pid(42, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-45, TURN_SPEED);
-
-  // Launch the catapult and toggle the intake
-  pistons.InitialLaunch(true);
-  intake.toggle(true, false);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-3, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Retract the catapult and toggle the intake
-  pistons.InitialLaunch(false);
-  intake.toggle(false, true);
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(8, 127, false);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-8, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(45, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-25, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Turn to a specific angle and launch the catapult
-  chassis.set_turn_pid(255, TURN_SPEED);
-  pistons.InitialLaunch(true);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position and toggle the intake
-  chassis.set_drive_pid(55, DRIVE_SPEED, true);
-  intake.toggle(false, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle and toggle the intake
-  chassis.set_turn_pid(180, TURN_SPEED);
-  intake.toggle(true, true);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position and toggle the intake
-  chassis.set_drive_pid(26, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Turn to a specific angle and launch the catapult
-  chassis.set_turn_pid(45, TURN_SPEED);
-  pistons.InitialLaunch(true);
-  intake.toggle(true, false);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position and toggle the intake
-  chassis.set_drive_pid(20, DRIVE_SPEED, false);
-  intake.toggle(false, true);
-  pistons.InitialLaunch(false);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-12, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle and launch the catapult
-  chassis.set_turn_pid(-90, TURN_SPEED);
-  pistons.InitialLaunch(true);
-  intake.toggle(false, false);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(15, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(45, TURN_SPEED);
-  chassis.wait_drive();
-}
-
-// Function to execute the Far Side Autonomous routine
-void FarSideAuton(Catapult catapult, Intake intake, Pistons pistons) {
-   // Lift the wheel using the pistons
-  pistons.LiftWheel();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-8, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(45, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(45, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(42, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(90, TURN_SPEED);
-
-  // Launch the catapult and toggle the intake
-  pistons.InitialLaunch(true);
-  intake.toggle(true, false);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-3, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Retract the catapult and toggle the intake
-  pistons.InitialLaunch(false);
-  intake.toggle(false, true);
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(10, 127, false);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-8, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-// Turn to a specific angle
-  chassis.set_turn_pid(0, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(28, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Turn to a specific angle and launch the catapult
-  chassis.set_turn_pid(290, TURN_SPEED);
-  pistons.InitialLaunch(true);
-  intake.toggle(false, false);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(50, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(180, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Spin the catapult to a specific position
-  catapult.CataSpinToPosition(0, 150);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(0, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(20, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(135, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(70, 127, true);
-}
-
-// Function to execute the Skills routine
-void Skills(Catapult catapult, Intake intake, Pistons pistons) {
-  // Lift the wheel using the pistons
-  pistons.LiftWheel();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-10, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(45, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-45, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(42, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-90, TURN_SPEED);
-
-  // Launch the catapult and toggle the intake
-  pistons.InitialLaunch(true);
-  intake.toggle(true, false);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-3, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Retract the catapult and toggle the intake
-  pistons.InitialLaunch(false);
-  intake.toggle(false, true);
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(10, 127, false);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-8, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-270, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(8, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-340, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Launch the catapult and load the ball
-  pistons.InitialLaunch(true);
-  catapult.MatchLoadSkills(22, 40);
-  catapult.CataSpinToPosition(0, 140);
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-343, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-50, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-90, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(5, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-0, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-15, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Toggle the intake
-  intake.toggle(false, false);
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-70, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(38, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Delay to wait for the piston to settle
-  pros::delay(400);
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-360, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Spin the catapult to a specific position
-  catapult.CataSpinToPosition(0, 140);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-20, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(10, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-90, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(20, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-0, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-15, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position and toggle the intake
-  chassis.set_drive_pid(15, DRIVE_SPEED, true, true);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-45, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(60, DRIVE_SPEED, true);
-  chassis.wait_until(60);
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-30, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Launch the catapult and load the ball
-  catapult.MatchLoadSkills(22, 40);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-0, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-5, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-315, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-20, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-0, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-20, DRIVE_SPEED, true);
-  chassis.wait_drive();
-}
-
-// Function to execute the SkillsMatchOnly routine
-void SkillsMatchOnly(Catapult catapult, Intake intake, Pistons pistons) {
-  // Lift the wheel using the pistons
-  pistons.LiftWheel();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-10, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(45, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-45, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(42, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-90, TURN_SPEED);
-
-  // Launch the catapult and toggle the intake
-  pistons.InitialLaunch(true);
-  intake.toggle(true, false);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-3, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Retract the catapult and toggle the intake
-  pistons.InitialLaunch(false);
-  intake.toggle(false, true);
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(10, 127, false);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-8, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-270, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(8, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-340, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Launch the catapult and load the ball
-  pistons.InitialLaunch(true);
-  catapult.MatchLoadSkills(22, 40);
-  catapult.CataSpinToPosition(0, 140);
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-343, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-50, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-90, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(80, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-45, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(70, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Toggle the intake
-  intake.toggle(false, false);
-
-  // Delay to wait for the piston to settle
-  pros::delay(400);
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-360, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Spin the catapult to a specific position
-  catapult.CataSpinToPosition(0, 140);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-20, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(10, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-90, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(20, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-0, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-15, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position and toggle the intake
-  chassis.set_drive_pid(15, DRIVE_SPEED, true, true);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-45, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move forward to a specific target position
-  chassis.set_drive_pid(60, DRIVE_SPEED, true);
-  chassis.wait_until(60);
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-30, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Launch the catapult and load the ball
-  catapult.MatchLoadSkills(22, 40);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-0, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-5, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-315, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-20, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Turn to a specific angle
-  chassis.set_turn_pid(-0, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Move backward to a specific target position
-  chassis.set_drive_pid(-20, DRIVE_SPEED, true);
-  chassis.wait_drive();
-}
-
 
 void intake_control_task(void* param) {
     Intake* intake = static_cast<Intake*>(param); // Cast the parameter back to Intake*
@@ -694,9 +65,13 @@ void intake_control_task(void* param) {
         int hue = optical_sensor.get_hue();
         printf("Hue: %d\n", hue);
 
-        if (hue > 100 && hue < 138) {
+        optical_sensor.set_led_pwm(100);
+
+        if (hue > 100 && hue < 120) {
             printf("Green detected\n");
-            intake->toggle(false, true);
+            intake->toggle(false, false);
+            COLOR_DETECTED = true;
+            // When Green is detected, out of loop
         }
 
         pros::delay(1); // Adjust the delay as needed
@@ -728,10 +103,19 @@ void initialize() {
   chassis.set_exit_condition(chassis.swing_exit, 100, 3,  500, 7,   500, 500);
   chassis.set_exit_condition(chassis.drive_exit, 50,  50, 300, 150, 250, 250);
 
-  
+  ez::as::auton_selector.add_autons({
+    Auton("Autonomous 1\n Goal Side Rush", GoalSideRush),
+    Auton("Autonomous 2\n Goal Side Safe", GoalSideSafe),
+    Auton("Autonomous 3\n Far Side (Shoots)", FarSide),
+    Auton("Autonomous 4\n Skills Development", SkillsDevelopment),
+    Auton("Autonomous 5\n Skills Match Load Only", SkillsMatchLoadOnly)
+  });
+
+  ez::as::auton_selector.print_selected_auton(); 
 
   // Initialize chassis
   chassis.initialize();
+  ez::as::initialize();
 }
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -769,18 +153,7 @@ void autonomous() {
     chassis.reset_gyro();
     chassis.reset_drive_sensor();
     chassis.set_drive_brake(MOTOR_BRAKE_HOLD);
-
-    Catapult catapult(2, 5, 16);
-    Intake intake(1);
-    Pistons pistons('A', 'B', 'C', 'D');
-
-    GoalSideAuton1(catapult, intake, pistons);
-    //GoalSideAuton2(catapult, intake, pistons);
-
-    //FarSideAuton(catapult, intake, pistons);
-
-    //Skills(catapult, intake, pistons);
-    //SkillsMatchOnly(catapult, intake, pistons);
+    ez::as::auton_selector.call_selected_auton(); // Calls selected auton from autonomous selector.
 }
 
 
@@ -808,14 +181,40 @@ void opcontrol() {
     Pistons pistons('A', 'B', 'C', 'D');
     Subsystems subsystems(catapult, intake, pistons);
 
+    pros::Optical optical(15);
+
+    // initial thread started
     pros::Task intake_task(intake_control_task, &intake, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Intake Control Task");
 
-
+    pistons.ChangeAngle(GoalSide);
+        
     while (true) {
+
+        if (optical.get_hue() < 100 || optical.get_hue() > 120) {
+          if (GoalSide == true) {
+            COLOR_DETECTED = false;
+            // When Green is detected, out of loop
+          }
+
+          else {
+            COLOR_DETECTED = true;
+          }
+        }
+
+        if (COLOR_DETECTED  == true) {
+          // write, thread re-start 
+          intake_task.suspend();
+        }
+
+        else {
+          intake_task.resume();
+        }
 
         // Update other subsystems and drive control
         chassis.arcade_standard(ez::SPLIT);
         subsystems.update();
         pros::delay(20); // Adjust the delay as needed
     }
+      
 }
+
