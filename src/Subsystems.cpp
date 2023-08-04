@@ -36,10 +36,10 @@ void Subsystems::update_Catapult() {
 		Bot_Intake.toggle(false, false);
     }
 
-	// Check if the DOWN button is pressed and perform the MatchLoadSkills routine
-	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-		Bot_Catapult.MatchLoadSkills(22, 50);
-	}
+	// // Check if the DOWN button is pressed and perform the MatchLoadSkills routine
+	// if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+	// 	Bot_Catapult.MatchLoadSkills(22, 50);
+	// }
 }
 
 // Update function for the Intake subsystem
@@ -47,13 +47,12 @@ void Subsystems::update_Intake() {
 
 	 // Check if the L1 button is pressed and toggle the intake on (in the forward direction)
     if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1) && CataActive == false) {
-        intakeToggle = !intakeToggle; // Toggle the intake state
-        Bot_Intake.toggle(false, !intakeToggle); // Toggle the intake with the current reverse setting
+         // Toggle the intake state
+        Bot_Intake.toggle(false, false); // Toggle the intake with the current reverse setting
     } 
     // Check if the L2 button is pressed and toggle the intake on (in the reverse direction)
     else if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2) && CataActive == false) {
-        intakeToggle = !intakeToggle; // Toggle the intake state
-        Bot_Intake.toggle(true, !intakeToggle); // Toggle the intake with the current reverse setting
+        Bot_Intake.toggle(true, false); // Toggle the intake with the current reverse setting
     }
 
 	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {

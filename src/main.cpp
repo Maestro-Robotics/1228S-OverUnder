@@ -67,9 +67,9 @@ void intake_control_task(void* param) {
 
         optical_sensor.set_led_pwm(100);
 
-        if (hue > 100 && hue < 120) {
+        if (hue > 80 && hue < 120) {
             printf("Green detected\n");
-            intake->toggle(false, false);
+            intake->toggle(false, true);
             COLOR_DETECTED = true;
             // When Green is detected, out of loop
         }
@@ -190,7 +190,7 @@ void opcontrol() {
         
     while (true) {
 
-        if (optical.get_hue() < 100 || optical.get_hue() > 120) {
+        if (optical.get_hue() < 80 || optical.get_hue() > 120) {
           if (GoalSide == true) {
             COLOR_DETECTED = false;
             // When Green is detected, out of loop
