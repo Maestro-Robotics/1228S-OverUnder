@@ -11,6 +11,10 @@ bool initialLaunchState = false;
 int ToggleGoalSide = 0;
 
 bool GoalSide = true;
+
+bool SkillsMode = false;
+
+int InitialIntake = 0;
 // Constructor for the Subsystems class, initializing the subsystem objects
 Subsystems::Subsystems(Catapult catapult, Intake intake, Pistons pistons) 
     : Bot_Catapult(catapult)
@@ -38,8 +42,13 @@ void Subsystems::update_Catapult() {
 
 	// // Check if the DOWN button is pressed and perform the MatchLoadSkills routine
 	// if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-	// 	Bot_Catapult.MatchLoadSkills(22, 50);
+	//  	Bot_Catapult.MatchLoadSkills(22, 50);
 	// }
+
+	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)){
+		Bot_Intake.toggle(false, true);
+		Bot_Catapult.CataSpinToPosition(2, 140);
+	}
 }
 
 // Update function for the Intake subsystem
@@ -47,12 +56,40 @@ void Subsystems::update_Intake() {
 
 	 // Check if the L1 button is pressed and toggle the intake on (in the forward direction)
     if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1) && CataActive == false) {
+		if (GoalSide == true && InitialIntake == 1){
+			Bot_Pistons.InitialLaunch(true);
+			Bot_Intake.toggle(false, false);
+			Bot_Intake.toggle(false, false);
+		}
+
+		else if (GoalSide == true){
+			Bot_Pistons.InitialLaunch(true);
+			Bot_Intake.toggle(false, false);
+			InitialIntake = 1;
+		}
+
+		else{
          // Toggle the intake state
         Bot_Intake.toggle(false, false); // Toggle the intake with the current reverse setting
+		}
     } 
     // Check if the L2 button is pressed and toggle the intake on (in the reverse direction)
     else if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2) && CataActive == false) {
+		if (GoalSide == true && InitialIntake == 1){
+			Bot_Intake.toggle(true, false);
+			Bot_Intake.toggle(true, false);
+			Bot_Pistons.InitialLaunch(false);
+		}
+
+		else if (GoalSide == true){
+			Bot_Pistons.InitialLaunch(true);
+			Bot_Intake.toggle(true, false);
+			InitialIntake = 1;
+		}
+
+		else{	
         Bot_Intake.toggle(true, false); // Toggle the intake with the current reverse setting
+		}
     }
 
 	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
@@ -61,7 +98,9 @@ void Subsystems::update_Intake() {
 		if (ToggleGoalSide == 4){
 			GoalSide = !GoalSide;
 			Bot_Pistons.ChangeAngle(GoalSide);
+			Bot_Intake.toggle(false, true);
 			ToggleGoalSide = 0;
+			InitialIntake = 0;
 		}
 	}
 }

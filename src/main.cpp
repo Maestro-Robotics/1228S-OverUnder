@@ -69,7 +69,7 @@ void intake_control_task(void* param) {
 
         if (hue > 80 && hue < 120) {
             printf("Green detected\n");
-            intake->toggle(false, true);
+            intake->toggle(true, true);
             COLOR_DETECTED = true;
             // When Green is detected, out of loop
         }
@@ -104,11 +104,12 @@ void initialize() {
   chassis.set_exit_condition(chassis.drive_exit, 50,  50, 300, 150, 250, 250);
 
   ez::as::auton_selector.add_autons({
+    Auton("Autonomous 5\n Skills Match Load Only", SkillsMatchLoadOnly),
     Auton("Autonomous 1\n Goal Side Rush", GoalSideRush),
     Auton("Autonomous 2\n Goal Side Safe", GoalSideSafe),
     Auton("Autonomous 3\n Far Side (Shoots)", FarSide),
-    Auton("Autonomous 4\n Skills Development", SkillsDevelopment),
-    Auton("Autonomous 5\n Skills Match Load Only", SkillsMatchLoadOnly)
+    Auton("Autonomous 4\n Skills Development", SkillsDevelopment)
+    
   });
 
   ez::as::auton_selector.print_selected_auton(); 
@@ -187,6 +188,7 @@ void opcontrol() {
     pros::Task intake_task(intake_control_task, &intake, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Intake Control Task");
 
     pistons.ChangeAngle(GoalSide);
+    pistons.InitialLaunch(true);
         
     while (true) {
 

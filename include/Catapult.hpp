@@ -22,4 +22,5 @@ public:
     void SpinToTarget(int targetAngle, int angleRange, int velocity);
     void CataSpinToPosition(int positiontype, int velocity);
     void MatchLoadSkills(int range, double buffer);
+    void SpinToTargetSkills(int targetAngle, int angleRange, int velocity);
 };
