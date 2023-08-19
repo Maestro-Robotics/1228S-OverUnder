@@ -1,6 +1,8 @@
 #include "pros/misc.h"
 #include <iostream>
 #include "Subsystems.hpp"
+#include "autons.hpp"
+#include "main.h"
 
 // Define a boolean variable to keep track of the button state for the R2 button
 bool r2Pressed = false;
@@ -15,46 +17,61 @@ bool GoalSide = true;
 bool SkillsMode = false;
 
 int InitialIntake = 0;
+
+// Define constants for drive and turn speeds
+const int DRIVE_SPEED = 127; // This is 110/127 (around 87% of max speed). We don't suggest making this 127.
+                             // If this is 127 and the robot tries to heading correct, it's only correcting by
+                             // making one side slower. When this is 87%, it's correcting by making one side
+                             // faster and one side slower, giving better heading correction.
+const int TURN_SPEED  = 90;
+const int SWING_SPEED = 90;
 // Constructor for the Subsystems class, initializing the subsystem objects
-Subsystems::Subsystems(Catapult catapult, Intake intake, Pistons pistons) 
-    : Bot_Catapult(catapult)
-	, Bot_Intake(intake)
-	, Bot_Pistons(pistons) {}
+Subsystems::Subsystems(Catapult Bot_Catapult, Intake Bot_Intake, Pistons Bot_Pistons) 
+    : Bot_Catapult(Bot_Catapult)
+	, Bot_Intake(Bot_Intake)
+	, Bot_Pistons(Bot_Pistons) {}
 
 // Update function for the Catapult subsystem
 void Subsystems::update_Catapult() {
 
-    // Check if the R1 button is pressed and activate the catapult
+    // Check if the R1 button is pressed and activate the Bot_Catapult
     if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) {
 		CataActive = true;
 		
-		// Toggle the intake off to avoid any interference with the catapult operation
+		// Toggle the Bot_Intake off to avoid any interference with the Bot_Catapult operation
         Bot_Intake.toggle(false, true);
         
-        // Move the catapult to the firing position
-        Bot_Catapult.CataSpinToPosition(0, 140);
+        // Move the Bot_Catapult to the firing position
+        Bot_Catapult.CataSpinToPosition(0, 200);
 		
 		CataActive = false;
 		
-		// Toggle the intake back on after the catapult operation is completed
+		// Toggle the Bot_Intake back on after the Bot_Catapult operation is completed
 		Bot_Intake.toggle(false, false);
     }
 
 	// // Check if the DOWN button is pressed and perform the MatchLoadSkills routine
 	// if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-	//  	Bot_Catapult.MatchLoadSkills(22, 50);
-	// }
+	//  	Bot_Catapult.MatchLoadSkills(44, 40);
+	
+
+	//  }
+
 
 	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)){
 		Bot_Intake.toggle(false, true);
-		Bot_Catapult.CataSpinToPosition(2, 140);
+		Bot_Catapult.CataSpinToPosition(2, 200);
+	}
+
+	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
+		autonomous();
 	}
 }
 
 // Update function for the Intake subsystem
 void Subsystems::update_Intake() {
 
-	 // Check if the L1 button is pressed and toggle the intake on (in the forward direction)
+	 // Check if the L1 button is pressed and toggle the Bot_Intake on (in the forward direction)
     if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1) && CataActive == false) {
 		if (GoalSide == true && InitialIntake == 1){
 			Bot_Pistons.InitialLaunch(true);
@@ -69,11 +86,11 @@ void Subsystems::update_Intake() {
 		}
 
 		else{
-         // Toggle the intake state
-        Bot_Intake.toggle(false, false); // Toggle the intake with the current reverse setting
+         // Toggle the Bot_Intake state
+        Bot_Intake.toggle(false, false); // Toggle the Bot_Intake with the current reverse setting
 		}
     } 
-    // Check if the L2 button is pressed and toggle the intake on (in the reverse direction)
+    // Check if the L2 button is pressed and toggle the Bot_Intake on (in the reverse direction)
     else if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2) && CataActive == false) {
 		if (GoalSide == true && InitialIntake == 1){
 			Bot_Intake.toggle(true, false);
@@ -88,14 +105,14 @@ void Subsystems::update_Intake() {
 		}
 
 		else{	
-        Bot_Intake.toggle(true, false); // Toggle the intake with the current reverse setting
+        Bot_Intake.toggle(true, false); // Toggle the Bot_Intake with the current reverse setting
 		}
     }
 
 	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
 		ToggleGoalSide++;
 
-		if (ToggleGoalSide == 4){
+		if (ToggleGoalSide == 2){
 			GoalSide = !GoalSide;
 			Bot_Pistons.ChangeAngle(GoalSide);
 			Bot_Intake.toggle(false, true);
@@ -138,6 +155,7 @@ void Subsystems::update_Pistons() {
 	        r2Pressed = false;
 	    }
 	}
+
 }
 
 // Update function that calls the individual update functions for each subsystem

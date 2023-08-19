@@ -6,6 +6,8 @@
 #include "Intake.hpp"
 #include "Pistons.hpp"
 
+#include "EZ-Template/api.hpp"
+
 class Subsystems {
     private:
         pros::Controller Bot_Controller{ pros::E_CONTROLLER_MASTER};

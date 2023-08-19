@@ -9,6 +9,7 @@ const int TURN_SPEED  = 90;
 const int SWING_SPEED = 90;
 
 
+
 Catapult catapult(2, 5, 16);
 Intake intake(1);
 Pistons pistons('A', 'B', 'C', 'D');
@@ -52,8 +53,11 @@ void GoalSideRush() {
   pistons.InitialLaunch(true);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(55, DRIVE_SPEED, true);
+  chassis.set_drive_pid(63, DRIVE_SPEED, true);
   intake.toggle(false, false);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-2, DRIVE_SPEED, false);
   chassis.wait_drive();
 
   chassis.set_turn_pid(45, TURN_SPEED);
@@ -65,7 +69,7 @@ void GoalSideRush() {
   pistons.InitialLaunch(false);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(18, DRIVE_SPEED, true);
+  chassis.set_drive_pid(22, DRIVE_SPEED, true);
   intake.toggle(false, true);
   chassis.wait_drive();
 
@@ -78,9 +82,10 @@ void GoalSideRush() {
   chassis.wait_drive();
 
   chassis.set_drive_pid(30, DRIVE_SPEED, true);
-  chassis.wait_drive();
+  chassis.wait_until(25);
+  chassis.set_max_speed(100);
 
-  chassis.set_drive_pid(-25, DRIVE_SPEED, true);
+  chassis.set_drive_pid(-15, DRIVE_SPEED, true);
   pistons.InitialLaunch(false);
   intake.toggle(false, true);
   chassis.wait_drive();
@@ -88,13 +93,16 @@ void GoalSideRush() {
   chassis.set_turn_pid(45, TURN_SPEED);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(3, DRIVE_SPEED, false);
+  chassis.set_drive_pid(8, DRIVE_SPEED, false);
   pistons.InitialLaunch(true);
   intake.toggle(true, false);
   chassis.wait_drive();
-
+  
   pistons.InitialLaunch(false);
-  chassis.set_drive_pid(20, DRIVE_SPEED, false);
+  chassis.set_turn_pid(225, 127);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-30, DRIVE_SPEED, false);
   chassis.wait_drive();
 }
 
@@ -227,7 +235,11 @@ void FarSide() {
   intake.toggle(false, false);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(50, DRIVE_SPEED, true);
+  chassis.set_drive_pid(45, DRIVE_SPEED, true);
+  chassis.wait_until(40);
+  chassis.set_max_speed(100);
+
+  chassis.set_drive_pid(-10, DRIVE_SPEED, false);
   chassis.wait_drive();
 
   chassis.set_turn_pid(180, TURN_SPEED);
@@ -239,7 +251,7 @@ void FarSide() {
   chassis.set_turn_pid(0, TURN_SPEED);
   chassis.wait_drive();
   
-  chassis.set_drive_pid(20, DRIVE_SPEED, true);
+  chassis.set_drive_pid(20, 127, true);
   chassis.wait_drive();
 
   chassis.set_turn_pid(135, TURN_SPEED);
@@ -434,20 +446,16 @@ void SkillsMatchLoadOnly() {
   SkillsMode = true;
   pistons.LiftWheel();
 
-  chassis.set_drive_pid(-8, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(45, DRIVE_SPEED, false);
+  chassis.set_drive_pid(37, DRIVE_SPEED, false);
   chassis.wait_drive();
 
   chassis.set_turn_pid(-45, TURN_SPEED);
   chassis.wait_drive(); 
 
-  chassis.set_drive_pid(42, DRIVE_SPEED, false);
+  chassis.set_drive_pid(36, DRIVE_SPEED, false);
   chassis.wait_drive();
 
   chassis.set_turn_pid(-90, TURN_SPEED);
-
   pistons.InitialLaunch(true);
   intake.toggle(true, false);
   chassis.wait_drive();
@@ -477,63 +485,23 @@ void SkillsMatchLoadOnly() {
   chassis.wait_drive();
 
   pistons.InitialLaunch(true);
-  catapult.MatchLoadSkills(44, 40);
+  catapult.MatchLoadSkills(1, 40);
   catapult.CataSpinToPosition(0, 140);
 
-  chassis.set_turn_pid(-343, TURN_SPEED);
+  chassis.set_drive_pid(-5, DRIVE_SPEED, false);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(-50, DRIVE_SPEED, true);
+  chassis.set_turn_pid(-60, TURN_SPEED);
   chassis.wait_drive();
 
-  chassis.set_turn_pid(-90, TURN_SPEED);
+  chassis.set_drive_pid(-30, DRIVE_SPEED, false);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(5, DRIVE_SPEED, false);
+  chassis.set_turn_pid(-27, TURN_SPEED);
   chassis.wait_drive();
 
-  chassis.set_turn_pid(-0, TURN_SPEED);
+  chassis.set_drive_pid(-80, DRIVE_SPEED, true);
   chassis.wait_drive();
-
-  chassis.set_drive_pid(-15, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  intake.toggle(false, false);
-  chassis.set_turn_pid(-70, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(38, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  pros::delay(400);
-
-  chassis.set_turn_pid(-360, TURN_SPEED);
-  chassis.wait_drive();
-
-  catapult.CataSpinToPosition(0, 140);
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(-20, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(10, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  chassis.set_turn_pid(-90, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(20, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  chassis.set_turn_pid(-0, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(-15, DRIVE_SPEED, false);
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(15, DRIVE_SPEED, true, true);
-  chassis.wait_drive();
-
   
 
   // chassis.set_turn_pid(-45, TURN_SPEED);
@@ -568,5 +536,58 @@ void SkillsMatchLoadOnly() {
   //   chassis.wait_drive();
 
   //   catapult.MatchLoadSkills(22, 40);
+
+}
+
+void AutonWin() {
+  GoalSide = false;
+
+  pistons.LiftWheel();
+
+  chassis.set_drive_pid(42, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(45, TURN_SPEED);
+  pistons.InitialLaunch(true);
+  intake.toggle(true, false);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-3, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  pistons.InitialLaunch(false);
+  intake.toggle(false, true);
+
+  chassis.set_drive_pid(10, 127, false);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-8, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(90, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(8, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  pistons.ArmMove();
+  chassis.set_turn_pid(225, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(45, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(270, TURN_SPEED);
+  chassis.wait_drive();
+
+  pistons.ArmMove();
+  chassis.set_drive_pid(45, DRIVE_SPEED, true);
+  pistons.InitialLaunch(true);
+  intake.toggle(true, false);
+  chassis.wait_drive();
+
+  pistons.ArmMove();
+
+
 
 }

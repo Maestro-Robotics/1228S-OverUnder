@@ -9,6 +9,8 @@ lv_obj_t *label; // Declare a global pointer for the label widget
 
 bool COLOR_DETECTED = false;
 
+
+
 // Chassis constructor
 Drive chassis (
   // Left Chassis Ports (negative port will reverse it!)
@@ -43,7 +45,7 @@ Drive chassis (
   // ,8 // Rotation sensor
 
   // Right Tracking Wheel Ports (negative port will reverse it!)
-  ,{-3, -4} // 3 wire encoder
+  ,{3, 4} // 3 wire encoder
   // Rotation sensor
 
 
@@ -93,7 +95,7 @@ void initialize() {
 
   // Configure your chassis controls
   chassis.toggle_modify_curve_with_controller(true); // Enables modifying the controller curve with buttons on the joysticks
-  chassis.set_active_brake(0.1); // Sets the active brake kP. We recommend 0.1.
+  chassis.set_active_brake(0.05); // Sets the active brake kP. We recommend 0.1.
   chassis.set_curve_default(0, 0); // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)  
   // These are already defaulted to these buttons, but you can change the left/right curve buttons here!
   // chassis.set_left_curve_buttons (pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT); // If using tank, only the left side is used. 
@@ -103,11 +105,22 @@ void initialize() {
   chassis.set_exit_condition(chassis.swing_exit, 100, 3,  500, 7,   500, 500);
   chassis.set_exit_condition(chassis.drive_exit, 50,  50, 300, 150, 250, 250);
 
+  
+	// chassis.set_slew_min_power(80, 80);
+	// chassis.set_slew_distance(7, 7);
+	// chassis.set_pid_constants(&chassis.headingPID, 11, 0, 20, 0);
+	// chassis.set_pid_constants(&chassis.forward_drivePID, 0.45, 0, 5, 0);
+	// chassis.set_pid_constants(&chassis.backward_drivePID, 0.45, 0, 5, 0);
+	// chassis.set_pid_constants(&chassis.turnPID, 5, 0.003, 35, 15);
+	// chassis.set_pid_constants(&chassis.swingPID, 7, 0, 45, 0);
+
+
+
   ez::as::auton_selector.add_autons({
-    Auton("Autonomous 5\n Skills Match Load Only", SkillsMatchLoadOnly),
-    Auton("Autonomous 1\n Goal Side Rush", GoalSideRush),
-    Auton("Autonomous 2\n Goal Side Safe", GoalSideSafe),
     Auton("Autonomous 3\n Far Side (Shoots)", FarSide),
+    Auton("Autonomous 1\n Goal Side Rush", GoalSideRush),
+    Auton("Autonomous 5\n Skills Match Load Only", SkillsMatchLoadOnly),
+    Auton("Autonomous 2\n Goal Side Safe", GoalSideSafe),
     Auton("Autonomous 4\n Skills Development", SkillsDevelopment)
     
   });
@@ -118,6 +131,8 @@ void initialize() {
   chassis.initialize();
   ez::as::initialize();
 }
+
+
 /**
  * Runs while the robot is in the disabled state of Field Management System or
  * the VEX Competition Switch, following either autonomous or opcontrol. When
@@ -148,8 +163,6 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-    pros::ADIAnalogIn selector('E');
-
     chassis.reset_pid_targets();
     chassis.reset_gyro();
     chassis.reset_drive_sensor();
@@ -183,6 +196,7 @@ void opcontrol() {
     Subsystems subsystems(catapult, intake, pistons);
 
     pros::Optical optical(15);
+    pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
     // initial thread started
     pros::Task intake_task(intake_control_task, &intake, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Intake Control Task");
@@ -215,7 +229,7 @@ void opcontrol() {
         // Update other subsystems and drive control
         chassis.arcade_standard(ez::SPLIT);
         subsystems.update();
-        pros::delay(20); // Adjust the delay as needed
+        pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
     }
       
 }

@@ -16,7 +16,6 @@ const double kD = 2.00; // Derivative gain
 // Function to control the catapult and spin it to the target angle
 void Catapult::SpinToTarget(int targetAngle, int angleRange, int velocity) {
     
-    chassis.arcade_standard(ez::SPLIT);
     const int timeout = 3000; // set timeout to 3 seconds
     uint32_t start_time = pros::millis();
 
@@ -103,11 +102,11 @@ void Catapult::CataSpinToPosition(int positiontype, int velocity) {
     // Start spinning the catapult motor at the desired velocity
     CataMotor.move_velocity(velocity);
     pros::Task::delay(300);
-    SpinToTarget(35200, 400, velocity);
+    SpinToTarget(35000, 400, velocity);
 
     } else if (positiontype == 1) {
         // Spin to the target angle with a smaller angle range
-        SpinToTarget(34000, 160, velocity);
+        SpinToTarget(34000, 170, velocity);
     } else if (positiontype == 2) {
         // Spin to a specific target angle with a very small angle range
         CataMotor.move_velocity(velocity);
@@ -120,17 +119,23 @@ void Catapult::CataSpinToPosition(int positiontype, int velocity) {
 void Catapult::MatchLoadSkills(int range, double buffer) {
     int now = 0;
     //unsigned long startTime = pros::millis(); // Get the start time in milliseconds
+    
 
     // Loop until the desired range is reached
     while (range > now) {
+        
+    chassis.reset_pid_targets();
+    chassis.reset_gyro();
+    chassis.reset_drive_sensor();
+    chassis.set_drive_brake(pros::E_MOTOR_BRAKE_HOLD);
+        chassis.set_drive_pid(2, 20, false);
 
-        // chassis.arcade_standard(ez::SPLIT);
 
         if (CataDistanceSensor.get() < buffer) {
             pros::delay(25);
-            CataMotor.move_velocity(160);
+            CataMotor.move_velocity(200);
             pros::Task::delay(300);
-            SpinToTargetSkills(35200, 350, 160);
+            SpinToTargetSkills(35200, 350, 200);
             now += 1;
         }
 

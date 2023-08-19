@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "1228SMoA",
+    "project_name": "1228SRobolabs",
     "target": "v5",
     "templates": {
       "EZ-Template": {

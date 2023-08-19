@@ -2,6 +2,10 @@
 #include "pros/adi.hpp"
 #include "Pistons.hpp"
 
+pros::ADIDigitalOut Arm({{17, 'H'}});
+
+bool ArmState = true;
+
 // Constructor for the Pistons class
 // Initializes the ADI objects representing the pneumatic pistons
 Pistons::Pistons(uint8_t const CataPistonPort, uint8_t const TrackingWheelPistonPort, uint8_t const IntakeLaunchPort1, uint8_t const IntakeLaunchPort2)
@@ -25,4 +29,11 @@ void Pistons::LiftWheel() {
 // - tf: true to change the angle, false to keep it unchanged
 void Pistons::ChangeAngle(bool tf) {
     CatapultAngleChange.set_value(tf);
+}
+
+
+void Pistons::ArmMove() {
+    Arm.set_value(ArmState);
+    
+    ArmState = !ArmState;
 }
