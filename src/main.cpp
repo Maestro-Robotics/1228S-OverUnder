@@ -15,18 +15,18 @@ bool COLOR_DETECTED = false;
 Drive chassis (
   // Left Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  {8, -9, -10}
+  {-1, 2, -3}
 
   // Right Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  ,{18, 19, -20}
+  ,{6, -7, 9}
 
   // IMU Port
-  ,7
+  ,19
 
   // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
   //    (or tracking wheel diameter)
-  ,4
+  ,3.25
 
   // Cartridge RPM
   //   (or tick per rotation if using tracking wheels)
@@ -36,29 +36,29 @@ Drive chassis (
   //    (or gear ratio of tracking wheel)
   // eg. if your drive is 84:36 where the 36t is powered, your RATIO would be 2.333.
   // eg. if your drive is 36:60 where the 60t is powered, your RATIO would be 0.6.
-  ,0.571
+  ,0.6
 
   // Uncomment if using tracking wheels
 
-  // Left Tracking Wheel Ports (negative port will reverse it!)
-  ,{-1, -2} // 3 wire encoder
-  // ,8 // Rotation sensor
+//   // Left Tracking Wheel Ports (negative port will reverse it!)
+//   ,{-1, -2} // 3 wire encoder
+//   // ,8 // Rotation sensor
 
-  // Right Tracking Wheel Ports (negative port will reverse it!)
-  ,{3, 4} // 3 wire encoder
-  // Rotation sensor
+//   // Right Tracking Wheel Ports (negative port will reverse it!)
+//   ,{3, 4} // 3 wire encoder
+//   // Rotation sensor
 
 
-  // Uncomment if tracking wheels are plugged into a 3 wire expander
-  // 3 Wire Port Expander Smart Port
-  ,17
+//   // Uncomment if tracking wheels are plugged into a 3 wire expander
+//   // 3 Wire Port Expander Smart Port
+//   ,17
 );
 
 
 void intake_control_task(void* param) {
     Intake* intake = static_cast<Intake*>(param); // Cast the parameter back to Intake*
 
-    pros::Optical optical_sensor(15);
+    pros::Optical optical_sensor(18);
 
     // Debug print to indicate task has started
     printf("Intake Control Task started\n");
@@ -190,8 +190,8 @@ void autonomous() {
 
 
 void opcontrol() {
-    Catapult catapult(2, 5, 16);
-    Intake intake(1);
+    Catapult catapult(15, 20, 16);
+    Intake intake(11);
     Pistons pistons('A', 'B', 'C', 'D');
     Subsystems subsystems(catapult, intake, pistons);
 

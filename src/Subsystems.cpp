@@ -42,7 +42,7 @@ void Subsystems::update_Catapult() {
         Bot_Intake.toggle(false, true);
         
         // Move the Bot_Catapult to the firing position
-        Bot_Catapult.CataSpinToPosition(0, 200);
+        Bot_Catapult.CataSpinToPosition(0, -200);
 		
 		CataActive = false;
 		
