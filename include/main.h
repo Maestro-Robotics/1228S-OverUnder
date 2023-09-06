@@ -42,19 +42,9 @@
 
 #include "pros./motors.hpp"
 #include "Subsystems.hpp"
-#include "Pistons.hpp"
-#include "Intake.hpp"
-#include "Catapult.hpp"
-
-#include "EZ-Template/api.hpp"
-#include "autons.hpp"
 
 #include "lemlib/api.hpp"
-//#include "autons.hpp"
 
-
-//#include "okapi/api.hpp"
-//#include "pros/api_legacy.h"
 
 extern bool GoalSide;
 

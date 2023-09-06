@@ -5,8 +5,7 @@
 #include "Catapult.hpp"
 #include "Intake.hpp"
 #include "Pistons.hpp"
-
-#include "EZ-Template/api.hpp"
+#include "Drivetrain.hpp"
 
 class Subsystems {
     private:
@@ -14,6 +13,7 @@ class Subsystems {
         Catapult Bot_Catapult;
         Intake Bot_Intake;
         Pistons Bot_Pistons;
+        Drivetrain Bot_Drivetrain;
 
         bool CataActive = false;
         bool intakeToggle = false;
@@ -21,8 +21,9 @@ class Subsystems {
         void update_Catapult();
         void update_Intake();
         void update_Pistons();
+        void update_Drivetrain();
 
     public:
-        Subsystems(Catapult catapult, Intake intake, Pistons pistons);
+        Subsystems(Catapult catapult, Intake intake, Pistons pistons, Drivetrain drivetrain);
         void update();
 };

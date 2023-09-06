@@ -4,17 +4,14 @@
 
 class Pistons{
     private:
-        pros::ADIDigitalOut CatapultAngleChange;
-        pros::ADIDigitalOut LiftTrackingWheel;
-        pros::ADIDigitalOut ExpandIntake1;
-        pros::ADIDigitalOut ExpandIntake2;
+        pros::ADIDigitalOut elevationLaunch;
 
     public:
-        Pistons(uint8_t const CatapultAngleChange, uint8_t const LiftTrackingWheel, uint8_t const ExpandIntake1, uint8_t const ExpandIntake2);
+        Pistons(uint8_t const elevationLaunch);
 
         void InitialLaunch(bool boolean);
-        void LiftWheel();
-        void ChangeAngle(bool tf);
-        void ArmMove();
+        void launchWings(bool tf);
+        void launchElevation();
+
 
 };

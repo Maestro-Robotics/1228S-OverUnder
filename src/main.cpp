@@ -1,85 +1,52 @@
 // Include necessary header files
 #include "main.h"
-#include "Catapult.hpp"
-#include "Intake.hpp"
 #include "pros/rtos.hpp"
 #include "pros/apix.h" // Include the LVGL library
 
-lv_obj_t *label; // Declare a global pointer for the label widget
+// drive motors
+pros::Motor lF(-1, pros::E_MOTOR_GEARSET_06); // left front motor. port 1, reversed
+pros::Motor lm(2, pros::E_MOTOR_GEARSET_06); // left front motor. port 2
+pros::Motor lB(-3, pros::E_MOTOR_GEARSET_06); // left back motor. port 3, reversed
+pros::Motor rF(6, pros::E_MOTOR_GEARSET_06); // right front motor. port 6
+pros::Motor rM(-7, pros::E_MOTOR_GEARSET_06); // right front motor. port 7, reversed
+pros::Motor rB(9, pros::E_MOTOR_GEARSET_06); // right back motor. port 9
 
-bool COLOR_DETECTED = false;
+// motor groups
+pros::MotorGroup leftMotors({lF, lm, lB}); // left motor group
+pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
 
-
-
-// Chassis constructor
-Drive chassis (
-  // Left Chassis Ports (negative port will reverse it!)
-  //   the first port is the sensored port (when trackers are not used!)
-  {-1, 2, -3}
-
-  // Right Chassis Ports (negative port will reverse it!)
-  //   the first port is the sensored port (when trackers are not used!)
-  ,{6, -7, 9}
-
-  // IMU Port
-  ,19
-
-  // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
-  //    (or tracking wheel diameter)
-  ,3.25
-
-  // Cartridge RPM
-  //   (or tick per rotation if using tracking wheels)
-  ,600
-
-  // External Gear Ratio (MUST BE DECIMAL)
-  //    (or gear ratio of tracking wheel)
-  // eg. if your drive is 84:36 where the 36t is powered, your RATIO would be 2.333.
-  // eg. if your drive is 36:60 where the 60t is powered, your RATIO would be 0.6.
-  ,0.6
-
-  // Uncomment if using tracking wheels
-
-//   // Left Tracking Wheel Ports (negative port will reverse it!)
-//   ,{-1, -2} // 3 wire encoder
-//   // ,8 // Rotation sensor
-
-//   // Right Tracking Wheel Ports (negative port will reverse it!)
-//   ,{3, 4} // 3 wire encoder
-//   // Rotation sensor
+// Inertial Sensor on port 11
+pros::Imu imu(19);
 
 
-//   // Uncomment if tracking wheels are plugged into a 3 wire expander
-//   // 3 Wire Port Expander Smart Port
-//   ,17
-);
+// drivetrain
+lemlib::Drivetrain_t drivetrain {&leftMotors, &rightMotors, 10, 3.25, 360};
 
+lemlib::ChassisController_t lateralController {
+    13, // kP
+    5, // kD
+    1, // smallErrorRange
+    100, // smallErrorTimeout
+    3, // largeErrorRange
+    500, // largeErrorTimeout
+    5 // slew rate
+};
 
-void intake_control_task(void* param) {
-    Intake* intake = static_cast<Intake*>(param); // Cast the parameter back to Intake*
+// turning PID
+lemlib::ChassisController_t angularController {
+    6, // kP
+    40, // kD
+    1, // smallErrorRange
+    100, // smallErrorTimeout
+    3, // largeErrorRange
+    500, // largeErrorTimeout
+    0 // slew rate
+};
 
-    pros::Optical optical_sensor(18);
+// sensors for odometry
+lemlib::OdomSensors_t sensors {nullptr, nullptr, nullptr, nullptr, &imu};
 
-    // Debug print to indicate task has started
-    printf("Intake Control Task started\n");
-
-    while (true) {
-        int hue = optical_sensor.get_hue();
-        printf("Hue: %d\n", hue);
-
-        optical_sensor.set_led_pwm(100);
-
-        if (hue > 80 && hue < 120) {
-            printf("Green detected\n");
-            intake->toggle(true, true);
-            COLOR_DETECTED = true;
-            // When Green is detected, out of loop
-        }
-
-        pros::delay(1); // Adjust the delay as needed
-    }
-}
-
+lemlib::Chassis lemchassis(drivetrain, lateralController, angularController, sensors);
 
 
 /**
@@ -89,47 +56,8 @@ void intake_control_task(void* param) {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-
-  pros::delay(500); // Stop the user from doing anything while legacy ports configure.
-  lv_init();
-
-  // Configure your chassis controls
-  chassis.toggle_modify_curve_with_controller(true); // Enables modifying the controller curve with buttons on the joysticks
-  chassis.set_active_brake(0.05); // Sets the active brake kP. We recommend 0.1.
-  chassis.set_curve_default(0, 0); // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)  
-  // These are already defaulted to these buttons, but you can change the left/right curve buttons here!
-  // chassis.set_left_curve_buttons (pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT); // If using tank, only the left side is used. 
-  // chassis.set_right_curve_buttons(pros::E_CONTROLLER_DIGITAL_Y,    pros::E_CONTROLLER_DIGITAL_A);
-
-  chassis.set_exit_condition(chassis.turn_exit,  50, 3,  500, 7,   250, 250);
-  chassis.set_exit_condition(chassis.swing_exit, 100, 3,  500, 7,   500, 500);
-  chassis.set_exit_condition(chassis.drive_exit, 50,  50, 300, 150, 250, 250);
-
-  
-	// chassis.set_slew_min_power(80, 80);
-	// chassis.set_slew_distance(7, 7);
-	// chassis.set_pid_constants(&chassis.headingPID, 11, 0, 20, 0);
-	// chassis.set_pid_constants(&chassis.forward_drivePID, 0.45, 0, 5, 0);
-	// chassis.set_pid_constants(&chassis.backward_drivePID, 0.45, 0, 5, 0);
-	// chassis.set_pid_constants(&chassis.turnPID, 5, 0.003, 35, 15);
-	// chassis.set_pid_constants(&chassis.swingPID, 7, 0, 45, 0);
-
-
-
-  ez::as::auton_selector.add_autons({
-    Auton("Autonomous 3\n Far Side (Shoots)", FarSide),
-    Auton("Autonomous 1\n Goal Side Rush", GoalSideRush),
-    Auton("Autonomous 5\n Skills Match Load Only", SkillsMatchLoadOnly),
-    Auton("Autonomous 2\n Goal Side Safe", GoalSideSafe),
-    Auton("Autonomous 4\n Skills Development", SkillsDevelopment)
-    
-  });
-
-  ez::as::auton_selector.print_selected_auton(); 
-
-  // Initialize chassis
-  chassis.initialize();
-  ez::as::initialize();
+  lemchassis.calibrate();
+  lemchassis.setPose(0, 0, 0);
 }
 
 
@@ -163,11 +91,20 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-    chassis.reset_pid_targets();
-    chassis.reset_gyro();
-    chassis.reset_drive_sensor();
-    chassis.set_drive_brake(MOTOR_BRAKE_HOLD);
-    ez::as::auton_selector.call_selected_auton(); // Calls selected auton from autonomous selector.
+    // chassis.reset_pid_targets();
+    // chassis.reset_gyro();
+    // chassis.reset_drive_sensor();
+    // chassis.set_drive_brake(MOTOR_BRAKE_HOLD);
+    // ez::as::auton_selector.call_selected_auton(); // Calls selected auton from autonomous selector.
+    Catapult catapult(15, 20);
+    Intake intake(11);
+    Pistons pistons('H');
+
+    lemchassis.moveTo(0, 30, 1000, 100);
+    pistons.launchWings(true);
+    lemchassis.moveTo(-20, 40, 1000, 50); 
+    lemchassis.turnTo(-50, 50, 1000, false, 50);
+    lemchassis.moveTo(-40, 40, 1000, 50);
 }
 
 
@@ -190,46 +127,16 @@ void autonomous() {
 
 
 void opcontrol() {
-    Catapult catapult(15, 20, 16);
+    Catapult catapult(15, 20);
     Intake intake(11);
-    Pistons pistons('A', 'B', 'C', 'D');
-    Subsystems subsystems(catapult, intake, pistons);
+    Pistons pistons('H');
+    Drivetrain drivetrain(1, 2, 3, 6, 7, 9);
+    Subsystems subsystems(catapult, intake, pistons, drivetrain);
 
-    pros::Optical optical(15);
-    pros::Controller controller(pros::E_CONTROLLER_MASTER);
-
-    // initial thread started
-    pros::Task intake_task(intake_control_task, &intake, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Intake Control Task");
-
-    pistons.ChangeAngle(GoalSide);
     pistons.InitialLaunch(true);
         
     while (true) {
-
-        if (optical.get_hue() < 80 || optical.get_hue() > 120) {
-          if (GoalSide == true) {
-            COLOR_DETECTED = false;
-            // When Green is detected, out of loop
-          }
-
-          else {
-            COLOR_DETECTED = true;
-          }
-        }
-
-        if (COLOR_DETECTED  == true) {
-          // write, thread re-start 
-          intake_task.suspend();
-        }
-
-        else {
-          intake_task.resume();
-        }
-
-        // Update other subsystems and drive control
-        chassis.arcade_standard(ez::SPLIT);
         subsystems.update();
-        pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
     }
       
 }
