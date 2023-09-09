@@ -1,18 +1,20 @@
 // Include necessary header files
 #include "main.h"
+#include "autoSelect/selection.h"
+#include "lemlib/chassis/trackingWheel.hpp"
 #include "pros/rtos.hpp"
 #include "pros/apix.h" // Include the LVGL library
 
 // drive motors
 pros::Motor lF(-1, pros::E_MOTOR_GEARSET_06); // left front motor. port 1, reversed
-pros::Motor lm(2, pros::E_MOTOR_GEARSET_06); // left front motor. port 2
+pros::Motor lM(2, pros::E_MOTOR_GEARSET_06); // left front motor. port 2
 pros::Motor lB(-3, pros::E_MOTOR_GEARSET_06); // left back motor. port 3, reversed
 pros::Motor rF(6, pros::E_MOTOR_GEARSET_06); // right front motor. port 6
 pros::Motor rM(-7, pros::E_MOTOR_GEARSET_06); // right front motor. port 7, reversed
 pros::Motor rB(9, pros::E_MOTOR_GEARSET_06); // right back motor. port 9
 
 // motor groups
-pros::MotorGroup leftMotors({lF, lm, lB}); // left motor group
+pros::MotorGroup leftMotors({lF, lM, lB}); // left motor group
 pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
 
 // Inertial Sensor on port 11
@@ -20,7 +22,7 @@ pros::Imu imu(19);
 
 
 // drivetrain
-lemlib::Drivetrain_t drivetrain {&leftMotors, &rightMotors, 10, 3.25, 360};
+lemlib::Drivetrain_t drivetrain {&leftMotors, &rightMotors, 10, lemlib::Omniwheel::NEW_325, 360};
 
 lemlib::ChassisController_t lateralController {
     13, // kP
@@ -56,6 +58,7 @@ lemlib::Chassis lemchassis(drivetrain, lateralController, angularController, sen
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+  selector::init();
   lemchassis.calibrate();
   lemchassis.setPose(0, 0, 0);
 }
@@ -99,12 +102,6 @@ void autonomous() {
     Catapult catapult(15, 20);
     Intake intake(11);
     Pistons pistons('H');
-
-    lemchassis.moveTo(0, 30, 1000, 100);
-    pistons.launchWings(true);
-    lemchassis.moveTo(-20, 40, 1000, 50); 
-    lemchassis.turnTo(-50, 50, 1000, false, 50);
-    lemchassis.moveTo(-40, 40, 1000, 50);
 }
 
 
@@ -130,13 +127,12 @@ void opcontrol() {
     Catapult catapult(15, 20);
     Intake intake(11);
     Pistons pistons('H');
-    Drivetrain drivetrain(1, 2, 3, 6, 7, 9);
-    Subsystems subsystems(catapult, intake, pistons, drivetrain);
+    Subsystems subsystems(catapult, intake, pistons);
 
     pistons.InitialLaunch(true);
         
     while (true) {
-        subsystems.update();
+      subsystems.update();
     }
       
 }

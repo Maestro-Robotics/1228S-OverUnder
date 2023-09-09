@@ -45,6 +45,8 @@
 
 #include "lemlib/api.hpp"
 
+#include "autoSelect/selection.h"
+
 
 extern bool GoalSide;
 

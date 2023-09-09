@@ -2,10 +2,13 @@
 
 #include "pros/misc.hpp"
 
+#include "lemlib/api.hpp"
+
 #include "Catapult.hpp"
 #include "Intake.hpp"
 #include "Pistons.hpp"
-#include "Drivetrain.hpp"
+
+extern lemlib::Chassis lemchassis;
 
 class Subsystems {
     private:
@@ -13,7 +16,6 @@ class Subsystems {
         Catapult Bot_Catapult;
         Intake Bot_Intake;
         Pistons Bot_Pistons;
-        Drivetrain Bot_Drivetrain;
 
         bool CataActive = false;
         bool intakeToggle = false;
@@ -24,6 +26,6 @@ class Subsystems {
         void update_Drivetrain();
 
     public:
-        Subsystems(Catapult catapult, Intake intake, Pistons pistons, Drivetrain drivetrain);
+        Subsystems(Catapult catapult, Intake intake, Pistons pistons);
         void update();
 };

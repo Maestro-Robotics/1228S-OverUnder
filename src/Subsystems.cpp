@@ -19,14 +19,13 @@ bool SkillsMode = false;
 int InitialIntake = 0;
 
 // Constructor for the Subsystems class, initializing the subsystem objects
-Subsystems::Subsystems(Catapult Bot_Catapult, Intake Bot_Intake, Pistons Bot_Pistons, Drivetrain Bot_Drivetrain) 
+Subsystems::Subsystems(Catapult Bot_Catapult, Intake Bot_Intake, Pistons Bot_Pistons) 
     : Bot_Catapult(Bot_Catapult)
 	, Bot_Intake(Bot_Intake)
-	, Bot_Pistons(Bot_Pistons)
-	, Bot_Drivetrain(Bot_Drivetrain) {}
+	, Bot_Pistons(Bot_Pistons) {}
 
 void Subsystems::update_Drivetrain() {
-	Bot_Drivetrain.update(Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
+	lemchassis.arcade(Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 2.7);
 }
 
 // Update function for the Catapult subsystem
