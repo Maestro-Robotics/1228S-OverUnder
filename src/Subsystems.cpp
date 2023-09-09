@@ -41,16 +41,22 @@ void Subsystems::update_Catapult() {
 		Bot_Pistons.InitialLaunch(true);
         
         // Move the Bot_Catapult to the firing position
-        Bot_Catapult.CataSpinToPosition(0, -200);
+        Bot_Catapult.cataSpinToPosition(0, -200);
 		
 		CataActive = false;
 		
     }
 
+	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)){
+		Bot_Intake.toggle(false, true);
+		Bot_Pistons.InitialLaunch(true);
+		Bot_Catapult.cataMatchLoad(-200);
+	}
+
 
 	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)){
 		Bot_Intake.toggle(false, true);
-		Bot_Catapult.CataSpinToPosition(2, 200);
+		Bot_Catapult.cataSpinToPosition(2, 200);
 	}
 }
 

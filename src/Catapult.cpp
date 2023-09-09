@@ -13,8 +13,10 @@ const double kP = 5;    // Proportional gain
 const double kI = 0.8;  // Integral gain
 const double kD = 2.00; // Derivative gain
 
+bool running = false;
+
 // Function to control the catapult and spin it to the target angle
-void Catapult::SpinToTarget(int targetAngle, int angleRange, int velocity) {
+void Catapult::spinToTarget(int targetAngle, int angleRange, int velocity) {
     
     const int timeout = 3000; // set timeout to 3 seconds
     uint32_t start_time = pros::millis();
@@ -56,21 +58,30 @@ void Catapult::SpinToTarget(int targetAngle, int angleRange, int velocity) {
 }
 
 // Function to spin the catapult to a pre-defined position based on positiontype
-void Catapult::CataSpinToPosition(int positiontype, int velocity) {
+void Catapult::cataSpinToPosition(int positiontype, int velocity) {
     if (positiontype == 0) {
     // Start spinning the catapult motor at the desired velocity
     CataMotor.move_velocity(velocity);
     pros::Task::delay(300);
-    SpinToTarget(30500, 400, velocity);
+    spinToTarget(30500, 400, velocity);
 
     } else if (positiontype == 1) {
         // Spin to the target angle with a smaller angle range
-        SpinToTarget(34000, 170, velocity);
+        spinToTarget(34000, 170, velocity);
     } else if (positiontype == 2) {
         // Spin to a specific target angle with a very small angle range
         CataMotor.move_velocity(velocity);
         pros::Task::delay(400);
         CataMotor.move_velocity(0);
+    }
+}
+
+void Catapult::cataMatchLoad(int velocity){
+    if (running == true){
+        CataMotor.move_velocity(0);
+    }
+    else{
+        CataMotor.move_velocity(velocity);
     }
 }
 
