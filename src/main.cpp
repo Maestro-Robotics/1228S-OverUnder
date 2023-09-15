@@ -61,6 +61,7 @@ void initialize() {
   selector::init();
   lemchassis.calibrate();
   lemchassis.setPose(0, 0, 0);
+  lemchassis.setPose(46, -61, 45);
 }
 
 
@@ -93,15 +94,54 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
+
+void goToGoal(){
+    Pistons pistons('H');
+    lemchassis.moveTo(33, 0, 90, 3000, false, true, 3, 0.6, 200);
+    pistons.InitialLaunch(false);
+    lemchassis.moveTo(41, 0, 90, 3000, false, true, 3, 0.6, 200);
+    lemchassis(32, 0, 90, 3000, false, true, 3, 0.6, 200);
+}
+
+ASSET(removeball_txt);
+ASSET(removeballtest_txt);
+ASSET(testpath_txt);
+
 void autonomous() {
-    // chassis.reset_pid_targets();
-    // chassis.reset_gyro();
-    // chassis.reset_drive_sensor();
-    // chassis.set_drive_brake(MOTOR_BRAKE_HOLD);
-    // ez::as::auton_selector.call_selected_auton(); // Calls selected auton from autonomous selector.
     Catapult catapult(15, 20);
     Intake intake(11);
     Pistons pistons('H');
+
+    pistons.launchWings(true);
+    lemchassis.moveTo(55, -47, 0, 2000, false, true, 3, 0.6);
+    // lemchassis.moveTo(60, -36, 0, 3000, false, true, 3);
+    pistons.launchWings(false);
+    lemchassis.moveTo(64, -17, 0, 2000, false, true, 6, 0.6, 180);
+    lemchassis.moveTo(46, -43, 135, 2000, false, false, 3, 0.6, 180);
+    pistons.InitialLaunch(true);
+    intake.toggle(false, false);
+    lemchassis.moveTo(4, -20, 90, 3000, false, true, 3, 0.6, 190);
+    intake.toggle(true, true);
+
+    goToGoal();
+
+    pistons.InitialLaunch(true);
+    intake.toggle(false, false);
+    lemchassis.moveTo(24, 0, 180, 3000, false, true, 3);
+    intake.toggle(true, true);
+
+    goToGoal();
+
+    
+    pistons.InitialLaunch(true);
+    intake.toggle(false, false);
+    lemchassis.moveTo(4, 1, 180, 3000, false, true, 3);
+    intake.toggle(true, true);
+
+    goToGoal();
+
+
+
 }
 
 

@@ -8,6 +8,8 @@
 // Define a boolean variable to keep track of the state of initial launch for the Pistons
 bool initialLaunchState = false;
 
+bool firing = false;
+
 bool wingsState = false;
 
 int ToggleGoalSide = 0;
@@ -25,7 +27,7 @@ Subsystems::Subsystems(Catapult Bot_Catapult, Intake Bot_Intake, Pistons Bot_Pis
 	, Bot_Pistons(Bot_Pistons) {}
 
 void Subsystems::update_Drivetrain() {
-	lemchassis.arcade(Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 2.7);
+	lemchassis.curvature(Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 2.7);
 }
 
 // Update function for the Catapult subsystem
@@ -48,9 +50,16 @@ void Subsystems::update_Catapult() {
     }
 
 	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)){
+		if(firing == true){
+			Bot_Catapult.cataMatchLoad(0);
+		}
+		else{
 		Bot_Intake.toggle(false, true);
 		Bot_Pistons.InitialLaunch(true);
 		Bot_Catapult.cataMatchLoad(-200);
+		}
+
+		firing = !firing;
 	}
 
 
