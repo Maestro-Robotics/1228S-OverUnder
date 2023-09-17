@@ -1,55 +1,52 @@
 // Include necessary header files
 #include "main.h"
 #include "autoSelect/selection.h"
-#include "lemlib/chassis/trackingWheel.hpp"
 #include "pros/rtos.hpp"
 #include "pros/apix.h" // Include the LVGL library
 
-// drive motors
-pros::Motor lF(-1, pros::E_MOTOR_GEARSET_06); // left front motor. port 1, reversed
-pros::Motor lM(2, pros::E_MOTOR_GEARSET_06); // left front motor. port 2
-pros::Motor lB(-3, pros::E_MOTOR_GEARSET_06); // left back motor. port 3, reversed
-pros::Motor rF(6, pros::E_MOTOR_GEARSET_06); // right front motor. port 6
-pros::Motor rM(-7, pros::E_MOTOR_GEARSET_06); // right front motor. port 7, reversed
-pros::Motor rB(9, pros::E_MOTOR_GEARSET_06); // right back motor. port 9
+// Chassis constructor
+Drive chassis (
+  // Left Chassis Ports (negative port will reverse it!)
+  //   the first port is the sensored port (when trackers are not used!)
+  {-1, 2, -3}
 
-// motor groups
-pros::MotorGroup leftMotors({lF, lM, lB}); // left motor group
-pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
+  // Right Chassis Ports (negative port will reverse it!)
+  //   the first port is the sensored port (when trackers are not used!)
+  ,{6, -7, 8}
 
-// Inertial Sensor on port 11
-pros::Imu imu(19);
+  // IMU Port
+  ,19
+
+  // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
+  //    (or tracking wheel diameter)
+  ,3.25
+
+  // Cartridge RPM
+  //   (or tick per rotation if using tracking wheels)
+  ,600
+
+  // External Gear Ratio (MUST BE DECIMAL)
+  //    (or gear ratio of tracking wheel)
+  // eg. if your drive is 84:36 where the 36t is powered, your RATIO would be 2.333.
+  // eg. if your drive is 36:60 where the 60t is powered, your RATIO would be 0.6.
+  ,0.6
 
 
-// drivetrain
-lemlib::Drivetrain_t drivetrain {&leftMotors, &rightMotors, 10, lemlib::Omniwheel::NEW_325, 360};
+  // Uncomment if using tracking wheels
+  /*
+  // Left Tracking Wheel Ports (negative port will reverse it!)
+  // ,{1, 2} // 3 wire encoder
+  // ,8 // Rotation sensor
 
-lemlib::ChassisController_t lateralController {
-    13, // kP
-    5, // kD
-    1, // smallErrorRange
-    100, // smallErrorTimeout
-    3, // largeErrorRange
-    500, // largeErrorTimeout
-    5 // slew rate
-};
+  // Right Tracking Wheel Ports (negative port will reverse it!)
+  // ,{-3, -4} // 3 wire encoder
+  // ,-9 // Rotation sensor
+  */
 
-// turning PID
-lemlib::ChassisController_t angularController {
-    6, // kP
-    40, // kD
-    1, // smallErrorRange
-    100, // smallErrorTimeout
-    3, // largeErrorRange
-    500, // largeErrorTimeout
-    0 // slew rate
-};
-
-// sensors for odometry
-lemlib::OdomSensors_t sensors {nullptr, nullptr, nullptr, nullptr, &imu};
-
-lemlib::Chassis lemchassis(drivetrain, lateralController, angularController, sensors);
-
+  // Uncomment if tracking wheels are plugged into a 3 wire expander
+  // 3 Wire Port Expander Smart Port
+  // ,1
+);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -58,10 +55,32 @@ lemlib::Chassis lemchassis(drivetrain, lateralController, angularController, sen
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-  selector::init();
-  lemchassis.calibrate();
-  lemchassis.setPose(0, 0, 0);
-  lemchassis.setPose(46, -61, 45);
+// Print our branding over your terminal :D
+  ez::print_ez_template();
+  
+  pros::delay(500); // Stop the user from doing anything while legacy ports configure.
+
+  // Configure your chassis controls
+  chassis.toggle_modify_curve_with_controller(true); // Enables modifying the controller curve with buttons on the joysticks
+  chassis.set_active_brake(0); // Sets the active brake kP. We recommend 0.1.
+  chassis.set_curve_default(0, 0); // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)  
+  default_constants(); // Set the drive to your own constants from autons.cpp!
+  chassis.set_exit_condition(chassis.turn_exit,  50, 3,  500, 7,   250, 250);
+  chassis.set_exit_condition(chassis.swing_exit, 50, 3,  500, 7,   250, 250);
+  chassis.set_exit_condition(chassis.drive_exit, 50,  50, 300, 150, 250, 250);
+  // These are already defaulted to these buttons, but you can change the left/right curve buttons here!
+  // chassis.set_left_curve_buttons (pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT); // If using tank, only the left side is used. 
+  // chassis.set_right_curve_buttons(pros::E_CONTROLLER_DIGITAL_Y,    pros::E_CONTROLLER_DIGITAL_A);
+
+  // Autonomous Selector using LLEMU
+  ez::as::auton_selector.add_autons({
+    Auton("Far Side", farSide),
+    Auton("Example Drive\n\nDrive forward and come back.", goalSideRush)
+  });
+
+  // Initialize chassis and auton selector
+  chassis.initialize();
+  ez::as::initialize();
 }
 
 
@@ -95,53 +114,13 @@ void competition_initialize() {}
  * from where it left off.
  */
 
-void goToGoal(){
-    Pistons pistons('H');
-    lemchassis.moveTo(33, 0, 90, 3000, false, true, 3, 0.6, 200);
-    pistons.InitialLaunch(false);
-    lemchassis.moveTo(41, 0, 90, 3000, false, true, 3, 0.6, 200);
-    lemchassis(32, 0, 90, 3000, false, true, 3, 0.6, 200);
-}
-
-ASSET(removeball_txt);
-ASSET(removeballtest_txt);
-ASSET(testpath_txt);
-
 void autonomous() {
-    Catapult catapult(15, 20);
-    Intake intake(11);
-    Pistons pistons('H');
+    chassis.reset_pid_targets(); // Resets PID targets to 0
+    chassis.reset_gyro(); // Reset gyro position to 0
+    chassis.reset_drive_sensor(); // Reset drive sensors to 0
+    chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
 
-    pistons.launchWings(true);
-    lemchassis.moveTo(55, -47, 0, 2000, false, true, 3, 0.6);
-    // lemchassis.moveTo(60, -36, 0, 3000, false, true, 3);
-    pistons.launchWings(false);
-    lemchassis.moveTo(64, -17, 0, 2000, false, true, 6, 0.6, 180);
-    lemchassis.moveTo(46, -43, 135, 2000, false, false, 3, 0.6, 180);
-    pistons.InitialLaunch(true);
-    intake.toggle(false, false);
-    lemchassis.moveTo(4, -20, 90, 3000, false, true, 3, 0.6, 190);
-    intake.toggle(true, true);
-
-    goToGoal();
-
-    pistons.InitialLaunch(true);
-    intake.toggle(false, false);
-    lemchassis.moveTo(24, 0, 180, 3000, false, true, 3);
-    intake.toggle(true, true);
-
-    goToGoal();
-
-    
-    pistons.InitialLaunch(true);
-    intake.toggle(false, false);
-    lemchassis.moveTo(4, 1, 180, 3000, false, true, 3);
-    intake.toggle(true, true);
-
-    goToGoal();
-
-
-
+    ez::as::auton_selector.call_selected_auton();
 }
 
 
@@ -173,6 +152,7 @@ void opcontrol() {
         
     while (true) {
       subsystems.update();
+      pros::delay(ez::util::DELAY_TIME);
     }
       
 }

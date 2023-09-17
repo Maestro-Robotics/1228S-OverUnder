@@ -43,7 +43,10 @@
 #include "pros./motors.hpp"
 #include "Subsystems.hpp"
 
-#include "lemlib/api.hpp"
+#include "EZ-Template/api.hpp"
+
+#include "autons.hpp"
+
 
 #include "autoSelect/selection.h"
 

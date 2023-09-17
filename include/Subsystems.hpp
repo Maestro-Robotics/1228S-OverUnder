@@ -2,13 +2,13 @@
 
 #include "pros/misc.hpp"
 
-#include "lemlib/api.hpp"
-
 #include "Catapult.hpp"
 #include "Intake.hpp"
 #include "Pistons.hpp"
 
-extern lemlib::Chassis lemchassis;
+#include "EZ-Template/api.hpp"
+
+extern Drive chassis;
 
 class Subsystems {
     private:
