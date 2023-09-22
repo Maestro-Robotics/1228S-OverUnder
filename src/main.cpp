@@ -75,6 +75,7 @@ void initialize() {
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
     Auton("Far Side", farSide),
+    Auton("Skills", SkillsDevelopment),
     Auton("Example Drive\n\nDrive forward and come back.", goalSideRush)
   });
 
@@ -143,7 +144,7 @@ void autonomous() {
 
 
 void opcontrol() {
-    Catapult catapult(15, 20);
+    Catapult catapult(15, 14);
     Intake intake(11);
     Pistons pistons('H');
     Subsystems subsystems(catapult, intake, pistons);

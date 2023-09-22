@@ -63,7 +63,7 @@ void Catapult::cataSpinToPosition(int positiontype, int velocity) {
     // Start spinning the catapult motor at the desired velocity
     CataMotor.move_velocity(velocity);
     pros::Task::delay(300);
-    spinToTarget(30300, 400, velocity);
+    spinToTarget(35900, 300, velocity);
 
     } else if (positiontype == 1) {
         // Spin to the target angle with a smaller angle range
