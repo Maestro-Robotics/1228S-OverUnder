@@ -8,8 +8,6 @@
 
 #include "EZ-Template/api.hpp"
 
-extern Drive chassis;
-
 class Subsystems {
     private:
         pros::Controller Bot_Controller{ pros::E_CONTROLLER_MASTER};

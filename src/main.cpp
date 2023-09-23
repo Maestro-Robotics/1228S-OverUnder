@@ -74,9 +74,10 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
-    Auton("Far Side", farSide),
-    Auton("Skills", SkillsDevelopment),
-    Auton("Example Drive\n\nDrive forward and come back.", goalSideRush)
+    Auton("5 Triball GoalSide Auton (25 points)", goalSide),
+    Auton("Far Side Safe (9 points)", farSideSafe),
+    Auton("Far Side Rush (9/11 points)", farSide),
+    Auton("Skills", SkillsDevelopment)
   });
 
   // Initialize chassis and auton selector
@@ -150,6 +151,13 @@ void opcontrol() {
     Subsystems subsystems(catapult, intake, pistons);
 
     pistons.InitialLaunch(true);
+
+    if (GoalSide == true){
+      pistons.InitialLaunch(true);
+      catapult.cataSpinToPosition(1, -200);
+    }
+    
+    
         
     while (true) {
       subsystems.update();

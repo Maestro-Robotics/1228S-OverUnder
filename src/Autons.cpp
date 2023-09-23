@@ -36,31 +36,41 @@ void default_constants() {
   chassis.set_pid_constants(&chassis.swingPID, 7, 0, 45, 0);
 }
 
-void goalSideRush(){
+void goalSide(){
+  bool GoalSide = true;
     pistons.launchWings(true);
 
     chassis.set_angle(45);
 
-    chassis.set_drive_pid(50, 70, true, true);
+    chassis.set_drive_pid(40, DRIVE_SPEED, true);
     chassis.wait_drive();
-    chassis.set_turn_pid(0, 70);
+
+    chassis.set_swing_pid(RIGHT_SWING, 0 , 80);
     chassis.wait_drive();
-    chassis.set_drive_pid(25, DRIVE_SPEED, true, true);
-    chassis.wait_drive();
-    chassis.set_turn_pid(45, TURN_SPEED);
-    chassis.wait_drive();
-    chassis.set_drive_pid(30, DRIVE_SPEED, true, true);
-    chassis.wait_drive();
-    pistons.launchWings(false);
+
     intake.toggle(true, false);
-    chassis.set_turn_pid(0, TURN_SPEED);
+    chassis.set_drive_pid(50, DRIVE_SPEED, false);
     chassis.wait_drive();
+
     intake.toggle(true, true);
-    chassis.set_drive_pid(25, DRIVE_SPEED, false, true);
-    chassis.wait_drive();
+
+    // chassis.set_turn_pid(45, TURN_SPEED);
+    // chassis.wait_drive();
+    // chassis.set_drive_pid(30, DRIVE_SPEED, false);
+    // chassis.wait_drive();
+    // pistons.launchWings(false);
+    // intake.toggle(true, false);
+    // chassis.set_turn_pid(0, TURN_SPEED);
+    // chassis.wait_drive();
+    // intake.toggle(true, true);
+    // chassis.set_drive_pid(25, DRIVE_SPEED, false);
+    // chassis.wait_drive();
 
     chassis.set_drive_pid(-40, DRIVE_SPEED, true, true);
     chassis.wait_drive();
+
+    pistons.launchWings(false);
+
     chassis.set_turn_pid(-70, TURN_SPEED);
     chassis.wait_until(-60);
     pistons.InitialLaunch(true);
@@ -76,32 +86,38 @@ void goalSideRush(){
 
     chassis.set_turn_pid(0, TURN_SPEED);
     chassis.wait_drive();
+
     chassis.set_drive_pid(50, DRIVE_SPEED, true, true);
     chassis.wait_drive();
-    pistons.launchWings(true);
 
     chassis.set_swing_pid(LEFT_SWING, 90, SWING_SPEED);
     chassis.wait_drive();
-    
-    pistons.InitialLaunch(false);
+
+    pistons.launchWings(true);
+
     intake.toggle(true, false);
+    pistons.InitialLaunch(false);
+
     chassis.set_drive_pid(50, DRIVE_SPEED, false, true);
     chassis.wait_drive();
 
     pistons.launchWings(false);
-    intake.toggle(true, true);
-    chassis.set_drive_pid(-60, DRIVE_SPEED, true, true);
+
+    chassis.set_drive_pid(-50, DRIVE_SPEED, false, true);
     chassis.wait_drive();
 
-    chassis.set_turn_pid(-60, TURN_SPEED);
+    intake.toggle(true, true);
+
+    chassis.set_turn_pid(-90, TURN_SPEED);
     chassis.wait_drive();
 
     pistons.InitialLaunch(true);
     intake.toggle(false, false);
-    chassis.set_drive_pid(30, DRIVE_SPEED, true, true);
+
+    chassis.set_drive_pid(40, DRIVE_SPEED, true, true);
     chassis.wait_drive();
 
-    chassis.set_drive_pid(-30, 127, true, true);
+    chassis.set_drive_pid(-40, DRIVE_SPEED, true, true);
     chassis.wait_drive();
     intake.toggle(false, true);
 
@@ -117,7 +133,88 @@ void goalSideRush(){
 
 }
 
+void farSideSafe(){
+  GoalSide = false;
+
+  chassis.set_angle(45);
+
+  pistons.launchWings(true);
+
+  chassis.set_drive_pid(40, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  chassis.set_swing_pid(LEFT_SWING, 90, 80);
+  chassis.wait_drive();
+
+  //chassis.set_turn_pid(90, 80);
+  pistons.launchWings(false);
+
+  intake.toggle(true, false);
+  chassis.set_drive_pid(50, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-50, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  intake.toggle(false, true);
+
+  chassis.set_turn_pid(135, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(115, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(90, TURN_SPEED);
+  chassis.wait_drive();
+
+  pistons.InitialLaunch(true);
+  intake.toggle(false, false);
+  chassis.set_drive_pid(30, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-30, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(0, TURN_SPEED);
+  chassis.wait_drive();
+
+  catapult.cataSpinToPosition(0, -200);
+
+  chassis.set_angle(0);
+
+  chassis.set_turn_pid(130, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(50, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-50, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(0, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-20, DRIVE_SPEED, false);
+  chassis.wait_drive();
+
+  catapult.cataSpinToPosition(0, -200);
+
+  chassis.set_drive_pid(20, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(225, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(100, 127, false);
+  chassis.wait_drive();
+
+
+}
+
+
 void farSide(){
+  GoalSide = false;
+
   pistons.launchWings(true);
   pros::delay(100);
   pistons.launchWings(false);
@@ -146,7 +243,7 @@ void farSide(){
   chassis.set_turn_pid(60, TURN_SPEED);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(50, DRIVE_SPEED, true);
+  chassis.set_drive_pid(40, DRIVE_SPEED, true);
   chassis.wait_drive();
 
   chassis.set_drive_pid(-30, DRIVE_SPEED, true);
@@ -162,16 +259,18 @@ void farSide(){
   chassis.set_turn_pid(-135, TURN_SPEED);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(140, DRIVE_SPEED, true);
+  chassis.set_drive_pid(130, DRIVE_SPEED, true);
+  chassis.wait_until(120);
+  chassis.set_max_speed(80);
   chassis.wait_drive();
 
   chassis.set_turn_pid(-180, TURN_SPEED);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(-50, DRIVE_SPEED, false);
+  chassis.set_drive_pid(-60, DRIVE_SPEED, false);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(20, DRIVE_SPEED, false);
+  chassis.set_drive_pid(45, DRIVE_SPEED, false);
   chassis.wait_drive();
 
   chassis.set_turn_pid(-200, TURN_SPEED);
@@ -180,13 +279,13 @@ void farSide(){
   pistons.InitialLaunch(false);
   pistons.launchWings(true);
 
-  chassis.set_drive_pid(60, DRIVE_SPEED, false);
+  chassis.set_drive_pid(57, DRIVE_SPEED, false);
   chassis.wait_drive();
 
-  chassis.set_turn_pid(-270, TURN_SPEED);
+  chassis.set_turn_pid(-290, TURN_SPEED);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(100, DRIVE_SPEED, false);
+  chassis.set_drive_pid(150, DRIVE_SPEED, false);
   chassis.wait_drive();
 }
 
@@ -211,6 +310,8 @@ void SkillsDevelopment(){
 
   chassis.set_turn_pid(20, TURN_SPEED);
     chassis.wait_drive();
+    chassis.set_drive_pid(1, DRIVE_SPEED, true);
+    chassis.wait_drive();
   if (pros::millis() - start_time > timeout) {
         std::printf("Spin motor timeout reached");
         catapult.cataSpinToPosition(0, -200);
@@ -221,8 +322,6 @@ chassis.set_turn_pid(110, TURN_SPEED);
 chassis.wait_drive();
 
 chassis.set_drive_pid(-65, DRIVE_SPEED, false);
-chassis.wait_until(-60);
-catapult.cataSpinToPosition(0, -200);
 chassis.wait_drive();
 
 chassis.set_turn_pid(135, TURN_SPEED);
@@ -256,7 +355,7 @@ chassis.wait_drive();
 chassis.set_drive_pid(55, 127, false);
 chassis.wait_drive();
 
-chassis.set_drive_pid(-45, DRIVE_SPEED, false);
+chassis.set_drive_pid(-60, DRIVE_SPEED, false);
 chassis.wait_drive();
 
 chassis.set_turn_pid(-45, TURN_SPEED);

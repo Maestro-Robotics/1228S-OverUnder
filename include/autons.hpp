@@ -8,9 +8,9 @@ extern Drive chassis;
 void default_constants();
 
 
-void goalSideRush();
+void goalSide();
 
-void GoalSideSafe();
+void farSideSafe();
 
 void farSide();
 

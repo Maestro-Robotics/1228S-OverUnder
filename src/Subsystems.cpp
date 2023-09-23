@@ -66,7 +66,8 @@ void Subsystems::update_Catapult() {
 
 	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)){
 		Bot_Intake.toggle(false, true);
-		Bot_Catapult.cataSpinToPosition(2, 200);
+		Bot_Pistons.InitialLaunch(true);
+		Bot_Catapult.cataSpinToPosition(1, -200);
 	}
 }
 
