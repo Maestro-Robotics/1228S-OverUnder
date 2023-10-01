@@ -27,7 +27,7 @@ Subsystems::Subsystems(Catapult Bot_Catapult, Intake Bot_Intake, Pistons Bot_Pis
 	, Bot_Pistons(Bot_Pistons) {}
 
 void Subsystems::update_Drivetrain() {
-	chassis.arcade_standard(ez::SPLIT);
+	lemchassis.curvature(Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 2.7);
 }
 
 

@@ -27,7 +27,7 @@ void Catapult::spinToTarget(int targetAngle, int angleRange, int velocity) {
     // Loop until the rotation sensor reaches the desired range of the target angle
     while (std::abs(CataRotationSensor.get_angle() - targetAngle) > angleRange) {
 
-	chassis.arcade_standard(ez::SPLIT);
+	// chassis.arcade_standard(ez::SPLIT);
         error = targetAngle - CataRotationSensor.get_angle();
 
         // Calculate PID terms

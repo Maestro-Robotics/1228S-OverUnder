@@ -1,19 +1,21 @@
-#pragma once
+// #pragma once
 
-#include "EZ-Template/api.hpp"
-#include "main.h"
+// #include "EZ-Template/api.hpp"
+// #include "main.h"
 
-extern Drive chassis;
+// extern Drive chassis;
 
-void default_constants();
+// void default_constants();
 
 
-void goalSide();
+// void goalSide();
 
-void farSideSafe();
+// void farSideSafe();
 
-void farSide();
+// void goalSafe();
 
-void SkillsDevelopment();
+// void farSide();
 
-void SkillsMatchLoadOnly();
+// void SkillsDevelopment();
+
+// void SkillsMatchLoadOnly();

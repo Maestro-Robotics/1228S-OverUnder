@@ -8,6 +8,10 @@
 
 #include "EZ-Template/api.hpp"
 
+#include "lemlib/api.hpp"
+
+extern lemlib::Chassis lemchassis;
+
 class Subsystems {
     private:
         pros::Controller Bot_Controller{ pros::E_CONTROLLER_MASTER};

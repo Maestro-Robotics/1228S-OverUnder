@@ -6,7 +6,7 @@
 
 #include "EZ-Template/api.hpp"
 
-extern Drive chassis;
+// extern Drive chassis;
 
 class Catapult {
 

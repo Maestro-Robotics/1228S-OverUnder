@@ -45,10 +45,9 @@
 
 #include "EZ-Template/api.hpp"
 
+#include "lemlib/api.hpp"
+
 #include "autons.hpp"
-
-
-#include "autoSelect/selection.h"
 
 
 extern bool GoalSide;
