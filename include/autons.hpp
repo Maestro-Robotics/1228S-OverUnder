@@ -1,21 +1,16 @@
-// #pragma once
+#pragma once
 
-// #include "EZ-Template/api.hpp"
-// #include "main.h"
+#include "EZ-Template/api.hpp"
+#include "main.h"
 
-// extern Drive chassis;
+extern lemlib::Chassis lemchassis;
 
-// void default_constants();
+void lemGoalSideTest();
 
+void twentyFiveGoal();
 
-// void goalSide();
+void goalSafe();
 
-// void farSideSafe();
+void farSideAutonWin();
 
-// void goalSafe();
-
-// void farSide();
-
-// void SkillsDevelopment();
-
-// void SkillsMatchLoadOnly();
+void Skills();

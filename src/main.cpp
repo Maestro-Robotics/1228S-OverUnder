@@ -1,7 +1,6 @@
 // Include necessary header files
 #include "main.h"
 #include "pros/rtos.hpp"
-#include "pros/apix.h" // Include the LVGL library
 
 // drive motors
 pros::Motor lF(-1, pros::E_MOTOR_GEARSET_06); // left front motor. port 1, reversed
@@ -48,51 +47,6 @@ lemlib::OdomSensors_t sensors {nullptr, nullptr, nullptr, nullptr, &imu};
 
 lemlib::Chassis lemchassis(drivetrain, lateralController, angularController, sensors);
 
-
-// Chassis constructor
-Drive chassis (
-  // Left Chassis Ports (negative port will reverse it!)
-  //   the first port is the sensored port (when trackers are not used!)
-  {-1, 2, -3}
-
-  // Right Chassis Ports (negative port will reverse it!)
-  //   the first port is the sensored port (when trackers are not used!)
-  ,{6, -7, 8}
-
-  // IMU Port
-  ,19
-
-  // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
-  //    (or tracking wheel diameter)
-  ,3.25
-
-  // Cartridge RPM
-  //   (or tick per rotation if using tracking wheels)
-  ,600
-
-  // External Gear Ratio (MUST BE DECIMAL)
-  //    (or gear ratio of tracking wheel)
-  // eg. if your drive is 84:36 where the 36t is powered, your RATIO would be 2.333.
-  // eg. if your drive is 36:60 where the 60t is powered, your RATIO would be 0.6.
-  ,0.6
-
-
-  // Uncomment if using tracking wheels
-  /*
-  // Left Tracking Wheel Ports (negative port will reverse it!)
-  // ,{1, 2} // 3 wire encoder
-  // ,8 // Rotation sensor
-
-  // Right Tracking Wheel Ports (negative port will reverse it!)
-  // ,{-3, -4} // 3 wire encoder
-  // ,-9 // Rotation sensor
-  */
-
-  // Uncomment if tracking wheels are plugged into a 3 wire expander
-  // 3 Wire Port Expander Smart Port
-  // ,1
-);
-
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -100,31 +54,13 @@ Drive chassis (
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-// // Print our branding over your terminal :D
-//   ez::print_ez_template();
-  
-//   pros::delay(500); // Stop the user from doing anything while legacy ports configure.
-
-//   // Configure your chassis controls
-//   chassis.toggle_modify_curve_with_controller(true); // Enables modifying the controller curve with buttons on the joysticks
-//   chassis.set_active_brake(0); // Sets the active brake kP. We recommend 0.1.
-//   chassis.set_curve_default(0, 0); // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)  
-//   default_constants(); // Set the drive to your own constants from autons.cpp!
-//   chassis.set_exit_condition(chassis.turn_exit,  50, 3,  500, 7,   250, 250);
-//   chassis.set_exit_condition(chassis.swing_exit, 50, 3,  500, 7,   250, 250);
-//   chassis.set_exit_condition(chassis.drive_exit, 50,  50, 300, 150, 250, 250);
-//   // These are already defaulted to these buttons, but you can change the left/right curve buttons here!
-//   // chassis.set_left_curve_buttons (pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT); // If using tank, only the left side is used. 
-//   // chassis.set_right_curve_buttons(pros::E_CONTROLLER_DIGITAL_Y,    pros::E_CONTROLLER_DIGITAL_A);
-
 //   // Autonomous Selector using LLEMU
-//   ez::as::auton_selector.add_autons({
-//     Auton("5 Triball GoalSide Auton (25 points)", goalSide),
-//     Auton("push preload in", goalSafe),
-//     Auton("Far Side Safe (9 points)", farSideSafe),
-//     Auton("Far Side Rush (9/11 points)", farSide),
-//     Auton("Skills", SkillsDevelopment)
-//   });
+  ez::as::auton_selector.add_autons({
+    Auton("5 Triball GoalSide Auton (25 points)", twentyFiveGoal),
+    Auton("Far Side Safe (9 points)", farSideAutonWin),
+    Auton("Test Goal Side (20/25 points)", lemGoalSideTest),
+    Auton("Skills", Skills)
+  });
 
   // Initialize chassis and auton selector
   pros::lcd::initialize();
@@ -142,7 +78,7 @@ void initialize() {
         }
     });
   // chassis.initialize();
-  //ez::as::initialize();
+  ez::as::initialize();
 }
 
 
@@ -175,244 +111,12 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-
-void lemGoalSideTest(){
-   
- Catapult catapult(15, 14);
- Intake intake(11);
- Pistons pistons('H');
-
-      pistons.launchWings(true);
-  lemchassis.moveTo(-30, 14, 270, 2000, false, true, 10);
-  pistons.launchWings(false);
-  lemchassis.moveTo(-30, 10, 270, 2000, false, true, 10);
-  pistons.InitialLaunch(true);
-  intake.toggle(false, false);
-  lemchassis.moveTo(-33, -30, 220, 2000, false, true, 10);
-  intake.toggle(false, false);
-  lemchassis.moveTo(-65, -20, 0, 2000, false, true, 10);
-  pistons.InitialLaunch(false);
-  pistons.launchWings(true);
-  intake.toggle(true, false);
-  lemchassis.moveTo(-65, 10, 0, 1500, false, true, 10);
-  intake.toggle(false, true);
-  pistons.InitialLaunch(true);
-  pistons.launchWings(false);
-  intake.toggle(false, false);
-  lemchassis.moveTo(-65, -30, 200, 2000, false, true, 10);
-  lemchassis.moveTo(-65, -20, 0, 2000, false, true, 10);
-  intake.toggle(false, true);
-  pistons.InitialLaunch(false);
-  pistons.launchWings(true);
-  intake.toggle(true, false);
-  lemchassis.moveTo(-65, 10, 0, 1500, false, true, 10);
-  lemchassis.moveTo(-65, 15, 0, 500, false, true, 10);
-  lemchassis.moveTo(0, -30, 180, 2000, false, true, 10);
-}
-
-ASSET(FrontGoal_txt);
-ASSET(PassBarrier_txt);
-ASSET(test2_txt);
-
-void Skills(){
-  
- Catapult catapult(15, 14);
- Intake intake(11);
- Pistons pistons('H');
-  
-lemchassis.setPose(-38,56,0);
-
-pistons.launchWings(true);
-lemchassis.moveTo(-37, 66, 22, 2000, false, true, 7);
-pistons.launchWings(false);
-
-const int timeout = 32000;
-uint32_t start_time = pros::millis();
-
-pistons.InitialLaunch(true);
-
-catapult.cataMatchLoad(-200);
-while (true){
-if (pros::millis() - start_time > timeout) {
-      std::printf("Spin motor timeout reached");
-      catapult.cataSpinToPosition(0, -200);
-      break;
-  }
-}
-
-lemchassis.moveTo(-61, 79, 90, 2000, false, false, 12);
-
-pistons.InitialLaunch(true);
-
-lemchassis.setPose(60, -35, 180);
-
-lemchassis.follow(PassBarrier_txt, 10000, 12, false, true);
-
-pistons.InitialLaunch(false);
-pistons.launchWings(true);
-
-lemchassis.follow(FrontGoal_txt, 3000, 10, false, true);
-
-lemchassis.turnTo(-39, 0, 1000);
-
-lemchassis.setPose(0, 0, 0);
-lemchassis.moveTo(0, 50, 0, 2000, false, true, 9);
-pistons.launchWings(false);
-
-lemchassis.moveTo(20, 10, 0, 3000, false, true, 9);
-pistons.launchWings(true);
-
-lemchassis.moveTo(5, 50, 0, 2000, false, true, 12);
-pistons.launchWings(false);
-
-lemchassis.moveTo(-30, 10, 0, 3000, false, true, 9);
-pistons.launchWings(true);
-
-lemchassis.moveTo(-15, 50, 0, 2000, false, true, 12);
-pistons.launchWings(false);
-
-lemchassis.moveTo(-40, 5, 315, 3000, false, true, 9);
-
-lemchassis.moveTo(-61, 30, 220, 2000, false, true, 10);
-
-lemchassis.moveTo(-30, 49, 270, 2000, false, false, 30);
-
-lemchassis.moveTo(-61, 30, 220, 2000, false, true, 10);
-
-lemchassis.moveTo(-30, 49, 270, 2000, false, false, 30);
-
-lemchassis.moveTo(-61, 30, 220, 2000, false, true, 10);
-
-lemchassis.moveTo(-30, 49, 270, 2000, false, false, 30);
-}
-
-void farSide(){
-
-Catapult catapult(15, 14);
- Intake intake(11);
- Pistons pistons('H');
-
-  
-lemchassis.setPose(0, 0, 0);
-
-pistons.launchWings(true);
-
-lemchassis.moveTo(7, 14, 90, 2000, false, true, 9);
-pistons.launchWings(false);
-
-lemchassis.moveTo(22, 15, 90, 2000, false, true, 12);
-
-lemchassis.moveTo(7, -2, 108, 2000, false, false, 9);
-
-lemchassis.moveTo(43, -12, 100, 2000, true, true, 9);
-lemchassis.waitUntilDist(5);
-pistons.InitialLaunch(true);
-intake.toggle(false, false);
-lemchassis.waitUntilDist(1000);
-
-pros::delay(500);
-
-lemchassis.turnTo(43, 0, 3000);
-catapult.cataSpinToPosition(0, -200);
-
-lemchassis.setPose(0,0,0);
-
-lemchassis.moveTo(-9, 4, 135, 2000, false, false, 4);
-
-lemchassis.moveTo(2, -8, 140, 2000, false, true, 2);
-
-lemchassis.moveTo(-8, -2, 0, 2000, false, false, 4);
-
-pros::delay(500);
-
-lemchassis.turnTo(-6, 10, 2000);
-catapult.cataSpinToPosition(0, -200);
-
-lemchassis.moveTo(-48, 19, 270, 2000, true, true, 12);
-lemchassis.waitUntilDist(5);
-pistons.InitialLaunch(false);
-intake.toggle(false, true);
-lemchassis.waitUntilDist(10000);
-
-lemchassis.moveTo(-50, -14, 180, 2000, false, true, 12);
-}
-
-void twentyFiveGoal(){
-   Catapult catapult(15, 14);
- Intake intake(11);
- Pistons pistons('H');
-
-lemchassis.setPose(0, 0, 0);
- pistons.InitialLaunch(true);
- intake.toggle(false, false);
-
-lemchassis.moveTo(30, -53, 270, 3000, true, false, 15);
-lemchassis.waitUntilDist(15);
-pistons.InitialLaunch(false);
-lemchassis.waitUntilDist(1000);
-
-lemchassis.setPose(0, 0, 0);
-
-lemchassis.moveTo(0, 20, 0, 2000, false, true, 10);
-
-intake.toggle(false, true);
-lemchassis.turnTo(0, 0, 2000);
-intake.toggle(true, false);
-pistons.launchWings(true);
-pros::delay(300);
-
-lemchassis.moveTo(0, -20, 0, 1000, false, true, 15);
-
-lemchassis.moveTo(24, 0, 144, 2000, true, true, 10);
-lemchassis.waitUntilDist(10);
-intake.toggle(true, true);
-intake.toggle(false, false);
-pistons.InitialLaunch(true);
-pistons.launchWings(false);
-lemchassis.waitUntilDist(1000);
-
-lemchassis.moveTo(50, -26, 140, 2000, false, true, 15);
-
-intake.toggle(false, true);
-
-lemchassis.moveTo(19, -33, 270, 2000, true, true, 12);
-lemchassis.waitUntilDist(15);
-pistons.InitialLaunch(false);
-intake.toggle(true, false);
-pistons.launchWings(true);
-lemchassis.waitUntilDist(10000);
-
-intake.toggle(false, true);
-pistons.launchWings(false);
-pistons.InitialLaunch(true);
-intake.toggle(false, false);
-
-lemchassis.moveTo(47, -15, 58, 2000, false, true, 7);
-
-lemchassis.moveTo(-7, 10, 270, 2000, false, true, 15);
-pistons.InitialLaunch(false);
-
-intake.toggle(false, true);
-
-lemchassis.turnTo(-7, -2, 2000);
-pistons.InitialLaunch(false);
-intake.toggle(true, false);
-
-lemchassis.moveTo(-7, -6, 180, 2000, false, true, 30);
-}
 void autonomous() {
-//     chassis.reset_pid_targets(); // Resets PID targets to 0
-//     chassis.reset_gyro(); // Reset gyro position to 0
-//     chassis.reset_drive_sensor(); // Reset drive sensors to 0
-//     chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
 
-    // ez::as::auton_selector.call_selected_auton();
+ ez::as::auton_selector.call_selected_auton();
     
- Catapult catapult(15, 14);
- Intake intake(11);
- Pistons pistons('H');
 
-farSide();
+//farSide();
 // Skills();
 
 
