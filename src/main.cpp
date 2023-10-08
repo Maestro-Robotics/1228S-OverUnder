@@ -54,7 +54,7 @@ lemlib::Chassis lemchassis(drivetrain, lateralController, angularController, sen
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-//   // Autonomous Selector using LLEMU
+  // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
     Auton("5 Triball GoalSide Auton (25 points)", twentyFiveGoal),
     Auton("Far Side Safe (9 points)", farSideAutonWin),
@@ -62,22 +62,8 @@ void initialize() {
     Auton("Skills", Skills)
   });
 
-  // Initialize chassis and auton selector
-  pros::lcd::initialize();
-    lemlib::Logger::initialize();
-    lemchassis.calibrate(); // calibrate sensors
 
-    // print odom values to the brain
-    pros::Task screenTask([=]() {
-        while (true) {
-            pros::lcd::print(0, "X: %f", lemchassis.getPose().x);
-            pros::lcd::print(1, "Y: %f", lemchassis.getPose().y);
-            pros::lcd::print(2, "Theta: %f", lemchassis.getPose().theta);
-            lemlib::Logger::logOdom(lemchassis.getPose());
-            pros::delay(50);
-        }
-    });
-  // chassis.initialize();
+  lemchassis.calibrate(); // calibrate sensors
   ez::as::initialize();
 }
 
@@ -111,11 +97,61 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
+
+// void farSideAutonWin(){
+
+//   Catapult catapult(15, 14);
+//  Intake intake(11);
+//  Pistons pistons('H');
+
+// GoalSide = false;
+  
+// lemchassis.setPose(0, 0, 0);
+
+// pistons.launchWings(true);
+
+// lemchassis.moveTo(22, 19, 90, 2000, true, true, 12);
+// lemchassis.waitUntilDist(15);
+// intake.toggle(true, false);
+// lemchassis.waitUntilDist(20);
+// pistons.launchWings(false);
+// lemchassis.waitUntilDist(1000);
+
+// intake.toggle(true, true);
+
+// lemchassis.moveTo(9, -2, 0, 2000, false, false, 12);
+
+// lemchassis.turnTo(37, -8, 1500);
+
+// lemchassis.moveTo(37, -8, 105, 2000, true, true, 9);
+// lemchassis.waitUntilDist(5);
+// pistons.InitialLaunch(true);
+// intake.toggle(false, false);
+// lemchassis.waitUntilDist(1000);
+
+// lemchassis.moveTo(29, -12, 0 , 2500, false, false, 2, 0.3);
+// pros::delay(300);
+// catapult.cataSpinToPosition(0, -200);
+
+// intake.toggle(false, true);
+// pistons.InitialLaunch(false);
+
+// lemchassis.moveTo(-4, 7, 315, 2000, false, true, 9);
+// pistons.launchWings(true);
+
+// lemchassis.turnTo(-7, 3, 2000);
+
+// lemchassis.moveTo(-11, -28, 180, 2000, false, true, 9);
+
+// pistons.InitialLaunch(true);
+
+// }
 void autonomous() {
 
- ez::as::auton_selector.call_selected_auton();
+  //farSideAutonWin();
+ez::as::auton_selector.call_selected_auton();
     
-
+//twentyFiveGoal();
 //farSide();
 // Skills();
 
@@ -157,7 +193,6 @@ void opcontrol() {
     }
     
     
-        
     while (true) {
       subsystems.update();
       pros::delay(ez::util::DELAY_TIME);

@@ -4,9 +4,9 @@
 #include "pros/rotation.hpp"
 #include "pros/distance.hpp"
 
-#include "EZ-Template/api.hpp"
+#include "main.h"
 
-// extern Drive chassis;
+#include "EZ-Template/api.hpp"
 
 class Catapult {
 

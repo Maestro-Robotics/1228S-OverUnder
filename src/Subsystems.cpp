@@ -69,6 +69,12 @@ void Subsystems::update_Catapult() {
 		Bot_Pistons.InitialLaunch(true);
 		Bot_Catapult.cataSpinToPosition(1, -200);
 	}
+
+	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)){
+		if (ez::as::auton_selector.current_auton_page == 3){
+       ez::as::auton_selector.call_selected_auton(); 
+      }
+	}
 }
 
 // Update function for the Intake subsystem

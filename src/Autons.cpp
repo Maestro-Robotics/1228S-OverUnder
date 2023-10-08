@@ -160,22 +160,22 @@ lemchassis.moveTo(-50, -14, 180, 2000, false, true, 12);
 void twentyFiveGoal(){
 
 lemchassis.setPose(0, 0, 0);
+
  pistons.InitialLaunch(true);
  intake.toggle(false, false);
 
-lemchassis.moveTo(30, -53, 270, 3000, true, false, 15);
+lemchassis.moveTo(30, -46, 270, 3000, true, false, 15);
 lemchassis.waitUntilDist(15);
 pistons.InitialLaunch(false);
 lemchassis.waitUntilDist(1000);
 
 lemchassis.setPose(0, 0, 0);
 
-lemchassis.moveTo(0, 20, 0, 2000, false, true, 10);
+lemchassis.moveTo(0, 10, 0, 2000, false, true, 10);
 
 intake.toggle(false, true);
 lemchassis.turnTo(0, 0, 2000);
 intake.toggle(true, false);
-pistons.launchWings(true);
 pros::delay(300);
 
 lemchassis.moveTo(0, -20, 0, 1000, false, true, 15);
@@ -185,12 +185,14 @@ lemchassis.waitUntilDist(10);
 intake.toggle(true, true);
 intake.toggle(false, false);
 pistons.InitialLaunch(true);
-pistons.launchWings(false);
 lemchassis.waitUntilDist(1000);
 
 lemchassis.moveTo(50, -26, 140, 2000, false, true, 15);
+pistons.InitialLaunch(false);
 
+lemchassis.turnTo(36, -28, 2000);
 intake.toggle(false, true);
+intake.toggle(true, false);
 
 lemchassis.moveTo(19, -33, 270, 2000, true, true, 12);
 lemchassis.waitUntilDist(15);
@@ -199,23 +201,33 @@ intake.toggle(true, false);
 pistons.launchWings(true);
 lemchassis.waitUntilDist(10000);
 
-intake.toggle(false, true);
+
+lemchassis.moveTo(45, -17, 47, 2000, true, true, 7);
+lemchassis.waitUntilDist(5);
+intake.toggle(true, true);
 pistons.launchWings(false);
 pistons.InitialLaunch(true);
 intake.toggle(false, false);
+lemchassis.waitUntilDist(1000);
 
-lemchassis.moveTo(47, -15, 58, 2000, false, true, 7);
-
-lemchassis.moveTo(-7, 10, 270, 2000, false, true, 15);
-pistons.InitialLaunch(false);
-
-intake.toggle(false, true);
-
-lemchassis.turnTo(-7, -2, 2000);
+lemchassis.moveTo(19, -33, 270, 2000, true, true, 12);
+lemchassis.waitUntilDist(25);
 pistons.InitialLaunch(false);
 intake.toggle(true, false);
+pistons.launchWings(true);
+lemchassis.waitUntilDist(1000);
 
-lemchassis.moveTo(-7, -6, 180, 2000, false, true, 30);
+
+// lemchassis.moveTo(-7, 10, 270, 2000, false, true, 15);
+// pistons.InitialLaunch(false);
+
+// intake.toggle(false, true);
+
+// lemchassis.turnTo(-7, -2, 2000);
+// pistons.InitialLaunch(false);
+// intake.toggle(true, false);
+
+// lemchassis.moveTo(-7, -6, 180, 2000, false, true, 30);
 }
 
 
