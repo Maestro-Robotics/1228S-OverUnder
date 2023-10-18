@@ -27,7 +27,7 @@ Subsystems::Subsystems(Catapult Bot_Catapult, Intake Bot_Intake, Pistons Bot_Pis
 	, Bot_Pistons(Bot_Pistons) {}
 
 void Subsystems::update_Drivetrain() {
-	lemchassis.curvature(Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 2.7);
+	lemchassis.curvature(Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 2.5);
 }
 
 
@@ -71,7 +71,7 @@ void Subsystems::update_Catapult() {
 	}
 
 	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)){
-		if (ez::as::auton_selector.current_auton_page == 3){
+		if (ez::as::auton_selector.current_auton_page == 4){
        ez::as::auton_selector.call_selected_auton(); 
       }
 	}

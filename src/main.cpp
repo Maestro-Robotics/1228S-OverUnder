@@ -54,14 +54,15 @@ lemlib::Chassis lemchassis(drivetrain, lateralController, angularController, sen
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-  // Autonomous Selector using LLEMU
+//   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
     Auton("5 Triball GoalSide Auton (25 points)", twentyFiveGoal),
-    Auton("Far Side Safe (9 points)", farSideAutonWin),
+    Auton("Preload and one ball (10 Point)", goalSide10Point),
+    Auton("Far Side Safe (12 points)", farSideAutonWin),
     Auton("Test Goal Side (20/25 points)", lemGoalSideTest),
+    Auton("Driver Skills", driverSkills),
     Auton("Skills", Skills)
   });
-
 
   lemchassis.calibrate(); // calibrate sensors
   ez::as::initialize();
@@ -104,48 +105,6 @@ void competition_initialize() {}
 //  Intake intake(11);
 //  Pistons pistons('H');
 
-// GoalSide = false;
-  
-// lemchassis.setPose(0, 0, 0);
-
-// pistons.launchWings(true);
-
-// lemchassis.moveTo(22, 19, 90, 2000, true, true, 12);
-// lemchassis.waitUntilDist(15);
-// intake.toggle(true, false);
-// lemchassis.waitUntilDist(20);
-// pistons.launchWings(false);
-// lemchassis.waitUntilDist(1000);
-
-// intake.toggle(true, true);
-
-// lemchassis.moveTo(9, -2, 0, 2000, false, false, 12);
-
-// lemchassis.turnTo(37, -8, 1500);
-
-// lemchassis.moveTo(37, -8, 105, 2000, true, true, 9);
-// lemchassis.waitUntilDist(5);
-// pistons.InitialLaunch(true);
-// intake.toggle(false, false);
-// lemchassis.waitUntilDist(1000);
-
-// lemchassis.moveTo(29, -12, 0 , 2500, false, false, 2, 0.3);
-// pros::delay(300);
-// catapult.cataSpinToPosition(0, -200);
-
-// intake.toggle(false, true);
-// pistons.InitialLaunch(false);
-
-// lemchassis.moveTo(-4, 7, 315, 2000, false, true, 9);
-// pistons.launchWings(true);
-
-// lemchassis.turnTo(-7, 3, 2000);
-
-// lemchassis.moveTo(-11, -28, 180, 2000, false, true, 9);
-
-// pistons.InitialLaunch(true);
-
-// }
 void autonomous() {
 
   //farSideAutonWin();
@@ -193,6 +152,7 @@ void opcontrol() {
     }
     
     
+        
     while (true) {
       subsystems.update();
       pros::delay(ez::util::DELAY_TIME);

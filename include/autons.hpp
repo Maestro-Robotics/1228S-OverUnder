@@ -9,8 +9,10 @@ void lemGoalSideTest();
 
 void twentyFiveGoal();
 
-void goalSafe();
+void driverSkills();
 
 void farSideAutonWin();
 
 void Skills();
+
+void goalSide10Point();
