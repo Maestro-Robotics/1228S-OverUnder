@@ -4,12 +4,12 @@
 
 class Pistons{
     private:
-        pros::ADIDigitalOut elevationLaunch;
+        pros::ADIDigitalOut actuateBlocker;
 
     public:
-        Pistons(uint8_t const elevationLaunch);
+        Pistons(uint8_t const actuateBlocker);
 
-        void InitialLaunch(bool boolean);
+        void launchBlocker(bool tf);
         void launchWings(bool tf);
         void launchElevation();
 

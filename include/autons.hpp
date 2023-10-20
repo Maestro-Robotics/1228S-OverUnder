@@ -4,8 +4,15 @@
 #include "main.h"
 
 extern lemlib::Chassis lemchassis;
+extern Drive chassis;
+
+void default_constants();
 
 void lemGoalSideTest();
+
+void PIDGoalSide();
+
+void PIDFarSide();
 
 void twentyFiveGoal();
 

@@ -10,7 +10,7 @@ void Intake::set_on(bool value) {
 
     // If the intake is set to be turned on, set the velocity based on the reverse flag
     if (m_on) {
-        velocity = reverse_velocity(600);
+        velocity = reverse_velocity(-600);
     }
 
     // Move the intake motor with the calculated velocity
