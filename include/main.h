@@ -46,6 +46,8 @@
 
 #include "EZ-Template/api.hpp"
 
+#include "EZ-Template/auton.hpp"
+
 #include "lemlib/api.hpp"
 
 #include "autons.hpp"

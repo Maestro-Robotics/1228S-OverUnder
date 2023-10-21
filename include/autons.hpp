@@ -10,15 +10,15 @@ void default_constants();
 
 void lemGoalSideTest();
 
-void PIDGoalSide();
-
-void PIDFarSide();
-
 void twentyFiveGoal();
 
 void driverSkills();
 
 void farSideAutonWin();
+
+void farSideMatchLoad();
+
+void farSideElims();
 
 void Skills();
 

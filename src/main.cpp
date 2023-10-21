@@ -2,6 +2,7 @@
 #include "main.h"
 #include "EZ-Template/auton.hpp"
 #include "autons.hpp"
+#include "pros/motors.h"
 #include "pros/rtos.hpp"
 
 // drive motors
@@ -16,7 +17,7 @@ pros::Motor rB(9, pros::E_MOTOR_GEARSET_06); // right back motor. port 9
 pros::MotorGroup leftMotors({lF, lM, lB}); // left motor group
 pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
 
-// Inertial Sensor on port 11
+// Inertial Sensor on port 19
 pros::Imu imu(19);
 
 // drivetrain
@@ -51,7 +52,7 @@ Drive chassis (
 
   // Right Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  ,{6, -7, 8}
+  ,{6, -7, 9}
 
   // IMU Port
   ,19
@@ -83,23 +84,27 @@ lemlib::Chassis lemchassis(drivetrain, lateralController, angularController, sen
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+  // pros::lcd::initialize();
 
-  // Configure ez-template controls
-  chassis.toggle_modify_curve_with_controller(true); // Enables modifying the controller curve with buttons on the joysticks
-  chassis.set_active_brake(0.1); // Sets the active brake kP. We recommend 0.1.
-  chassis.set_curve_default(0, 0); // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)  
+  // pros::Task screenTask([=]() {
+  //       while (true) {
+  //           pros::lcd::print(0, "X: %f", lemchassis.getPose().x);
+  //           pros::lcd::print(1, "Y: %f", lemchassis.getPose().y);
+  //           pros::lcd::print(2, "Theta: %f", lemchassis.getPose().theta);
+  //           pros::delay(50);
+  //       }
+  //   });
+
+  // Configure ez-template controls 
   default_constants(); // Set the drive to your own constants from autons.cpp!
-  chassis.set_exit_condition(chassis.turn_exit,  50, 3,  500, 7,   250, 250);
-  chassis.set_exit_condition(chassis.swing_exit, 50, 3,  500, 7,   250, 250);
-  chassis.set_exit_condition(chassis.drive_exit, 50,  50, 300, 150, 250, 250);
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
     Auton("Lemlib & PID Blended\n 5 Triball GoalSide Auton (25 points)", twentyFiveGoal),
-    Auton("Pure PID\n 5 Triball Goalside Auton (25 points)", PIDGoalSide),
-    Auton("Pure PID\n Preload and MatchLoadBall AWP(10 points)",PIDFarSide),
     Auton("Pure Lemlib\n Preload and one ball (10 Point)", goalSide10Point),
-    Auton("Lemlib & PID Blended\n Far Side Safe (12 points)", farSideAutonWin),
+    Auton("Lemlib & PID Blended\n Far Side Safe (9 points)", farSideAutonWin),
+    Auton("Lemlib & PID Blended \n Far Side MatchLoad (7 points)", farSideMatchLoad),
+    Auton("Lemlib & PID Blended \n Far Side Elims (5 points)", farSideElims),
     Auton("Pure Lemlib\n Test Goal Side (20/25 points)", lemGoalSideTest),
     Auton("Skills", Skills),
     Auton("Driver Skills", driverSkills)
@@ -109,6 +114,7 @@ void initialize() {
   chassis.initialize();
   lemchassis.calibrate(false);
   ez::as::initialize();
+
 }
 
 
@@ -147,7 +153,8 @@ void autonomous() {
   chassis.reset_pid_targets(); // Resets PID targets to 0
   chassis.reset_gyro(); // Reset gyro position to 0
   chassis.reset_drive_sensor(); // Reset drive sensors to 0
-  chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
+  chassis.set_drive_brake(MOTOR_BRAKE_COAST);
+  
 
   ez::as::auton_selector.call_selected_auton();
 
@@ -177,13 +184,14 @@ void opcontrol() {
   Intake intake(11);
   Pistons pistons('H');
   Subsystems subsystems(catapult, intake, pistons);
-  
+
   lemchassis.setPose(0,0,0);
+
   if (GoalSide == true){
     catapult.cataSpinToPosition(1, -200);
   }
-  
-  
+
+  chassis.toggle_auto_drive(false);
       
   while (true) {
     subsystems.update();

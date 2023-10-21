@@ -4,8 +4,6 @@
 #include "pros/rotation.hpp"
 #include "pros/distance.hpp"
 
-#include "main.h"
-
 #include "EZ-Template/api.hpp"
 
 class Catapult {

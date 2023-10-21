@@ -11,7 +11,7 @@ int i = 0;
 
 bool firing = false;
 
-bool wingsState = true;
+bool wingsState = false;
 
 bool blockerState = true;
 
@@ -39,6 +39,7 @@ void Subsystems::update_Catapult() {
 		
 		// Toggle the Bot_Intake off to avoid any interference with the Bot_Catapult operation
         Bot_Intake.toggle(false, true);
+		intakeToggle = false;
         
         // Move the Bot_Catapult to the firing position
         Bot_Catapult.cataSpinToPosition(0, -200);
@@ -53,6 +54,7 @@ void Subsystems::update_Catapult() {
 		}
 		else{
 		Bot_Intake.toggle(false, true);
+		intakeToggle = false;
 		Bot_Catapult.cataMatchLoad(-200);
 		}
 
@@ -71,21 +73,14 @@ void Subsystems::update_Intake() {
 
 	 // Check if the L1 button is pressed and toggle the Bot_Intake on (in the forward direction)
     if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1) && CataActive == false) {
-		if (i == 0){
-			Bot_Intake.toggle(false, false);
-			i++;
-		}
-		else{
-			Bot_Intake.toggle(intakeState, false);
-			Bot_Intake.toggle(intakeState, false);
-			intakeState = !intakeState;
-		}
+		Bot_Intake.toggle(intakeState, false);
+		intakeState = !intakeState;
 		
 
     } 
     // Check if the L2 button is pressed and toggle the Bot_Intake on (in the reverse direction)
     else if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2) && CataActive == false) {
-        Bot_Intake.toggle(true, false); // Toggle the Bot_Intake with the current reverse setting
+        Bot_Intake.toggle(false, true); // Toggle the Bot_Intake with the current reverse setting
 		intakeState = false;
 		}
     
@@ -102,10 +97,14 @@ void Subsystems::update_Pistons() {
 		Bot_Pistons.launchWings(wingsState);
 	}
 
-	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
 		blockerState = !blockerState;
 
 		Bot_Pistons.launchBlocker(blockerState);
+	}
+
+	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+		Bot_Pistons.launchElevation();
 	}
 
 }
