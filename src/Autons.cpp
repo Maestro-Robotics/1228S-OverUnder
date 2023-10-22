@@ -148,7 +148,8 @@ void farSideMatchLoad(){
 chassis.toggle_auto_drive(false);
 
 GoalSide = false;
-  
+matchLoadAuto = true;  
+
 lemchassis.setPose(0, 0, 0);
 
 pistons.launchWings(true);
@@ -184,6 +185,7 @@ void farSideElims(){
 chassis.toggle_auto_drive(false);
 
 GoalSide = false;
+matchLoadAuto = true;
   
 lemchassis.setPose(0, 0, 0);
 

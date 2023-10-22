@@ -191,6 +191,10 @@ void opcontrol() {
     catapult.cataSpinToPosition(1, -200);
   }
 
+  if (matchLoadAuto == true){
+    catapult.cataMatchLoad(-200);
+  }
+
   chassis.toggle_auto_drive(false);
       
   while (true) {

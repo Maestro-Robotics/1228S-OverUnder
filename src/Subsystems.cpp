@@ -13,9 +13,11 @@ bool firing = false;
 
 bool wingsState = false;
 
-bool blockerState = true;
+bool blockerState = false;
 
 bool GoalSide = true;
+
+bool matchLoadAuto = false;
 
 bool intakeState = false;
 
@@ -42,7 +44,7 @@ void Subsystems::update_Catapult() {
 		intakeToggle = false;
         
         // Move the Bot_Catapult to the firing position
-        Bot_Catapult.cataSpinToPosition(0, -200);
+        Bot_Catapult.cataSpinToPosition(1, -200);
 		
 		CataActive = false;
 		
@@ -64,7 +66,7 @@ void Subsystems::update_Catapult() {
 
 	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)){
 		Bot_Intake.toggle(false, true);
-		Bot_Catapult.cataSpinToPosition(1, -200);
+		Bot_Catapult.cataSpinToPosition(0, -200);
 	}
 }
 
