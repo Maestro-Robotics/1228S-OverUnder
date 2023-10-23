@@ -1,10 +1,8 @@
 // Include necessary header files
 #include "main.h"
-#include "EZ-Template/auton.hpp"
 #include "autons.hpp"
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
-
 // drive motors
 pros::Motor lF(-1, pros::E_MOTOR_GEARSET_06); // left front motor. port 1, reversed
 pros::Motor lM(2, pros::E_MOTOR_GEARSET_06); // left front motor. port 2
@@ -35,8 +33,8 @@ lemlib::ChassisController_t lateralController {
 
 // turning PID
 lemlib::ChassisController_t angularController {
-    6, // kP
-    40, // kD
+    9, // kP
+    73, // kD
     1, // smallErrorRange
     100, // smallErrorTimeout
     3, // largeErrorRange
@@ -44,38 +42,23 @@ lemlib::ChassisController_t angularController {
     0 // slew rate
 };
 
-// Chassis constructor
-Drive chassis (
-  // Left Chassis Ports (negative port will reverse it!)
-  //   the first port is the sensored port (when trackers are not used!)
-  {-1, 2, -3}
+//Swing PID
 
-  // Right Chassis Ports (negative port will reverse it!)
-  //   the first port is the sensored port (when trackers are not used!)
-  ,{6, -7, 9}
-
-  // IMU Port
-  ,19
-
-  // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
-  //    (or tracking wheel diameter)
-  ,3.25
-
-  // Cartridge RPM
-  //   (or tick per rotation if using tracking wheels)
-  ,600
-
-  // External Gear Ratio (MUST BE DECIMAL)
-  //    (or gear ratio of tracking wheel)
-  // eg. if your drive is 84:36 where the 36t is powered, your RATIO would be 2.333.
-  // eg. if your drive is 36:60 where the 60t is powered, your RATIO would be 0.6.
-  ,0.666
-);
+lemlib::ChassisController_t swingController {
+    2,
+    15,
+    1,
+    100,
+    3,
+    500,
+    0
+};
 
 // sensors for odometry
 lemlib::OdomSensors_t sensors {nullptr, nullptr, nullptr, nullptr, &imu};
 
-lemlib::Chassis lemchassis(drivetrain, lateralController, angularController, sensors);
+lemlib::Chassis lemchassis(drivetrain, lateralController, angularController, swingController, sensors);
+
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -95,24 +78,20 @@ void initialize() {
   //       }
   //   });
 
-  // Configure ez-template controls 
-  default_constants(); // Set the drive to your own constants from autons.cpp!
-
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
-    Auton("Lemlib & PID Blended\n 5 Triball GoalSide Auton (25 points)", twentyFiveGoal),
-    Auton("Pure Lemlib\n Preload and one ball (10 Point)", goalSide10Point),
-    Auton("Lemlib & PID Blended\n Far Side Safe (9 points)", farSideAutonWin),
-    Auton("Lemlib & PID Blended \n Far Side MatchLoad (7 points)", farSideMatchLoad),
-    Auton("Lemlib & PID Blended \n Far Side Elims (5 points)", farSideElims),
-    Auton("Pure Lemlib\n Test Goal Side (20/25 points)", lemGoalSideTest),
+    Auton("lib & PID Blended\n 5 Triball GoalSide Auton (25 points)", twentyFiveGoal),
+    Auton("Pure lib\n Preload and one ball (10 Point)", goalSide10Point),
+    Auton("lib & PID Blended\n Far Side Safe (9 points)", farSideAutonWin),
+    Auton("lib & PID Blended \n Far Side MatchLoad (7 points)", farSideMatchLoad),
+    Auton("lib & PID Blended \n Far Side Elims (5 points)", farSideElims),
+    Auton("Pure lib\n Test Goal Side (20/25 points)", lemGoalSideTest),
     Auton("Skills", Skills),
     Auton("Driver Skills", driverSkills)
   });
 
 // initialize libraries and autonomous selector
-  chassis.initialize();
-  lemchassis.calibrate(false);
+  lemchassis.calibrate();
   ez::as::initialize();
 
 }
@@ -149,12 +128,6 @@ void competition_initialize() {}
  */
 
 void autonomous() {
-
-  chassis.reset_pid_targets(); // Resets PID targets to 0
-  chassis.reset_gyro(); // Reset gyro position to 0
-  chassis.reset_drive_sensor(); // Reset drive sensors to 0
-  chassis.set_drive_brake(MOTOR_BRAKE_COAST);
-  
 
   ez::as::auton_selector.call_selected_auton();
 
@@ -194,8 +167,6 @@ void opcontrol() {
   if (matchLoadAuto == true){
     catapult.cataMatchLoad(-200);
   }
-
-  chassis.toggle_auto_drive(false);
       
   while (true) {
     subsystems.update();

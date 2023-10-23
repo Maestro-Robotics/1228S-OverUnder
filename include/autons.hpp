@@ -4,7 +4,6 @@
 #include "main.h"
 
 extern lemlib::Chassis lemchassis;
-extern Drive chassis;
 
 void default_constants();
 

@@ -24,18 +24,6 @@ Pistons pistons('H');
 
 // It's best practice to tune constants when the robot is empty and with heavier game objects, or with lifts up vs down.
 // If the objects are light or the cog doesn't change much, then there isn't a concern here.
-
-void default_constants() {
-  chassis.set_slew_min_power(80, 80);
-  chassis.set_slew_distance(7, 7);
-  chassis.set_pid_constants(&chassis.headingPID, 11, 0, 20, 0);
-  chassis.set_pid_constants(&chassis.forward_drivePID, 0.45, 0, 2, 0);
-  chassis.set_pid_constants(&chassis.backward_drivePID, 0.45, 0, 5, 0);
-  chassis.set_pid_constants(&chassis.turnPID, 5, 0.003, 35, 15);
-  chassis.set_pid_constants(&chassis.swingPID, 7, 0, 45, 0);
-}
-
-
  
 ASSET(FrontGoal_txt);
 ASSET(PassBarrier_txt);
@@ -53,13 +41,6 @@ lemchassis.moveTo(32, -50, 270, 2000, false, false, 15);
 lemchassis.setPose(0, 0, 0);
 
 lemchassis.moveTo(0, 10, 0, 2000, false, true, 10);
-
-chassis.toggle_auto_drive(true);
-
-chassis.set_turn_pid(90, TURN_SPEED);
-chassis.wait_drive();
-
-chassis.toggle_auto_drive(false);
 
 intake.toggle(true, false);
 
@@ -97,8 +78,6 @@ lemchassis.moveTo(23, -28, 270, 2000, false, true, 10);
 
 void farSideAutonWin(){
 
-chassis.toggle_auto_drive(false);
-
 GoalSide = false;
   
 lemchassis.setPose(0, 0, 0);
@@ -131,13 +110,6 @@ intake.toggle(false, true);
 
 lemchassis.moveTo(-8, 5, 315, 2000, false, true, 9);
 
-chassis.toggle_auto_drive(true);
-
-chassis.set_turn_pid(-180, TURN_SPEED);
-chassis.wait_drive();
-
-chassis.toggle_auto_drive(false);
-
 lemchassis.moveTo(-8, -30, 180, 2000, false, true, 9);
 
 
@@ -145,8 +117,6 @@ lemchassis.moveTo(-8, -30, 180, 2000, false, true, 9);
 
 void farSideMatchLoad(){
   
-chassis.toggle_auto_drive(false);
-
 GoalSide = false;
 matchLoadAuto = true;  
 
@@ -182,7 +152,6 @@ lemchassis.moveTo(-4, 17, 342, 2000, false, true, 12);
 }
 
 void farSideElims(){
-chassis.toggle_auto_drive(false);
 
 GoalSide = false;
 matchLoadAuto = true;
@@ -191,32 +160,9 @@ lemchassis.setPose(0, 0, 0);
 
 lemchassis.moveTo(0, 42, 0, 2000, false, true, 9);
 
-chassis.toggle_auto_drive(true);
-
-chassis.set_turn_pid(-90, TURN_SPEED);
-chassis.wait_drive();
-
-chassis.set_drive_pid(20, DRIVE_SPEED);
-chassis.wait_drive();
-
-chassis.set_drive_pid(-20, DRIVE_SPEED);
-chassis.wait_drive();
-
-chassis.toggle_auto_drive(false);
-
 lemchassis.moveTo(13, 43, 270, 2000, false, true, 9);
 
 pistons.launchWings(true);
-
-chassis.toggle_auto_drive(true);
-
-chassis.set_turn_pid(90, TURN_SPEED);
-chassis.wait_drive();
-
-chassis.set_turn_pid(-90, TURN_SPEED);
-chassis.wait_drive();
-
-chassis.toggle_auto_drive(false);
 
 pistons.launchWings(false);
 
@@ -238,13 +184,6 @@ lemchassis.setPose(0, 0, 0);
 
 lemchassis.moveTo(0, 10, 0, 2000, false, true, 10);
 
-chassis.toggle_auto_drive(true);
-
-chassis.set_turn_pid(90, TURN_SPEED);
-chassis.wait_drive();
-
-chassis.toggle_auto_drive(false);
-
 intake.toggle(true, false);
 
 pros::delay(100);
@@ -255,7 +194,6 @@ intake.toggle(false, false);
 }
 
 void Skills(){
-chassis.set_angle(0);
 lemchassis.setPose(-38,56,0);
 
 pistons.launchWings(true);

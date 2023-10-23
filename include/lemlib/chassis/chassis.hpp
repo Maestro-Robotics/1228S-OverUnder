@@ -120,7 +120,7 @@ class Chassis {
          * @param sensors sensors to be used for odometry
          * @param driveCurve drive curve to be used. defaults to `defaultDriveCurve`
          */
-        Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings,
+        Chassis(Drivetrain_t drivetrain, ChassisController_t lateralSettings, ChassisController_t angularSettings, ChassisController_t swingSettings,
                 OdomSensors_t sensors, DriveCurveFunction_t driveCurve = &defaultDriveCurve);
         /**
          * @brief Calibrate the chassis sensors
@@ -196,6 +196,37 @@ class Chassis {
          */
         void turnTo(float x, float y, int timeout, bool async = false, bool reversed = false, float maxSpeed = 127,
                     bool log = false);
+
+        /**
+         * @brief Turn the chassis so it is facing the target angle
+         *
+         * The PID logging id is "angularPID"
+         *
+         * @param theta Target angle (in degrees)
+         * @param timeout longest time the robot can spend moving
+         * @param async whether the function should be run asynchronously. false by default
+         * @param reversed whether the robot should turn to face the point with the back of the robot. false by default
+         * @param maxSpeed the maximum speed the robot can turn at. Default is 200
+         * @param log whether the chassis should log the turnTo function. false by default
+         */
+        void turnToPID(float theta, int timeout, bool async = false, bool reversed = false, float maxSpeed = 127,
+                    bool log = false);
+
+        /**
+        * @brief Turn the chassis so it is facing the target point
+        *
+        * The PID logging id is "angularPID"
+        *
+        * @param leftSwing Determines if the bot should use a left swing. right swing by default
+        * @param angle angle(In degrees). Target angle
+        * @param timeout longest time the robot can spend moving
+        * @param async whether the function should be run asynchronously. false by default
+        * @param reversed whether the robot should turn to face the point with the back of the robot. false by default
+        * @param maxSpeed the maximum speed the robot can turn at. Default is 200
+        * @param log whether the chassis should log the turnTo function. false by default
+        */
+        void swingTo(bool leftSwing, float angle, int timeout, bool async, bool reversed, float maxSpeed, bool log);
+
         /**
          * @brief Move the chassis towards the target pose
          *
@@ -216,6 +247,22 @@ class Chassis {
          */
         void moveTo(float x, float y, float theta, int timeout, bool async = false, bool forwards = true,
                     float chasePower = 0, float lead = 0.6, float maxSpeed = 127, bool log = false);
+
+        /**
+         * @brief Move the chassis towards the target point
+         *
+         * The PID logging ids are "angularPID" and "lateralPID"
+         *
+         * @param x x location
+         * @param y y location
+         * @param timeout longest time the robot can spend moving
+         * @param async whether the function should be run asynchronously. false by default
+         * @param maxSpeed the maximum speed the robot can move at
+         * @param log whether the chassis should log the turnTo function. false by default
+         */
+        void moveToPID(float x, float y, int timeout, bool async, float maxSpeed = 200, bool log = false);
+
+
         /**
          * @brief Move the chassis along a path
          *
@@ -266,6 +313,7 @@ class Chassis {
 
         ChassisController_t lateralSettings;
         ChassisController_t angularSettings;
+        ChassisController_t swingSettings;
         Drivetrain_t drivetrain;
         OdomSensors_t odomSensors;
         DriveCurveFunction_t driveCurve;
