@@ -9,6 +9,8 @@
 
 int i = 0;
 
+bool l1pressed = false;
+
 bool firing = false;
 
 bool wingsState = false;
@@ -19,7 +21,7 @@ bool GoalSide = true;
 
 bool matchLoadAuto = false;
 
-bool intakeState = false;
+bool intakeState = true;
 
 // Constructor for the Subsystems class, initializing the subsystem objects
 Subsystems::Subsystems(Catapult Bot_Catapult, Intake Bot_Intake, Pistons Bot_Pistons) 
@@ -70,24 +72,33 @@ void Subsystems::update_Catapult() {
 	}
 }
 
-// Update function for the Intake subsystem
 void Subsystems::update_Intake() {
+    // Check if the L1 button is pressed and toggle the Bot_Intake
+    if (Bot_Controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+        if (!l1pressed) {
+            Bot_Intake.toggle(true, false); // Turn on intake in the forward direction
+            l1pressed = true;
+            intakeState = true;
+        }
+    } else {
+        l1pressed = false;
+        if (intakeState) {
+            Bot_Intake.toggle(false, false); // Keep intake running forward
+        }
+    }
 
-	 // Check if the L1 button is pressed and toggle the Bot_Intake on (in the forward direction)
-    if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1) && CataActive == false) {
-		Bot_Intake.toggle(intakeState, false);
-		intakeState = !intakeState;
-		
-
-    } 
-    // Check if the L2 button is pressed and toggle the Bot_Intake on (in the reverse direction)
-    else if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2) && CataActive == false) {
-        Bot_Intake.toggle(false, true); // Toggle the Bot_Intake with the current reverse setting
-		intakeState = false;
-		}
-    
-
+    // Check if the L2 button is pressed
+    if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
+        if (intakeState) {
+            Bot_Intake.toggle(false, true); // Turn on intake in the reverse direction
+            intakeState = false;
+        } else {
+            Bot_Intake.toggle(false, false); // Stop the intake
+            intakeState = true;
+        }
+    }
 }
+
 
 // Update function for the Pistons subsystem
 void Subsystems::update_Pistons() {

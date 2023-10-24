@@ -46,7 +46,7 @@ lemlib::ChassisController_t angularController {
 
 lemlib::ChassisController_t swingController {
     2,
-    15,
+    10,
     1,
     100,
     3,
@@ -67,16 +67,16 @@ lemlib::Chassis lemchassis(drivetrain, lateralController, angularController, swi
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-  // pros::lcd::initialize();
+  pros::lcd::initialize();
 
-  // pros::Task screenTask([=]() {
-  //       while (true) {
-  //           pros::lcd::print(0, "X: %f", lemchassis.getPose().x);
-  //           pros::lcd::print(1, "Y: %f", lemchassis.getPose().y);
-  //           pros::lcd::print(2, "Theta: %f", lemchassis.getPose().theta);
-  //           pros::delay(50);
-  //       }
-  //   });
+  pros::Task screenTask([=]() {
+        while (true) {
+            pros::lcd::print(0, "X: %f", lemchassis.getPose().x);
+            pros::lcd::print(1, "Y: %f", lemchassis.getPose().y);
+            pros::lcd::print(2, "Theta: %f", lemchassis.getPose().theta);
+            pros::delay(50);
+        }
+    });
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
@@ -92,7 +92,7 @@ void initialize() {
 
 // initialize libraries and autonomous selector
   lemchassis.calibrate();
-  ez::as::initialize();
+  //ez::as::initialize();
 
 }
 
@@ -129,7 +129,8 @@ void competition_initialize() {}
 
 void autonomous() {
 
-  ez::as::auton_selector.call_selected_auton();
+  //ez::as::auton_selector.call_selected_auton();
+  farSideElims();
 
 }
 
