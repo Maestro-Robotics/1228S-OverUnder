@@ -1,12 +1,8 @@
 #include "pros/misc.h"
-#include <iostream>
-#include "Subsystems.hpp"
-#include "autons.hpp"
 #include "main.h"
 
 
-// Define a boolean variable to keep track of the state of initial launch for the Pistons
-
+// Define variables
 int i = 0;
 
 bool l1pressed = false;

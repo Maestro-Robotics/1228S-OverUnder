@@ -1,8 +1,6 @@
 // Include necessary header files
 #include "main.h"
-#include "autons.hpp"
-#include "pros/motors.h"
-#include "pros/rtos.hpp"
+
 // drive motors
 pros::Motor lF(-1, pros::E_MOTOR_GEARSET_06); // left front motor. port 1, reversed
 pros::Motor lM(2, pros::E_MOTOR_GEARSET_06); // left front motor. port 2
@@ -23,7 +21,7 @@ lemlib::Drivetrain_t drivetrain {&leftMotors, &rightMotors, 10, lemlib::Omniwhee
 
 lemlib::ChassisController_t lateralController {
     13, // kP
-    5, // kD
+    6, // kD
     1, // smallErrorRange
     100, // smallErrorTimeout
     3, // largeErrorRange
@@ -67,16 +65,16 @@ lemlib::Chassis lemchassis(drivetrain, lateralController, angularController, swi
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-  pros::lcd::initialize();
+  // pros::lcd::initialize();
 
-  pros::Task screenTask([=]() {
-        while (true) {
-            pros::lcd::print(0, "X: %f", lemchassis.getPose().x);
-            pros::lcd::print(1, "Y: %f", lemchassis.getPose().y);
-            pros::lcd::print(2, "Theta: %f", lemchassis.getPose().theta);
-            pros::delay(50);
-        }
-    });
+  // pros::Task screenTask([=]() {
+  //       while (true) {
+  //           pros::lcd::print(0, "X: %f", lemchassis.getPose().x);
+  //           pros::lcd::print(1, "Y: %f", lemchassis.getPose().y);
+  //           pros::lcd::print(2, "Theta: %f", lemchassis.getPose().theta);
+  //           pros::delay(50);
+  //       }
+  //   });
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
@@ -92,7 +90,7 @@ void initialize() {
 
 // initialize libraries and autonomous selector
   lemchassis.calibrate();
-  //ez::as::initialize();
+  ez::as::initialize();
 
 }
 
@@ -129,8 +127,10 @@ void competition_initialize() {}
 
 void autonomous() {
 
-  //ez::as::auton_selector.call_selected_auton();
-  farSideElims();
+  ez::as::auton_selector.call_selected_auton();
+  //farSideElims();
+  //twentyFiveGoal();
+  //lemchassis.moveToPID(0, 10, 1000, false);
 
 }
 

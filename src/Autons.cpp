@@ -1,30 +1,11 @@
-#include "autons.hpp"
-#include "EZ-Template/util.hpp"
-#include "Intake.hpp"
-#include "Pistons.hpp"
-#include "Subsystems.hpp"
 #include "main.h"
-#include "pros/rtos.hpp"
-#include <sys/types.h>
-const int DRIVE_SPEED = 115; // This is 110/127 (around 87% of max speed).  We don't suggest making this 127.
-                             // If this is 127 and the robot tries to heading correct, it's only correcting by
-                             // making one side slower.  When this is 87%, it's correcting by making one side
-                             // faster and one side slower, giving better heading correction.
-const int TURN_SPEED  = 100;
-const int SWING_SPEED = 100;
 
 
 Catapult catapult(15, 14);
 Intake intake(11);
 Pistons pistons('H');
 
-///
-// Constants
-///
 
-// It's best practice to tune constants when the robot is empty and with heavier game objects, or with lifts up vs down.
-// If the objects are light or the cog doesn't change much, then there isn't a concern here.
- 
 ASSET(FrontGoal_txt);
 ASSET(PassBarrier_txt);
 
@@ -32,48 +13,73 @@ void twentyFiveGoal(){
   
 lemchassis.setPose(0, 0, 0);
 
-intake.toggle(false, false);
-
-lemchassis.moveTo(0, 3, 0, 2000, false, true, 2);
-
-lemchassis.moveTo(32, -50, 270, 2000, false, false, 15);
-
-lemchassis.setPose(0, 0, 0);
-
-lemchassis.moveTo(0, 10, 0, 2000, false, true, 10);
-
-intake.toggle(true, false);
-
-pros::delay(100);
-
-lemchassis.moveTo(0, -10, 0, 2000, false, true, 5);
-
-intake.toggle(false, false);
-
-lemchassis.moveTo(24, 0, 124, 2000, true, true, 10);
-lemchassis.waitUntilDist(10);
-intake.toggle(false, false);
-lemchassis.waitUntilDist(1000);
-
-lemchassis.moveTo(48, -3, 101, 2000, false, true, 15);
-
-lemchassis.turnTo(0, -30, 1500);
-
-intake.toggle(true, false);
-
-lemchassis.moveTo(48, -25, 111, 2000, true, true, 2);
-lemchassis.waitUntilDist(3);
-intake.toggle(false, false);
-lemchassis.waitUntilDist(1000);
-
-intake.toggle(false, true);
-
-lemchassis.turnTo(23, -28, 1500);
-
-intake.toggle(true, false);
 pistons.launchWings(true);
 
-lemchassis.moveTo(23, -28, 270, 2000, false, true, 10);
+lemchassis.turnToPID(330, 200, true);
+lemchassis.waitUntilDist(1);
+pistons.launchWings(false);
+lemchassis.waitUntilDist(1000);
+
+lemchassis.moveToPID(-29, 45, 2000, true);
+lemchassis.waitUntilDist(1);
+intake.toggle(false, false);
+catapult.cataSpinToPosition(1, -200);
+lemchassis.waitUntilDist(1000);
+
+lemchassis.turnToPID(90, 400);
+lemchassis.moveToPID(3, 51, 1500, true);
+lemchassis.waitUntilDist(1);
+pistons.launchWings(true);
+intake.toggle(true, false);
+lemchassis.waitUntilDist(1000);
+
+pistons.launchWings(false);
+lemchassis.moveToPID(-11, 51, 1000, false);
+
+lemchassis.turnToPID(232, 300, false);
+lemchassis.moveToPID(-28, 36, 1000, true);
+lemchassis.waitUntilDist(1);
+intake.toggle(false, false);
+lemchassis.waitUntilDist(1000);
+
+lemchassis.turnToPID(69, 400);
+lemchassis.moveToPID(1, 49, 1000, true);
+lemchassis.waitUntilDist(1);
+intake.toggle(true, false);
+lemchassis.waitUntilDist(1000);
+
+lemchassis.moveToPID(-12, 48, 1000, false);
+lemchassis.turnToPID(152, 300);
+intake.toggle(false, true);
+
+lemchassis.moveTo(-2, -15, 270, 1000, false, true, 12);
+lemchassis.moveToPID(-26, 0, 1000, true);
+lemchassis.waitUntilDist(1);
+intake.toggle(false, false);
+lemchassis.waitUntilDist(1000);
+
+lemchassis.moveToPID(0, 0, 1000, false);
+lemchassis.turnToPID(66, 400, false);
+pistons.launchWings(true);
+
+lemchassis.moveTo(17, 31, 0, 1000, true, true, 12);
+lemchassis.waitUntilDist(15);
+pistons.launchWings(false);
+intake.toggle(true, false);
+lemchassis.waitUntilDist(1000);
+
+lemchassis.moveToPID(17, 35, 200, false);
+
+lemchassis.moveToPID(17, 27, 1000, false);
+intake.toggle(false, true);
+
+lemchassis.moveTo(-5, 0, 90, 2000, true, false, 25);
+lemchassis.waitUntilDist(5);
+pistons.launchBlocker(true);
+lemchassis.waitUntilDist(1000);
+
+lemchassis.moveToPID(-31, 0, 2000, false);
+
 }
 
 void farSideAutonWin(){
@@ -139,6 +145,7 @@ intake.toggle(false, true);
 
 lemchassis.moveTo(14, 17, 340, 2000, false, true, 12);
 }
+
 void farSideElims(){
 
 GoalSide = false;
@@ -169,12 +176,6 @@ lemchassis.moveToPID(-25, 22, 2000, false);
 lemchassis.moveToPID(-20, 10, 2000, false);
 lemchassis.turnToPID(245, 1000);
 lemchassis.moveToPID(-19, 7, 2000, false);
-
-
-
-
-
-
 
 }
 
@@ -227,23 +228,22 @@ lemchassis.setPose(60, -35, 180);
 
 lemchassis.follow(PassBarrier_txt, 10000, 12, false, true);
 
-pistons.launchWings(true);
-
 lemchassis.follow(FrontGoal_txt, 3000, 10, false, true);
 
 lemchassis.turnTo(-39, 0, 1000);
+pistons.launchWings(true);
 
 lemchassis.setPose(0, 0, 0);
-lemchassis.moveTo(0, 50, 0, 2000, false, true, 12);
+lemchassis.moveToPID(0, 50, 2000, false);
 pistons.launchWings(false);
 
 lemchassis.moveTo(20, 10, 0, 3000, false, true, 9);
 pistons.launchWings(true);
 
-lemchassis.moveTo(5, 50, 0, 2000, false, true, 12);
+lemchassis.moveTo(5, 50, 315, 2000, false, true, 12);
 pistons.launchWings(false);
 
-lemchassis.moveTo(-30, 10, 0, 3000, false, true, 9);
+lemchassis.moveToPID(-30, 10, 3000, false);
 pistons.launchWings(true);
 
 lemchassis.moveTo(-15, 50, 0, 2000, false, true, 12);
