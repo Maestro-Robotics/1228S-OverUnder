@@ -3,10 +3,10 @@
 
 // drive motors
 pros::Motor lF(-1, pros::E_MOTOR_GEARSET_06); // left front motor. port 1, reversed
-pros::Motor lM(2, pros::E_MOTOR_GEARSET_06); // left front motor. port 2
+pros::Motor lM(2, pros::E_MOTOR_GEARSET_06); // left middle motor. port 2
 pros::Motor lB(-3, pros::E_MOTOR_GEARSET_06); // left back motor. port 3, reversed
 pros::Motor rF(6, pros::E_MOTOR_GEARSET_06); // right front motor. port 6
-pros::Motor rM(-7, pros::E_MOTOR_GEARSET_06); // right front motor. port 7, reversed
+pros::Motor rM(-7, pros::E_MOTOR_GEARSET_06); // right middle motor. port 7, reversed
 pros::Motor rB(9, pros::E_MOTOR_GEARSET_06); // right back motor. port 9
 
 // motor groups
@@ -19,6 +19,7 @@ pros::Imu imu(19);
 // drivetrain
 lemlib::Drivetrain_t drivetrain {&leftMotors, &rightMotors, 10, lemlib::Omniwheel::NEW_325, 400};
 
+// Drive PID
 lemlib::ChassisController_t lateralController {
     13, // kP
     6, // kD
@@ -29,7 +30,7 @@ lemlib::ChassisController_t lateralController {
     5 // slew rate
 };
 
-// turning PID
+// Turning PID
 lemlib::ChassisController_t angularController {
     9, // kP
     73, // kD
@@ -41,15 +42,14 @@ lemlib::ChassisController_t angularController {
 };
 
 //Swing PID
-
 lemlib::ChassisController_t swingController {
-    2,
-    10,
-    1,
-    100,
-    3,
-    500,
-    0
+    2, // kP
+    10, // kD
+    1, // smallErrorRange
+    100, // smallErrorTimeout
+    3, // largeErrorRange
+    500, // largeErrorTimeout
+    0 // slew rate
 };
 
 // sensors for odometry
@@ -65,6 +65,8 @@ lemlib::Chassis lemchassis(drivetrain, lateralController, angularController, swi
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+  // Shows position of the bot (Used for creating auton)
+  
   // pros::lcd::initialize();
 
   // pros::Task screenTask([=]() {
@@ -88,7 +90,7 @@ void initialize() {
     Auton("Driver Skills", driverSkills)
   });
 
-// initialize libraries and autonomous selector
+// initialize Library and autonomous selector
   lemchassis.calibrate();
   ez::as::initialize();
 
@@ -127,10 +129,8 @@ void competition_initialize() {}
 
 void autonomous() {
 
+  //Calls Autonomous using autonomous selector
   ez::as::auton_selector.call_selected_auton();
-  //farSideElims();
-  //twentyFiveGoal();
-  //lemchassis.moveToPID(0, 10, 1000, false);
 
 }
 
@@ -159,7 +159,9 @@ void opcontrol() {
   Pistons pistons('H');
   Subsystems subsystems(catapult, intake, pistons);
 
+  // applies all of these functions based on how different autonomouses ended
   lemchassis.setPose(0,0,0);
+  pistons.launchBlocker(false);
 
   if (GoalSide == true){
     catapult.cataSpinToPosition(1, -200);

@@ -1,5 +1,8 @@
+#include "Pistons.hpp"
+#include "Subsystems.hpp"
 #include "main.h"
 
+// Contains all of the code for the different autons for team 1228S
 
 Catapult catapult(15, 14);
 Intake intake(11);
@@ -73,12 +76,13 @@ lemchassis.moveToPID(17, 35, 200, false);
 lemchassis.moveToPID(17, 27, 1000, false);
 intake.toggle(false, true);
 
-lemchassis.moveTo(-5, 0, 90, 2000, true, false, 25);
+lemchassis.moveTo(-5, 0, 90, 1500, true, false, 25);
 lemchassis.waitUntilDist(5);
 pistons.launchBlocker(true);
 lemchassis.waitUntilDist(1000);
 
 lemchassis.moveToPID(-31, 0, 2000, false);
+pistons.launchBlocker(true);
 
 }
 
@@ -93,7 +97,7 @@ pistons.launchWings(true);
 lemchassis.moveToPID(7, 7, 2000, false);
 lemchassis.swingTo(false, 90, 1000, false, false, 200, false);
 pistons.launchWings(false);
-lemchassis.moveToPID(33, 16, 2000, false);
+lemchassis.moveToPID(37, 16, 2000, false);
 lemchassis.moveTo(8, 1, 45, 2000, false, false, 12);
 
 lemchassis.turnToPID(112, 2000);
@@ -108,12 +112,13 @@ lemchassis.turnToPID(0, 1000);
 catapult.cataSpinToPosition(0, -200);
 intake.toggle(false, true);
 
-lemchassis.moveTo(2, -3, 270, 1000, false, true, 9);
+lemchassis.moveTo(-20, 0, 270, 1000, false, true, 9);
 lemchassis.turnToPID(180, 1000);
-lemchassis.moveToPID(11, -38, 2000, true);
+lemchassis.moveToPID(11, -43, 2000, true);
 lemchassis.waitUntilDist(10);
 intake.toggle(true, false);
 lemchassis.waitUntilDist(1000);
+pistons.launchBlocker(true);
 }
 
 void farSideMatchLoad(){
@@ -182,23 +187,29 @@ lemchassis.moveToPID(-19, 7, 2000, false);
 void goalSide10Point(){
  lemchassis.setPose(0, 0, 0);
 
-intake.toggle(false, false);
+ lemchassis.moveToPID(0, 50, 2000, false);
+ lemchassis.moveToPID(0, 0, 2000, false)
+;
+// intake.toggle(false, false);
 
-lemchassis.moveTo(0, 3, 0, 2000, false, true, 2);
+// lemchassis.moveTo(0, 3, 0, 2000, false, true, 2);
 
-lemchassis.moveTo(32, -50, 270, 2000, false, false, 15);
+// lemchassis.moveTo(32, -50, 270, 2000, false, false, 9);
 
-lemchassis.setPose(0, 0, 0);
+// lemchassis.setPose(0, 0, 0);
 
-lemchassis.moveTo(0, 10, 0, 2000, false, true, 10);
+// lemchassis.moveTo(0, 10, 0, 2000, false, true, 10);
 
-intake.toggle(true, false);
+// pros::delay(100);
 
-pros::delay(100);
+// lemchassis.moveToPID(0, -10, 2000, false);
+// lemchassis.turnToPID(180, 2000);
 
-lemchassis.moveTo(0, -10, 0, 2000, false, true, 5);
+// intake.toggle(true, false);
 
-intake.toggle(false, false);
+// lemchassis.moveToPID(0, -10, 2000, false);
+
+// intake.toggle(false, true);
 }
 
 void Skills(){

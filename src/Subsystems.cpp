@@ -1,10 +1,7 @@
 #include "pros/misc.h"
 #include "main.h"
 
-
 // Define variables
-int i = 0;
-
 bool l1pressed = false;
 
 bool firing = false;
@@ -25,6 +22,7 @@ Subsystems::Subsystems(Catapult Bot_Catapult, Intake Bot_Intake, Pistons Bot_Pis
 	, Bot_Intake(Bot_Intake)
 	, Bot_Pistons(Bot_Pistons) {}
 
+// Update function for the Drivetrain subsystem
 void Subsystems::update_Drivetrain() {
 	lemchassis.curvature(Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 2.5);
 }
@@ -68,6 +66,7 @@ void Subsystems::update_Catapult() {
 	}
 }
 
+// Update function for the Intake Subsystem
 void Subsystems::update_Intake() {
     // Check if the L1 button is pressed and toggle the Bot_Intake
     if (Bot_Controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
@@ -118,7 +117,7 @@ void Subsystems::update_Pistons() {
 
 }
 
-// Update function that calls the individual update functions for each subsystem
+// Update function that calls the individual update functions for each subsystem (called in OP Control)
 void Subsystems::update() {
 	update_Drivetrain();
 	update_Catapult();
