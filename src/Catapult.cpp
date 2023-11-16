@@ -17,11 +17,10 @@ bool running = false;
 
 // Function to control the catapult and spin it to the target angle
 void Catapult::spinToTarget(int targetAngle, int angleRange, int velocity) {
+    pros::Task cataSpin{[=] {
     
     const int timeout = 3000; // set timeout to 3 seconds
     uint32_t start_time = pros::millis();
-
-    // Variables for PID control
     double error, lastError = 0, integral = 0, derivative;
 
     // Loop until the rotation sensor reaches the desired range of the target angle
@@ -44,7 +43,6 @@ void Catapult::spinToTarget(int targetAngle, int angleRange, int velocity) {
 
         // Check for timeout
         if (pros::millis() - start_time > timeout) {
-            std::printf("Spin motor timeout reached");
             break;
         }
 
@@ -56,6 +54,7 @@ void Catapult::spinToTarget(int targetAngle, int angleRange, int velocity) {
 
     // Stop the catapult motor
     CataMotor.move_velocity(0);
+    }};
 }
 
 // Function to spin the catapult to a pre-defined position based on positiontype

@@ -1,6 +1,7 @@
 #include "Pistons.hpp"
 #include "Subsystems.hpp"
 #include "main.h"
+#include "pros/rtos.hpp"
 
 // Contains all of the code for the different autons for team 1228S
 
@@ -18,71 +19,93 @@ lemchassis.setPose(0, 0, 0);
 
 pistons.launchWings(true);
 
-lemchassis.turnToPID(330, 200, true);
-lemchassis.waitUntilDist(1);
+lemchassis.turnToPID(347, 200, false);
 pistons.launchWings(false);
-lemchassis.waitUntilDist(1000);
 
-lemchassis.moveToPID(-29, 45, 2000, true);
+lemchassis.moveToPID(-9, 44, 2000, true);
 lemchassis.waitUntilDist(1);
 intake.toggle(false, false);
-catapult.cataSpinToPosition(1, -200);
+catapult.cataSpinToPosition(0, -200);
 lemchassis.waitUntilDist(1000);
 
-lemchassis.turnToPID(90, 400);
-lemchassis.moveToPID(3, 51, 1500, true);
-lemchassis.waitUntilDist(1);
-pistons.launchWings(true);
+lemchassis.turnToPID(90, 2000);
 intake.toggle(true, false);
-lemchassis.waitUntilDist(1000);
+pros::delay(200);
 
-pistons.launchWings(false);
-lemchassis.moveToPID(-11, 51, 1000, false);
 
-lemchassis.turnToPID(232, 300, false);
-lemchassis.moveToPID(-28, 36, 1000, true);
+lemchassis.moveTo(-33, 56, 270, 1500, true, true, 12, 0.2);
 lemchassis.waitUntilDist(1);
 intake.toggle(false, false);
-lemchassis.waitUntilDist(1000);
+lemchassis.waitUntilDist(10000);
 
-lemchassis.turnToPID(69, 400);
-lemchassis.moveToPID(1, 49, 1000, true);
-lemchassis.waitUntilDist(1);
-intake.toggle(true, false);
-lemchassis.waitUntilDist(1000);
-
-lemchassis.moveToPID(-12, 48, 1000, false);
-lemchassis.turnToPID(152, 300);
-intake.toggle(false, true);
-
-lemchassis.moveTo(-2, -15, 270, 1000, false, true, 12);
-lemchassis.moveToPID(-26, 0, 1000, true);
-lemchassis.waitUntilDist(1);
-intake.toggle(false, false);
-lemchassis.waitUntilDist(1000);
-
-lemchassis.moveToPID(0, 0, 1000, false);
-lemchassis.turnToPID(66, 400, false);
-pistons.launchWings(true);
-
-lemchassis.moveTo(17, 31, 0, 1000, true, true, 12);
-lemchassis.waitUntilDist(15);
-pistons.launchWings(false);
-intake.toggle(true, false);
-lemchassis.waitUntilDist(1000);
-
-lemchassis.moveToPID(17, 35, 200, false);
-
-lemchassis.moveToPID(17, 27, 1000, false);
-intake.toggle(false, true);
-
-lemchassis.moveTo(-5, 0, 90, 1500, true, false, 25);
+lemchassis.turnToPID(90, 500);
+lemchassis.moveToPID(10, 51, 1500, true);
 lemchassis.waitUntilDist(5);
-pistons.launchBlocker(true);
-lemchassis.waitUntilDist(1000);
+pistons.launchWings(true);
+lemchassis.waitUntilDist(10000);
 
-lemchassis.moveToPID(-31, 0, 2000, false);
-pistons.launchBlocker(true);
+lemchassis.moveToPID(-10, 51, 300, false);
+
+lemchassis.moveTo(-25, 32, 270, 2000, false, true, 12, 0.2);
+lemchassis.moveToPID(-15, 32, 1000, false);
+
+lemchassis.turnToPID(138, 1000);
+intake.toggle(true, false);
+
+lemchassis.moveToPID(8, 0, 1000, false);
+lemchassis.moveToPID(-22, -5, 1000, true);
+lemchassis.waitUntilDist(1);
+intake.toggle(false, false);
+lemchassis.waitUntilDist(10000);
+
+lemchassis.turnToPID(90, 1000);
+// pistons.launchWings(false);
+// lemchassis.moveToPID(-11, 51, 1000, false);
+
+// lemchassis.turnToPID(232, 300, false);
+// lemchassis.moveToPID(-28, 36, 1000, true);
+// lemchassis.waitUntilDist(1);
+// intake.toggle(false, false);
+// lemchassis.waitUntilDist(1000);
+
+// lemchassis.turnToPID(69, 400);
+// lemchassis.moveToPID(1, 49, 1000, true);
+// lemchassis.waitUntilDist(1);
+// intake.toggle(true, false);
+// lemchassis.waitUntilDist(1000);
+
+// lemchassis.moveToPID(-12, 48, 1000, false);
+// lemchassis.turnToPID(152, 300);
+// intake.toggle(false, true);
+
+// lemchassis.moveTo(-2, -15, 270, 1000, false, true, 12);
+// lemchassis.moveToPID(-26, 0, 1000, true);
+// lemchassis.waitUntilDist(1);
+// intake.toggle(false, false);
+// lemchassis.waitUntilDist(1000);
+
+// lemchassis.moveToPID(0, 0, 1000, false);
+// lemchassis.turnToPID(66, 400, false);
+// pistons.launchWings(true);
+
+// lemchassis.moveTo(17, 31, 0, 1000, true, true, 12);
+// lemchassis.waitUntilDist(25);
+// pistons.launchWings(false);
+// intake.toggle(true, false);
+// lemchassis.waitUntilDist(1000);
+
+// lemchassis.moveToPID(17, 35, 200, false);
+
+// lemchassis.moveToPID(17, 27, 1000, false);
+// intake.toggle(false, true);
+
+// lemchassis.moveTo(-5, 0, 90, 1500, true, false, 25);
+// lemchassis.waitUntilDist(5);
+// pistons.launchBlocker(true);
+// lemchassis.waitUntilDist(1000);
+
+// lemchassis.moveToPID(-31, 0, 2000, false);
+// pistons.launchBlocker(true);
 
 }
 

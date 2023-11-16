@@ -1,13 +1,14 @@
 // Include necessary header files
 #include "main.h"
+#include "autons.hpp"
 
 // drive motors
-pros::Motor lF(-1, pros::E_MOTOR_GEARSET_06); // left front motor. port 1, reversed
-pros::Motor lM(2, pros::E_MOTOR_GEARSET_06); // left middle motor. port 2
-pros::Motor lB(-3, pros::E_MOTOR_GEARSET_06); // left back motor. port 3, reversed
-pros::Motor rF(6, pros::E_MOTOR_GEARSET_06); // right front motor. port 6
-pros::Motor rM(-7, pros::E_MOTOR_GEARSET_06); // right middle motor. port 7, reversed
-pros::Motor rB(9, pros::E_MOTOR_GEARSET_06); // right back motor. port 9
+pros::Motor lF(-7, pros::E_MOTOR_GEARSET_06); // left front motor. port 7, reversed
+pros::Motor lM(-8, pros::E_MOTOR_GEARSET_06); // left middle motor. port 8, reversed
+pros::Motor lB(10, pros::E_MOTOR_GEARSET_06); // left back motor. port 10
+pros::Motor rF(-1, pros::E_MOTOR_GEARSET_06); // right front motor. port 1, reversed
+pros::Motor rM(3, pros::E_MOTOR_GEARSET_06); // right middle motor. port 3
+pros::Motor rB(4, pros::E_MOTOR_GEARSET_06); // right back motor. port 4
 
 // motor groups
 pros::MotorGroup leftMotors({lF, lM, lB}); // left motor group
@@ -17,7 +18,7 @@ pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
 pros::Imu imu(19);
 
 // drivetrain
-lemlib::Drivetrain_t drivetrain {&leftMotors, &rightMotors, 10, lemlib::Omniwheel::NEW_325, 400};
+lemlib::Drivetrain_t drivetrain {&leftMotors, &rightMotors, 11, lemlib::Omniwheel::NEW_325, 400};
 
 // Drive PID
 lemlib::ChassisController_t lateralController {
@@ -67,16 +68,16 @@ lemlib::Chassis lemchassis(drivetrain, lateralController, angularController, swi
 void initialize() {
   // Shows position of the bot (Used for creating auton)
   
-  // pros::lcd::initialize();
+  pros::lcd::initialize();
 
-  // pros::Task screenTask([=]() {
-  //       while (true) {
-  //           pros::lcd::print(0, "X: %f", lemchassis.getPose().x);
-  //           pros::lcd::print(1, "Y: %f", lemchassis.getPose().y);
-  //           pros::lcd::print(2, "Theta: %f", lemchassis.getPose().theta);
-  //           pros::delay(50);
-  //       }
-  //   });
+  pros::Task screenTask([=]() {
+        while (true) {
+            pros::lcd::print(0, "X: %f", lemchassis.getPose().x);
+            pros::lcd::print(1, "Y: %f", lemchassis.getPose().y);
+            pros::lcd::print(2, "Theta: %f", lemchassis.getPose().theta);
+            pros::delay(50);
+        }
+    });
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
@@ -92,7 +93,7 @@ void initialize() {
 
 // initialize Library and autonomous selector
   lemchassis.calibrate();
-  ez::as::initialize();
+  //ez::as::initialize();
 
 }
 
@@ -130,7 +131,8 @@ void competition_initialize() {}
 void autonomous() {
 
   //Calls Autonomous using autonomous selector
-  ez::as::auton_selector.call_selected_auton();
+  //ez::as::auton_selector.call_selected_auton();
+  twentyFiveGoal();
 
 }
 

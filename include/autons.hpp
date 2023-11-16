@@ -5,8 +5,6 @@
 
 extern lemlib::Chassis lemchassis;
 
-void default_constants();
-
 void lemGoalSideTest();
 
 void twentyFiveGoal();
