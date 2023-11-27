@@ -11,7 +11,6 @@ Pistons pistons('H');
 
 
 ASSET(FrontGoal_txt);
-ASSET(PassBarrier_txt);
 
 void twentyFiveGoal(){
   
@@ -19,159 +18,186 @@ lemchassis.setPose(0, 0, 0);
 
 pistons.launchWings(true);
 
-lemchassis.turnToPID(347, 200, false);
+lemchassis.turnToPID(345, 200, false);
 pistons.launchWings(false);
 
-lemchassis.moveToPID(-9, 44, 2000, true);
+lemchassis.moveToPID(-14, 47, 1500, true);
 lemchassis.waitUntilDist(1);
 intake.toggle(false, false);
 catapult.cataSpinToPosition(0, -200);
 lemchassis.waitUntilDist(1000);
 
-lemchassis.turnToPID(90, 2000);
+lemchassis.turnToPID(90, 500);
 intake.toggle(true, false);
 pros::delay(200);
 
-
-lemchassis.moveTo(-33, 56, 270, 1500, true, true, 12, 0.2);
+lemchassis.turnToPID(260, 500);
+lemchassis.moveToPID(-30, 52, 1000, true);
 lemchassis.waitUntilDist(1);
 intake.toggle(false, false);
 lemchassis.waitUntilDist(10000);
 
+lemchassis.moveToPID(-27, 51, 500, false);
+
 lemchassis.turnToPID(90, 500);
-lemchassis.moveToPID(10, 51, 1500, true);
+lemchassis.moveToPID(3, 49, 2000, true);
 lemchassis.waitUntilDist(5);
 pistons.launchWings(true);
 lemchassis.waitUntilDist(10000);
 
-lemchassis.moveToPID(-10, 51, 300, false);
+lemchassis.moveToPID(-14, 49, 2000, false);
+pistons.launchWings(false);
 
-lemchassis.moveTo(-25, 32, 270, 2000, false, true, 12, 0.2);
-lemchassis.moveToPID(-15, 32, 1000, false);
+lemchassis.turnToPID(245, 500);
+lemchassis.moveToPID(-20, 37, 1000, false);
+lemchassis.moveToPID(-12, 43, 1000, false);
 
-lemchassis.turnToPID(138, 1000);
+lemchassis.turnToPID(125, 500);
 intake.toggle(true, false);
+lemchassis.turnToPID(145, 200);
 
-lemchassis.moveToPID(8, 0, 1000, false);
-lemchassis.moveToPID(-22, -5, 1000, true);
+lemchassis.moveToPID(15, -1, 1000, true);
+lemchassis.waitUntilDist(5);
+intake.toggle(false, true);
+lemchassis.waitUntilDist(1000);
+
+lemchassis.turnToPID(250, 1000);
+intake.toggle(false, false);
+
+lemchassis.setPose(lemchassis.getPose().x, lemchassis.getPose().y, 270);
+
+lemchassis.moveToPID(-13, -1, 1000, false);
+
+lemchassis.moveToPID(14, -7, 1000, false);
+lemchassis.turnToPID(84, 1000);
+
+pistons.launchWings(true);
+lemchassis.moveTo(44, 30, 0, 2000, true, true, 12);
+lemchassis.waitUntilDist(15);
+pistons.launchWings(false);
+lemchassis.waitUntilDist(10000);
+}
+
+void testGoal(){
+    
+lemchassis.setPose(0, 0, 0);
+
+pistons.launchWings(true);
+
+lemchassis.turnToPID(345, 200, false);
+pistons.launchWings(false);
+
+lemchassis.moveToPID(-14, 47, 1500, true);
+lemchassis.waitUntilDist(1);
+intake.toggle(false, false);
+catapult.cataSpinToPosition(0, -200);
+lemchassis.waitUntilDist(1000);
+
+lemchassis.turnToPID(90, 500);
+intake.toggle(true, false);
+pros::delay(200);
+
+lemchassis.turnToPID(260, 500);
+lemchassis.moveToPID(-30, 52, 1000, true);
 lemchassis.waitUntilDist(1);
 intake.toggle(false, false);
 lemchassis.waitUntilDist(10000);
 
+lemchassis.moveToPID(-27, 51, 500, false);
+
+lemchassis.turnToPID(90, 500);
+lemchassis.moveToPID(3, 49, 2000, true);
+lemchassis.waitUntilDist(5);
+pistons.launchWings(true);
+lemchassis.waitUntilDist(10000);
+
+lemchassis.moveToPID(-14, 49, 2000, false);
+pistons.launchWings(false);
+
+lemchassis.turnToPID(245, 500);
+lemchassis.moveToPID(-20, 37, 1000, false);
+lemchassis.moveToPID(-12, 43, 1000, false);
+
+lemchassis.turnToPID(125, 500);
+
+lemchassis.moveToPID(15, -1, 1000, false);
+
 lemchassis.turnToPID(90, 1000);
-// pistons.launchWings(false);
-// lemchassis.moveToPID(-11, 51, 1000, false);
 
-// lemchassis.turnToPID(232, 300, false);
-// lemchassis.moveToPID(-28, 36, 1000, true);
-// lemchassis.waitUntilDist(1);
-// intake.toggle(false, false);
-// lemchassis.waitUntilDist(1000);
+pistons.launchWings(true);
+lemchassis.moveTo(44, 30, 0, 2000, true, true, 12);
+lemchassis.waitUntilDist(15);
+pistons.launchWings(false);
+lemchassis.waitUntilDist(10000);
 
-// lemchassis.turnToPID(69, 400);
-// lemchassis.moveToPID(1, 49, 1000, true);
-// lemchassis.waitUntilDist(1);
-// intake.toggle(true, false);
-// lemchassis.waitUntilDist(1000);
+}
 
-// lemchassis.moveToPID(-12, 48, 1000, false);
-// lemchassis.turnToPID(152, 300);
-// intake.toggle(false, true);
+void disruptClose(){
+  lemchassis.moveToPID(0, 38, 1000, false);
+  lemchassis.turnToPID(270, 1000);
+  intake.toggle(true, false);
+  pistons.launchWings(true);
 
-// lemchassis.moveTo(-2, -15, 270, 1000, false, true, 12);
-// lemchassis.moveToPID(-26, 0, 1000, true);
-// lemchassis.waitUntilDist(1);
-// intake.toggle(false, false);
-// lemchassis.waitUntilDist(1000);
+  lemchassis.moveToPID(22, 38, 1000, false);
+  pistons.launchWings(false);
 
-// lemchassis.moveToPID(0, 0, 1000, false);
-// lemchassis.turnToPID(66, 400, false);
-// pistons.launchWings(true);
+  lemchassis.moveToPID(-13, 38, 2000, false);
+  lemchassis.moveToPID(13, 38, 2000, false);
+  lemchassis.turnToPID(330, 1000);
 
-// lemchassis.moveTo(17, 31, 0, 1000, true, true, 12);
-// lemchassis.waitUntilDist(25);
-// pistons.launchWings(false);
-// intake.toggle(true, false);
-// lemchassis.waitUntilDist(1000);
 
-// lemchassis.moveToPID(17, 35, 200, false);
-
-// lemchassis.moveToPID(17, 27, 1000, false);
-// intake.toggle(false, true);
-
-// lemchassis.moveTo(-5, 0, 90, 1500, true, false, 25);
-// lemchassis.waitUntilDist(5);
-// pistons.launchBlocker(true);
-// lemchassis.waitUntilDist(1000);
-
-// lemchassis.moveToPID(-31, 0, 2000, false);
-// pistons.launchBlocker(true);
 
 }
 
 void farSideAutonWin(){
 
 GoalSide = false;
+
+matchLoadAuto = true;
   
 lemchassis.setPose(0, 0, 45);
 
+lemchassis.moveTo(-32, -15, 90, 2000, false, false, 18);
+
+lemchassis.moveTo(-5, -8, 45, 2000, false, true, 15);
+
 pistons.launchWings(true);
+lemchassis.turnToPID(0, 2000, false);
 
-lemchassis.moveToPID(7, 7, 2000, false);
-lemchassis.swingTo(false, 90, 1000, false, false, 200, false);
+pros::delay(200);
 pistons.launchWings(false);
-lemchassis.moveToPID(37, 16, 2000, false);
-lemchassis.moveTo(8, 1, 45, 2000, false, false, 12);
 
-lemchassis.turnToPID(112, 2000);
-lemchassis.moveToPID(53, -13, 2000, true);
-lemchassis.waitUntilDist(10);
-intake.toggle(false, false);
-lemchassis.waitUntilDist(1000);
-
-lemchassis.swingTo(false, 0, 1000, false, false, 200, false);
-lemchassis.moveToPID(39, -17, 1000, false);
-lemchassis.turnToPID(0, 1000);
-catapult.cataSpinToPosition(0, -200);
-intake.toggle(false, true);
-
-lemchassis.moveTo(-20, 0, 270, 1000, false, true, 9);
-lemchassis.turnToPID(180, 1000);
-lemchassis.moveToPID(11, -43, 2000, true);
-lemchassis.waitUntilDist(10);
+lemchassis.moveTo(3, 35, 0, 2000, false, true, 12);
 intake.toggle(true, false);
-lemchassis.waitUntilDist(1000);
-pistons.launchBlocker(true);
+
 }
 
 void farSideMatchLoad(){
 
 GoalSide = false;
+
 matchLoadAuto = true;
   
 lemchassis.setPose(0, 0, 45);
 
+lemchassis.moveTo(-32, -15, 90, 2000, false, false, 18);
+
+lemchassis.moveTo(-5, -8, 45, 2000, false, true, 15);
+
 pistons.launchWings(true);
+lemchassis.turnToPID(0, 2000, false);
 
-lemchassis.moveToPID(7, 7, 2000, false);
-lemchassis.swingTo(false, 90, 1000, false, false, 200, false);
+pros::delay(200);
 pistons.launchWings(false);
-lemchassis.moveToPID(33, 16, 2000, false);
-lemchassis.moveTo(8, 1, 45, 2000, false, false, 15);
 
-lemchassis.turnToPID(112, 2000);
-lemchassis.moveToPID(53, -13, 2000, true);
-lemchassis.waitUntilDist(10);
-intake.toggle(false, false);
-lemchassis.waitUntilDist(1000);
+lemchassis.moveTo(3, 35, 0, 2000, false, true, 12);
+intake.toggle(true, false);
 
-lemchassis.swingTo(false, 0, 1000, false, false, 200, false);
-lemchassis.moveToPID(39, -17, 1000, false);
-lemchassis.turnToPID(0, 1000);
-catapult.cataSpinToPosition(0, -200);
-intake.toggle(false, true);
+lemchassis.moveToPID(-5, -8, 2000, false);
 
-lemchassis.moveTo(14, 17, 340, 2000, false, true, 12);
+lemchassis.turnToPID(165, 1000);
+
+intake.toggle(true, true);
 }
 
 void farSideElims(){
@@ -239,10 +265,10 @@ void Skills(){
 lemchassis.setPose(-38,56,0);
 
 pistons.launchWings(true);
-lemchassis.moveTo(-37, 66, 18, 2000, false, true, 10);
+lemchassis.moveTo(-37, 66, 18, 2000, false, true, 10, 0.2);
 pistons.launchWings(false);
 
-const int timeout = 32000;
+const int timeout = 30000;
 uint32_t start_time = pros::millis();
 
 
@@ -255,47 +281,49 @@ if (pros::millis() - start_time > timeout) {
   }
 }
 
-lemchassis.moveTo(-61, 79, 90, 2000, false, false, 12);
+lemchassis.moveTo(-68, 79, 90, 2000, false, false, 12);
 
 
-lemchassis.setPose(60, -35, 180);
+lemchassis.setPose(-59,27,0);
 
-lemchassis.follow(PassBarrier_txt, 10000, 12, false, true);
+lemchassis.follow(FrontGoal_txt, 10000, 20, false, true);
 
-lemchassis.follow(FrontGoal_txt, 3000, 10, false, true);
-
-lemchassis.turnTo(-39, 0, 1000);
+lemchassis.turnToPID(90, 1000);
 pistons.launchWings(true);
 
 lemchassis.setPose(0, 0, 0);
-lemchassis.moveToPID(0, 50, 2000, false);
+lemchassis.moveToPID(0, 30, 2000, false);
 pistons.launchWings(false);
 
-lemchassis.moveTo(20, 10, 0, 3000, false, true, 9);
+lemchassis.moveToPID(0, 20, 2000, false, 100, false);
+
+pistons.launchWings(true);
+lemchassis.moveToPID(0, 40, 2000, false);
+pistons.launchWings(false);
+
+lemchassis.moveTo(-20, 5, 0, 3000, false, true, 12, 0.2, 80);
 pistons.launchWings(true);
 
-lemchassis.moveTo(5, 50, 315, 2000, false, true, 12);
-pistons.launchWings(false);
-
-lemchassis.moveToPID(-30, 10, 3000, false);
+lemchassis.moveToPID(10, 5, 3000, false, 100);
+lemchassis.moveToPID(10, 30, 3000, false);
 pistons.launchWings(true);
 
-lemchassis.moveTo(-15, 50, 0, 2000, false, true, 12);
+lemchassis.moveToPID(10, 15, 2000, false);
+lemchassis.moveToPID(10, 40, 2000, false);
 pistons.launchWings(false);
 
-lemchassis.moveTo(-40, 5, 315, 3000, false, true, 9);
+lemchassis.moveToPID(10, 5, 2000, false);
 
-lemchassis.moveTo(-61, 30, 220, 2000, false, true, 10);
+lemchassis.moveTo(55, 40, 180, 2000, false, true, 12, 0.2, 80);
+pistons.launchWings(true);
 
-lemchassis.moveTo(-30, 49, 270, 2000, false, false, 30);
+lemchassis.moveTo(0, 50, 180, 1500, false, true, 12);
 
-lemchassis.moveTo(-61, 30, 220, 2000, false, true, 10);
+lemchassis.moveTo(55, 40, 180, 2000, false, false, 12);
 
-lemchassis.moveTo(-30, 49, 270, 2000, false, false, 30);
+lemchassis.moveTo(0, 50, 180, 1500, false, true, 12);
 
-lemchassis.moveTo(-61, 30, 220, 2000, false, true, 10);
-
-lemchassis.moveTo(-30, 49, 270, 2000, false, false, 30);
+lemchassis.moveTo(55, 40, 180, 2000, false, false, 12);
 }
 
 void driverSkills() {
@@ -390,7 +418,6 @@ void lemGoalSideTest(){
 
   // lemchassis.moveTo(-7, -6, 180, 2000, false, true, 30);
 }
-
 
 
 

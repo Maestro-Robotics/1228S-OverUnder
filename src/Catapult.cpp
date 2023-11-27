@@ -60,8 +60,6 @@ void Catapult::spinToTarget(int targetAngle, int angleRange, int velocity) {
 // Function to spin the catapult to a pre-defined position based on positiontype
 void Catapult::cataSpinToPosition(int positiontype, int velocity) {
     if (positiontype == 0) {
-    CataMotor.move_velocity(velocity);
-    pros::Task::delay(300);
     spinToTarget(35900, 300, velocity);
 
     } else if (positiontype == 1) {

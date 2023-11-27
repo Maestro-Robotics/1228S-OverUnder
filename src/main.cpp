@@ -1,12 +1,13 @@
 // Include necessary header files
 #include "main.h"
+#include "EZ-Template/auton.hpp"
 #include "autons.hpp"
 
 // drive motors
 pros::Motor lF(-7, pros::E_MOTOR_GEARSET_06); // left front motor. port 7, reversed
 pros::Motor lM(-8, pros::E_MOTOR_GEARSET_06); // left middle motor. port 8, reversed
 pros::Motor lB(10, pros::E_MOTOR_GEARSET_06); // left back motor. port 10
-pros::Motor rF(-1, pros::E_MOTOR_GEARSET_06); // right front motor. port 1, reversed
+pros::Motor rF(-2, pros::E_MOTOR_GEARSET_06); // right front motor. port 1, reversed
 pros::Motor rM(3, pros::E_MOTOR_GEARSET_06); // right middle motor. port 3
 pros::Motor rB(4, pros::E_MOTOR_GEARSET_06); // right back motor. port 4
 
@@ -68,32 +69,32 @@ lemlib::Chassis lemchassis(drivetrain, lateralController, angularController, swi
 void initialize() {
   // Shows position of the bot (Used for creating auton)
   
-  pros::lcd::initialize();
+  // pros::lcd::initialize();
 
-  pros::Task screenTask([=]() {
-        while (true) {
-            pros::lcd::print(0, "X: %f", lemchassis.getPose().x);
-            pros::lcd::print(1, "Y: %f", lemchassis.getPose().y);
-            pros::lcd::print(2, "Theta: %f", lemchassis.getPose().theta);
-            pros::delay(50);
-        }
-    });
+  // pros::Task screenTask([=]() {
+  //       while (true) {
+  //           pros::lcd::print(0, "X: %f", lemchassis.getPose().x);
+  //           pros::lcd::print(1, "Y: %f", lemchassis.getPose().y);
+  //           pros::lcd::print(2, "Theta: %f", lemchassis.getPose().theta);
+  //           pros::delay(50);
+  //       }
+  //   });
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
     Auton("lib & PID Blended\n 5 Triball GoalSide Auton (25 points)", twentyFiveGoal),
-    Auton("Pure lib\n Preload and one ball (10 Point)", goalSide10Point),
+    Auton("Disrupt Close, Elim", disruptClose),
+    Auton("test goal", testGoal),
+    Auton("Pure lib\n Preload(5 Point)", goalSide10Point),
     Auton("lib & PID Blended\n Far Side Safe (9 points)", farSideAutonWin),
-    Auton("lib & PID Blended \n Far Side MatchLoad (7 points)", farSideMatchLoad),
-    Auton("lib & PID Blended \n Far Side Elims (5 points)", farSideElims),
-    Auton("Pure lib\n Test Goal Side (20/25 points)", lemGoalSideTest),
+    Auton("Far Side auton, touch match load zone", farSideMatchLoad),
     Auton("Skills", Skills),
     Auton("Driver Skills", driverSkills)
   });
 
 // initialize Library and autonomous selector
   lemchassis.calibrate();
-  //ez::as::initialize();
+  ez::as::initialize();
 
 }
 
@@ -131,8 +132,13 @@ void competition_initialize() {}
 void autonomous() {
 
   //Calls Autonomous using autonomous selector
-  //ez::as::auton_selector.call_selected_auton();
-  twentyFiveGoal();
+  ez::as::auton_selector.call_selected_auton();
+  //twentyFiveGoal();
+  //farSideAutonWin();
+  //Skills();
+  //testGoal();
+ //disruptClose();
+  
 
 }
 
@@ -162,11 +168,10 @@ void opcontrol() {
   Subsystems subsystems(catapult, intake, pistons);
 
   // applies all of these functions based on how different autonomouses ended
-  lemchassis.setPose(0,0,0);
   pistons.launchBlocker(false);
 
   if (GoalSide == true){
-    catapult.cataSpinToPosition(1, -200);
+    catapult.cataSpinToPosition(0, -200);
   }
 
   if (matchLoadAuto == true){

@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "1228S_DVHS",
+    "project_name": "1228S_OneWorld",
     "target": "v5",
     "templates": {
       "EZ-Template": {

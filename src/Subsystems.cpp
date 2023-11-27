@@ -40,7 +40,7 @@ void Subsystems::update_Catapult() {
 		intakeToggle = false;
         
         // Move the Bot_Catapult to the firing position
-        Bot_Catapult.cataSpinToPosition(1, -200);
+        Bot_Catapult.cataSpinToPosition(0, -200);
 		
 		CataActive = false;
 		

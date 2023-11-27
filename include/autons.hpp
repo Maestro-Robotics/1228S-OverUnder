@@ -15,6 +15,10 @@ void farSideAutonWin();
 
 void farSideMatchLoad();
 
+void testGoal();
+
+void disruptClose();
+
 void farSideElims();
 
 void Skills();
