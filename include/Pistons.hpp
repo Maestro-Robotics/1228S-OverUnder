@@ -4,10 +4,11 @@
 
 class Pistons{
     private:
-        pros::ADIDigitalOut actuateBlocker;
+        pros::ADIDigitalOut actuateElevation;
+        pros::ADIDigitalOut actuateWings;
 
     public:
-        Pistons(uint8_t const actuateBlocker);
+        Pistons(uint8_t const actuateBlocker, uint8_t const actuateWings);
 
         void launchBlocker(bool tf);
         void launchWings(bool tf);

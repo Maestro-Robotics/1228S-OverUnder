@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "1228S_OneWorld",
+    "project_name": "1228S_Hollywood",
     "target": "v5",
     "templates": {
       "EZ-Template": {
@@ -26,40 +26,43 @@
         "user_files": [],
         "version": "2.1.2"
       },
-      "Lemlib1228S": {
-        "location": "C:\\Users\\mlyeo\\AppData\\Roaming\\PROS\\templates\\Lemlib1228S@0.0.3",
+      "LemLib": {
+        "location": "C:\\Users\\mlyeo\\AppData\\Roaming\\PROS\\templates\\LemLib@0.5.0-rc.5",
         "metadata": {
           "origin": "local"
         },
-        "name": "Lemlib1228S",
+        "name": "LemLib",
         "py/object": "pros.conductor.templates.local_template.LocalTemplate",
         "supported_kernels": "^3.8.0",
         "system_files": [
-          "include\\fmt\\xchar.h",
-          "include\\lemlib\\chassis\\chassis.hpp",
-          "include\\fmt\\args.h",
-          "include\\fmt\\ranges.h",
-          "firmware\\asset.mk",
-          "include\\fmt\\printf.h",
-          "include\\fmt\\compile.h",
-          "include\\lemlib\\util.hpp",
-          "include\\lemlib\\pid.hpp",
-          "include\\fmt\\format-inl.h",
-          "include\\lemlib\\pose.hpp",
-          "include\\fmt\\os.h",
-          "firmware\\Lemlib1228S.a",
-          "include\\fmt\\ostream.h",
-          "include\\lemlib\\api.hpp",
-          "include\\lemlib\\chassis\\trackingWheel.hpp",
-          "include\\lemlib\\chassis\\odom.hpp",
+          "include\\lemlib\\logger\\stdout.hpp",
           "include\\lemlib\\asset.hpp",
-          "include\\fmt\\color.h",
+          "include\\lemlib\\logger\\telemetrySink.hpp",
+          "include\\fmt\\format.h",
+          "include\\lemlib\\chassis\\trackingWheel.hpp",
+          "firmware\\LemLib.a",
+          "firmware\\asset.mk",
+          "include\\lemlib\\logger\\message.hpp",
+          "include\\fmt\\args.h",
+          "include\\lemlib\\util.hpp",
+          "include\\lemlib\\chassis\\odom.hpp",
+          "include\\lemlib\\pose.hpp",
+          "include\\lemlib\\timer.hpp",
+          "include\\lemlib\\chassis\\chassis.hpp",
+          "static\\example.txt",
+          "include\\lemlib\\exitcondition.hpp",
+          "include\\lemlib\\logger\\baseSink.hpp",
           "include\\fmt\\core.h",
-          "include\\fmt\\format.h"
+          "include\\fmt\\format-inl.h",
+          "include\\lemlib\\logger\\infoSink.hpp",
+          "include\\lemlib\\logger\\buffer.hpp",
+          "include\\lemlib\\pid.hpp",
+          "include\\lemlib\\api.hpp",
+          "include\\lemlib\\logger\\logger.hpp"
         ],
         "target": "v5",
         "user_files": [],
-        "version": "0.0.3"
+        "version": "0.5.0-rc.5"
       },
       "kernel": {
         "location": "C:\\Users\\21min\\AppData\\Roaming\\PROS\\templates\\kernel@3.8.0",

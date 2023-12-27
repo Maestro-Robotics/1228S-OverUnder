@@ -18,46 +18,49 @@ pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
 // Inertial Sensor on port 19
 pros::Imu imu(19);
 
-// drivetrain
-lemlib::Drivetrain_t drivetrain {&leftMotors, &rightMotors, 11, lemlib::Omniwheel::NEW_325, 400};
+// drivetrain settings
+lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
+                              &rightMotors, // right motor group
+                              11, // 11 inch track width
+                              lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
+                              400, // drivetrain rpm is 400
+                              8 // chase power is 2. If we had traction wheels, it would have been 8
+);
+// lateral motion controller
+lemlib::ControllerSettings linearController(13, // proportional gain (kP)
+                                            0, // integral gain (kI)
+                                            6, // derivative gain (kD)
+                                            3, // anti windup
+                                            1, // small error range, in inches
+                                            100, // small error range timeout, in milliseconds
+                                            2, // large error range, in inches
+                                            200, // large error range timeout, in milliseconds
+                                            20 // maximum acceleration (slew)
+);
 
-// Drive PID
-lemlib::ChassisController_t lateralController {
-    13, // kP
-    6, // kD
-    1, // smallErrorRange
-    100, // smallErrorTimeout
-    3, // largeErrorRange
-    500, // largeErrorTimeout
-    5 // slew rate
-};
 
-// Turning PID
-lemlib::ChassisController_t angularController {
-    9, // kP
-    73, // kD
-    1, // smallErrorRange
-    100, // smallErrorTimeout
-    3, // largeErrorRange
-    500, // largeErrorTimeout
-    0 // slew rate
-};
-
-//Swing PID
-lemlib::ChassisController_t swingController {
-    2, // kP
-    10, // kD
-    1, // smallErrorRange
-    100, // smallErrorTimeout
-    3, // largeErrorRange
-    500, // largeErrorTimeout
-    0 // slew rate
-};
-
+// angular motion controller
+lemlib::ControllerSettings angularController(9, // proportional gain (kP)
+                                             0, // integral gain (kI)
+                                             73, // derivative gain (kD)
+                                             3, // anti windup
+                                             1, // small error range, in degrees
+                                             100, // small error range timeout, in milliseconds
+                                             2, // large error range, in degrees
+                                             200, // large error range timeout, in milliseconds
+                                             0 // maximum acceleration (slew)
+);
 // sensors for odometry
-lemlib::OdomSensors_t sensors {nullptr, nullptr, nullptr, nullptr, &imu};
+// note that in this example we use internal motor encoders (IMEs), so we don't pass vertical tracking wheels
+lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to null
+                            nullptr, // vertical tracking wheel 2, set to nullptr as we are using IMEs
+                            nullptr, // horizontal tracking wheel 1
+                            nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
+                            &imu // inertial sensor
+);
 
-lemlib::Chassis lemchassis(drivetrain, lateralController, angularController, swingController, sensors);
+// create the chassis
+lemlib::Chassis lemchassis(drivetrain, linearController, angularController, sensors);
 
 
 /**
@@ -82,14 +85,13 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
-    Auton("lib & PID Blended\n 5 Triball GoalSide Auton (25 points)", twentyFiveGoal),
+    Auton("Goal Side 5 Ball", testGoal),
+    Auton("Goal Side 6 Ball (UNTESTED)", twentyFiveGoal),
     Auton("Disrupt Close, Elim", disruptClose),
-    Auton("test goal", testGoal),
     Auton("Pure lib\n Preload(5 Point)", goalSide10Point),
     Auton("lib & PID Blended\n Far Side Safe (9 points)", farSideAutonWin),
     Auton("Far Side auton, touch match load zone", farSideMatchLoad),
-    Auton("Skills", Skills),
-    Auton("Driver Skills", driverSkills)
+    Auton("Skills", driverSkills),
   });
 
 // initialize Library and autonomous selector
@@ -138,7 +140,7 @@ void autonomous() {
   //Skills();
   //testGoal();
  //disruptClose();
-  
+  //driverSkills();
 
 }
 
@@ -164,11 +166,12 @@ void autonomous() {
 void opcontrol() {
   Catapult catapult(15, 14);
   Intake intake(11);
-  Pistons pistons('H');
+  Pistons pistons('H', 'G');
   Subsystems subsystems(catapult, intake, pistons);
 
   // applies all of these functions based on how different autonomouses ended
-  pistons.launchBlocker(false);
+
+  pistons.launchWings(false);
 
   if (GoalSide == true){
     catapult.cataSpinToPosition(0, -200);

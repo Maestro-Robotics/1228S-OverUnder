@@ -4,9 +4,13 @@
 // Define variables
 bool l1pressed = false;
 
+bool l2pressed = false;
+
 bool firing = false;
 
 bool wingsState = false;
+
+bool prevWingsState = wingsState;
 
 bool blockerState = false;
 
@@ -83,7 +87,7 @@ void Subsystems::update_Intake() {
     }
 
     // Check if the L2 button is pressed
-    if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
+    if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
         if (intakeState) {
             Bot_Intake.toggle(false, true); // Turn on intake in the reverse direction
             intakeState = false;
@@ -98,18 +102,12 @@ void Subsystems::update_Intake() {
 // Update function for the Pistons subsystem
 void Subsystems::update_Pistons() {
 
+	wingsState = Bot_Controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
 
-	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-		wingsState = !wingsState;
-
-		Bot_Pistons.launchWings(wingsState);
-	}
-
-	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
-		blockerState = !blockerState;
-
-		Bot_Pistons.launchBlocker(blockerState);
-	}
+	if (wingsState != prevWingsState) {
+    	Bot_Pistons.launchWings(wingsState);
+    	prevWingsState = wingsState;
+}
 
 	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
 		Bot_Pistons.launchElevation();

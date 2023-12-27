@@ -2,20 +2,15 @@
 #include "pros/adi.hpp"
 #include "Pistons.hpp"
 
-pros::ADIDigitalOut actuateElevation({{12, 'A'}});
-pros::ADIDigitalOut actuateWings({{12, 'B'}});
-
 // Constructor for the Pistons class
 // Initializes the ADI objects representing the pneumatic pistons
-Pistons::Pistons(uint8_t const elevationPort)
-    : actuateBlocker(elevationPort) {}
+Pistons::Pistons(uint8_t const elevationPort, uint8_t const wingsPort)
+    : actuateElevation(elevationPort),
+    actuateWings(wingsPort) {}
 
 // Function to control the pistons used for the launch of the blocker mechanism
 // Parameters:
 // - boolean: true to expand the blocker, false to retract it
-void Pistons::launchBlocker(bool tf) {
-    actuateBlocker.set_value(tf);
-}
 
 // Function to control the pistons used to change the state of the Wings
 void Pistons::launchWings(bool tf) {
