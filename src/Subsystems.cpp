@@ -28,7 +28,7 @@ Subsystems::Subsystems(Catapult Bot_Catapult, Intake Bot_Intake, Pistons Bot_Pis
 
 // Update function for the Drivetrain subsystem
 void Subsystems::update_Drivetrain() {
-	lemchassis.curvature(Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 2.5);
+	lemchassis.curvature(Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 1.6);
 }
 
 
@@ -66,7 +66,7 @@ void Subsystems::update_Catapult() {
 
 	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)){
 		Bot_Intake.toggle(false, true);
-		Bot_Catapult.cataSpinToPosition(0, -200);
+		Bot_Catapult.cataSpinToPosition(2, -200);
 	}
 }
 

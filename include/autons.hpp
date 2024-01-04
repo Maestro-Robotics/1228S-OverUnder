@@ -1,9 +1,11 @@
 #pragma once
 
 #include "EZ-Template/api.hpp"
+#include "lemlib/chassis/chassis.hpp"
 #include "main.h"
 
 extern lemlib::Chassis lemchassis;
+extern lemlib::Drivetrain drivetrain;
 
 void lemGoalSideTest();
 
@@ -24,3 +26,5 @@ void farSideElims();
 void Skills();
 
 void goalSide10Point();
+
+void pptest();

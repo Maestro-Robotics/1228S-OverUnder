@@ -224,6 +224,11 @@ class Chassis {
          */
         void waitUntilDone();
         /**
+        * @brief Sets the brake mode of the drivetrain motors
+        *
+        */
+        void setBrakeMode(pros::motor_brake_mode_e mode);
+        /**
          * @brief Turn the chassis so it is facing the target point
          *
          * The PID logging id is "angularPID"
@@ -247,10 +252,22 @@ class Chassis {
          * @param async whether the function should be run asynchronously. false by default
          * @param reversed whether the robot should turn to face the point with the back of the robot. false by default
          * @param maxSpeed the maximum speed the robot can turn at. Default is 200
-         * @param log whether the chassis should log the turnTo function. false by default
          */
-        void turnToPID(float theta, int timeout, bool async = false, bool reversed = false, float maxSpeed = 127,
-                    bool log = false);
+        void turnToPID(float theta, int timeout, bool async = false, bool reversed = false, float maxSpeed = 127
+                    );
+        /**
+        * @brief Turn the chassis to face the target angle using a swing movement
+        *
+        * The PID logging id is "angularPID"
+        *
+        * @param targetAngle Target angle in degrees.
+        * @param stopLeftSide If true, the left side of the drivetrain remains stationary during the turn. If false, the right side remains stationary.
+        * @param timeout Longest time the robot can spend moving (in milliseconds).
+        * @param swingLong If true, the robot swings counterclockwise to reach the target angle. If false, it swings clockwise. Default is false.
+        * @param maxSpeed The maximum speed the robot can turn at. Default is 200.
+        * @param async Whether the function should be run asynchronously. false by default.
+        */
+        void swingToAngle(float targetAngle, bool stopLeftSide, int timeout, bool swingLong = false, float maxSpeed = 127, bool async = true);
         /**
          * @brief Move the chassis towards the target pose
          *

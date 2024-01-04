@@ -2,13 +2,14 @@
 #include "main.h"
 #include "EZ-Template/auton.hpp"
 #include "autons.hpp"
+#include "pros/motors.h"
 
 // drive motors
 pros::Motor lF(-7, pros::E_MOTOR_GEARSET_06); // left front motor. port 7, reversed
 pros::Motor lM(-8, pros::E_MOTOR_GEARSET_06); // left middle motor. port 8, reversed
 pros::Motor lB(10, pros::E_MOTOR_GEARSET_06); // left back motor. port 10
 pros::Motor rF(-2, pros::E_MOTOR_GEARSET_06); // right front motor. port 1, reversed
-pros::Motor rM(3, pros::E_MOTOR_GEARSET_06); // right middle motor. port 3
+pros::Motor rM(5, pros::E_MOTOR_GEARSET_06); // right middle motor. port 3
 pros::Motor rB(4, pros::E_MOTOR_GEARSET_06); // right back motor. port 4
 
 // motor groups
@@ -26,24 +27,25 @@ lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
                               400, // drivetrain rpm is 400
                               8 // chase power is 2. If we had traction wheels, it would have been 8
 );
+
 // lateral motion controller
 lemlib::ControllerSettings linearController(13, // proportional gain (kP)
                                             0, // integral gain (kI)
                                             6, // derivative gain (kD)
-                                            3, // anti windup
+                                            0, // anti windup
                                             1, // small error range, in inches
                                             100, // small error range timeout, in milliseconds
                                             2, // large error range, in inches
                                             200, // large error range timeout, in milliseconds
-                                            20 // maximum acceleration (slew)
+                                            10 // maximum acceleration (slew)
 );
 
 
 // angular motion controller
-lemlib::ControllerSettings angularController(9, // proportional gain (kP)
+lemlib::ControllerSettings angularController(3.5, // proportional gain (kP)
                                              0, // integral gain (kI)
-                                             73, // derivative gain (kD)
-                                             3, // anti windup
+                                             21, // derivative gain (kD)
+                                             0, // anti windup
                                              1, // small error range, in degrees
                                              100, // small error range timeout, in milliseconds
                                              2, // large error range, in degrees
@@ -72,16 +74,16 @@ lemlib::Chassis lemchassis(drivetrain, linearController, angularController, sens
 void initialize() {
   // Shows position of the bot (Used for creating auton)
   
-  // pros::lcd::initialize();
+  pros::lcd::initialize();
 
-  // pros::Task screenTask([=]() {
-  //       while (true) {
-  //           pros::lcd::print(0, "X: %f", lemchassis.getPose().x);
-  //           pros::lcd::print(1, "Y: %f", lemchassis.getPose().y);
-  //           pros::lcd::print(2, "Theta: %f", lemchassis.getPose().theta);
-  //           pros::delay(50);
-  //       }
-  //   });
+  pros::Task screenTask([=]() {
+        while (true) {
+            pros::lcd::print(0, "X: %f", lemchassis.getPose().x);
+            pros::lcd::print(1, "Y: %f", lemchassis.getPose().y);
+            pros::lcd::print(2, "Theta: %f", lemchassis.getPose().theta);
+            pros::delay(50);
+        }
+    });
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
@@ -96,7 +98,7 @@ void initialize() {
 
 // initialize Library and autonomous selector
   lemchassis.calibrate();
-  ez::as::initialize();
+  //ez::as::initialize();
 
 }
 
@@ -134,13 +136,14 @@ void competition_initialize() {}
 void autonomous() {
 
   //Calls Autonomous using autonomous selector
-  ez::as::auton_selector.call_selected_auton();
+  //ez::as::auton_selector.call_selected_auton();
   //twentyFiveGoal();
-  //farSideAutonWin();
+  farSideAutonWin();
   //Skills();
   //testGoal();
  //disruptClose();
   //driverSkills();
+  //pptest();
 
 }
 
@@ -164,13 +167,16 @@ void autonomous() {
 
 
 void opcontrol() {
-  Catapult catapult(15, 14);
+  Catapult catapult(15, 17);
   Intake intake(11);
   Pistons pistons('H', 'G');
   Subsystems subsystems(catapult, intake, pistons);
 
-  // applies all of these functions based on how different autonomouses ended
+  //Sets drivetrain brake mode to coast for smoother driving
+  lemchassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 
+
+  // applies all of these functions based on how different autonomouses ended  
   pistons.launchWings(false);
 
   if (GoalSide == true){
