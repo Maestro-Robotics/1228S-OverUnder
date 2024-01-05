@@ -72,6 +72,7 @@ void Catapult::cataSpinToPosition(int positiontype, int velocity) {
     }
 }
 
+// Function to spin the catapult until stopped (Skills/Match loading)
 void Catapult::cataMatchLoad(int velocity){
     if (running == true){
         CataMotor.move_velocity(0);

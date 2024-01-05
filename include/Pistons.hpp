@@ -8,9 +8,8 @@ class Pistons{
         pros::ADIDigitalOut actuateWings;
 
     public:
-        Pistons(uint8_t const actuateBlocker, uint8_t const actuateWings);
+        Pistons(uint8_t const elevationPort, uint8_t const wingsPort);
 
-        void launchBlocker(bool tf);
         void launchWings(bool tf);
         void launchElevation();
 

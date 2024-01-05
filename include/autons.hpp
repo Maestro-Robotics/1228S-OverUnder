@@ -7,24 +7,20 @@
 extern lemlib::Chassis lemchassis;
 extern lemlib::Drivetrain drivetrain;
 
-void lemGoalSideTest();
-
 void twentyFiveGoal();
 
 void driverSkills();
 
-void farSideAutonWin();
+void closeSideAWP();
 
-void farSideMatchLoad();
+void closeSideElims();
 
 void testGoal();
 
 void disruptClose();
 
-void farSideElims();
-
 void Skills();
 
-void goalSide10Point();
+void preloadGoal();
 
 void pptest();

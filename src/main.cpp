@@ -88,12 +88,12 @@ void initialize() {
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
     Auton("Goal Side 5 Ball", testGoal),
-    Auton("Goal Side 6 Ball (UNTESTED)", twentyFiveGoal),
+    Auton("Goal Side 6 Ball", twentyFiveGoal),
+    Auton("Pure lib\n Preload(5 Point)", preloadGoal),
+    Auton("lib & PID Blended\n Far Side Safe (9 points), \n 2 tile, bar inwards", closeSideAWP),
+    Auton("Far Side auton, touch match load zone", closeSideElims),
     Auton("Disrupt Close, Elim", disruptClose),
-    Auton("Pure lib\n Preload(5 Point)", goalSide10Point),
-    Auton("lib & PID Blended\n Far Side Safe (9 points)", farSideAutonWin),
-    Auton("Far Side auton, touch match load zone", farSideMatchLoad),
-    Auton("Skills", driverSkills),
+    Auton("Skills", Skills),
   });
 
 // initialize Library and autonomous selector
@@ -138,10 +138,10 @@ void autonomous() {
   //Calls Autonomous using autonomous selector
   //ez::as::auton_selector.call_selected_auton();
   //twentyFiveGoal();
-  farSideAutonWin();
+  //farSideAutonWin();
   //Skills();
-  //testGoal();
- //disruptClose();
+  testGoal();
+  //disruptClose();
   //driverSkills();
   //pptest();
 
@@ -162,10 +162,6 @@ void autonomous() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-
-
-
-
 void opcontrol() {
   Catapult catapult(15, 17);
   Intake intake(11);
@@ -174,7 +170,6 @@ void opcontrol() {
 
   //Sets drivetrain brake mode to coast for smoother driving
   lemchassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
-
 
   // applies all of these functions based on how different autonomouses ended  
   pistons.launchWings(false);
