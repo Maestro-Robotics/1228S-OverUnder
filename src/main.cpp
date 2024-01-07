@@ -74,21 +74,20 @@ lemlib::Chassis lemchassis(drivetrain, linearController, angularController, sens
 void initialize() {
   // Shows position of the bot (Used for creating auton)
   
-  pros::lcd::initialize();
+  // pros::lcd::initialize();
 
-  pros::Task screenTask([=]() {
-        while (true) {
-            pros::lcd::print(0, "X: %f", lemchassis.getPose().x);
-            pros::lcd::print(1, "Y: %f", lemchassis.getPose().y);
-            pros::lcd::print(2, "Theta: %f", lemchassis.getPose().theta);
-            pros::delay(50);
-        }
-    });
+  // pros::Task screenTask([=]() {
+  //       while (true) {
+  //           pros::lcd::print(0, "X: %f", lemchassis.getPose().x);
+  //           pros::lcd::print(1, "Y: %f", lemchassis.getPose().y);
+  //           pros::lcd::print(2, "Theta: %f", lemchassis.getPose().theta);
+  //           pros::delay(50);
+  //       }
+  //   });
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
-    Auton("Goal Side 5 Ball", testGoal),
-    Auton("Goal Side 6 Ball", twentyFiveGoal),
+    Auton("Goal Side 6 Ball", testGoal),
     Auton("Pure lib\n Preload(5 Point)", preloadGoal),
     Auton("lib & PID Blended\n Far Side Safe (9 points), \n 2 tile, bar inwards", closeSideAWP),
     Auton("Far Side auton, touch match load zone", closeSideElims),
@@ -98,7 +97,7 @@ void initialize() {
 
 // initialize Library and autonomous selector
   lemchassis.calibrate();
-  //ez::as::initialize();
+  ez::as::initialize();
 
 }
 
@@ -136,11 +135,11 @@ void competition_initialize() {}
 void autonomous() {
 
   //Calls Autonomous using autonomous selector
-  //ez::as::auton_selector.call_selected_auton();
+  ez::as::auton_selector.call_selected_auton();
   //twentyFiveGoal();
-  //farSideAutonWin();
+  //closeSideAWP();
   //Skills();
-  testGoal();
+  //testGoal();
   //disruptClose();
   //driverSkills();
   //pptest();

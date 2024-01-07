@@ -13,7 +13,7 @@
 Catapult catapult(15, 17);
 Intake intake(11);
 Pistons pistons('H', 'G');
-pros::Optical optSen(13);
+pros::Optical optSen(18);
 
 void twentyFiveGoal(){
   lemchassis.setPose(0, 0, 0);
@@ -86,57 +86,65 @@ void testGoal(){
   lemchassis.setPose(0, 0, 0);
 
   intake.toggle(false, false);
-
-  lemchassis.moveToPoint(0, 3, 2000);
-  lemchassis.waitUntil(2);
+  lemchassis.moveToPoint(0, 33, 2000);
+  lemchassis.waitUntil(30);
   lemchassis.cancelMotion();
 
-  lemchassis.moveToPoint(0, -7, 2000, false);
-  lemchassis.waitUntil(5);
+  lemchassis.moveToPoint(0, 25, 2000, false);
+  lemchassis.waitUntil(20);
   lemchassis.cancelMotion();
 
-  lemchassis.moveToPose(32, -50, 180, 2500, {.forwards = false, .chasePower = 18, .minSpeed = 127});
-  lemchassis.waitUntil(55);
-  lemchassis.cancelMotion();
+  lemchassis.turnTo(0, 0, 800);
 
-  lemchassis.moveToPose(7, -35, 319, 2500, {.forwards = true, .chasePower = 18, .minSpeed = 127});
-  lemchassis.waitUntil(15);
-  lemchassis.cancelMotion();
+  lemchassis.moveToPoint(1, 5, 1000);
+  lemchassis.swingToAngle(133, true, 500);
 
-  intake.toggle(false, true);
-
-  lemchassis.turnToPID(140, 1000, false, true);
-  lemchassis.moveToPoint(12, -51, 2000);
+  lemchassis.moveToPoint(7, -7, 1000);
+  lemchassis.waitUntilDone();
   pistons.launchWings(true);
-  //lemchassis.turnTo(20, -51, 1000);
-  lemchassis.turnToPID(90, 1000);
+
+  lemchassis.turnToPID(90, 550);
+  lemchassis.moveToPose(21, -13, 90, 2000, {.chasePower = 12, .minSpeed = 127});
+  lemchassis.waitUntilDone();
   pistons.launchWings(false);
-
   intake.toggle(true, false);
+  lemchassis.moveToPoint(36, -15, 1000);
 
-  lemchassis.moveToPose(48, -56, 90, 1000, {.forwards = true, .chasePower = 15, .minSpeed = 127});
-  lemchassis.moveToPoint(23, -53, 1000, false);
-  lemchassis.moveToPoint(41, -53, 1000);
+  lemchassis.moveToPose(3, 3, 130, 1200, {.forwards = false, .chasePower = 18});
 
-  lemchassis.moveToPose(13, -40, 100, 2500, {.forwards = false, .chasePower = 18, .minSpeed = 127});
-
+  lemchassis.swingToAngle(58, true, 400);
+  lemchassis.waitUntilDone();
   intake.toggle(false, false);
 
-  lemchassis.moveToPoint(63, -4, 2300, true);
-  lemchassis.turnToPID(180, 1000);
 
+  lemchassis.moveToPose(57, 39, 45, 2000, {.forwards = true, .chasePower = 18});
+  lemchassis.turnToPID(180, 500);
+  lemchassis.waitUntilDone();
   pistons.launchWings(true);
   intake.toggle(true, false);
 
-  lemchassis.moveToPoint(63, -42, 2000);
+  lemchassis.moveToPoint(61, 5, 2000);
 
-  lemchassis.moveToPoint(63, -8, 2000, false);
-  intake.toggle(false, true);
-  lemchassis.turnToPID(270, 1000);
+  lemchassis.moveToPoint(61, 25, 1000, false);
+  lemchassis.waitUntilDone();
+  pistons.launchWings(false);
 
-  lemchassis.moveToPoint(21, -2, 2000);
+  lemchassis.swingToAngle(347, false, 500);
+  lemchassis.waitUntilDone();
+  intake.toggle(false, false);
 
-}
+  lemchassis.moveToPoint(39, 39, 2000);
+  lemchassis.swingToAngle(180, false, 500);
+  lemchassis.waitUntilDone();
+  pistons.launchWings(true);
+
+  lemchassis.moveToPoint(55, 5, 1500);
+  lemchassis.waitUntil(15);
+  intake.toggle(true, false);
+
+  lemchassis.moveToPoint(55, 30, 1000, false);
+
+  }
 
 void disruptClose(){
   lemchassis.moveToPoint(0, 38, 1000, false);
@@ -160,7 +168,7 @@ void closeSideAWP(){
     
   lemchassis.setPose(0, 0, 45);
 
-  lemchassis.moveToPose(-26.2, -15, 90, 2000, {.forwards = false, .chasePower = 18});
+  lemchassis.moveToPose(-26, -15, 90, 2000, {.forwards = false, .chasePower = 18, .minSpeed = 110});
 
   lemchassis.moveToPose(-5, -8, 45, 2000, {.forwards = true, .chasePower = 18});
   lemchassis.waitUntilDone();
@@ -237,9 +245,9 @@ void Skills(){
   lemchassis.moveToPose(-35, 24, 90, 1500, {.forwards = false, .chasePower = 12, .minSpeed = 127});
   lemchassis.moveToPoint(-15, 17, 800);
 
-  lemchassis.moveToPose(-8, 23, 20, 1500, {.forwards = true, .chasePower = 12, .lead = 0.3});
+  lemchassis.moveToPose(-8, 23, 20.5, 1500, {.forwards = true, .chasePower = 12});
 
-  const int timeout = 29700;
+  const int timeout = 29900;
   uint32_t start_time = pros::millis();
   lemchassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
 
@@ -258,69 +266,82 @@ void Skills(){
   lemchassis.waitUntil(19);
   lemchassis.cancelMotion();
 
-  lemchassis.turnToPID(0, 900);
+  lemchassis.turnToPID(0, 300);
 
-  lemchassis.moveToPoint(-3, -79, 2500, false, 100);
-  lemchassis.waitUntil(65);
+  lemchassis.moveToPoint(2, -70, 2000, false, 100);
+  lemchassis.waitUntil(64);
   lemchassis.cancelMotion();
 
-  lemchassis.turnToPID(45, 500);
+  lemchassis.turnToPID(45, 300);
 
-  lemchassis.moveToPoint(-13, -89, 800, false);
-  lemchassis.moveToPose(-40, -97, 90, 1500, {.forwards = false, .chasePower = 18, .lead = 0.3, .minSpeed = 127});
+  lemchassis.moveToPoint(-13, -89, 500, false);
+  lemchassis.moveToPose(-43, -99, 90, 1500, {.forwards = false, .chasePower = 18, .lead = 0.3, .minSpeed = 127});
 
   lemchassis.moveToPoint(-13, -89, 1000);
-  lemchassis.moveToPose(-40, -93, 90, 2000, {.forwards = false, .chasePower = 18, .lead = 0.3, .minSpeed = 127});
+  lemchassis.moveToPose(-43, -96, 90, 2000, {.forwards = false, .chasePower = 18, .lead = 0.3, .minSpeed = 127});
 
   lemchassis.moveToPoint(-30, -95, 1000);
-  lemchassis.turnToPID(0, 800);
+  lemchassis.turnToPID(0, 600);
   pistons.launchWings(true);
 
-  lemchassis.moveToPose(-44, -48, -90, 1800, {.forwards = true, .chasePower = 18, .maxSpeed = 90});
-  lemchassis.turnToPID(-135, 500, false);
+  lemchassis.moveToPose(-49, -48, -90, 1800, {.forwards = true, .chasePower = 18, .maxSpeed = 90});
+  lemchassis.turnToPID(-135, 300, false);
 
   intake.toggle(true, false);
   lemchassis.moveToPose(-56, -83, -180, 1800, {.forwards = true, .chasePower = 18, .minSpeed = 127}, false);
+  pistons.launchWings(false);
   lemchassis.moveToPoint(-56, -63, 800, false, 127, false);
+  pistons.launchWings(true);
   lemchassis.moveToPoint(-56 , -83, 1000, true, 127, false);
   pistons.launchWings(false);
 
-  lemchassis.moveToPose(-42, -52, -90, 1500, {.forwards = false, .chasePower = 18}, false);
+  lemchassis.moveToPose(-44, -48, -90, 1800, {.forwards = false, .chasePower = 18, .maxSpeed = 127}, false);
   pistons.launchWings(true);
+  lemchassis.moveToPose(-90, -42, -217, 2500, { .chasePower = 18}, false);
   intake.toggle(true, true);
 
-  lemchassis.moveToPoint(-61, -47, 1000, true, 100, false);
-
-  lemchassis.turnToPID(-200, 1000);
-  intake.toggle(true, false);
-
-  //lemchassis.moveToPoint(-61, -87, 2000);
-
   lemchassis.moveToPose(-71, -87, -180, 1800, {.forwards = true, .chasePower = 18, .minSpeed = 127}, false);
-  lemchassis.moveToPoint(-71, -63, 800, false, 127, false);
-  lemchassis.moveToPoint(-71 , -83, 1000, true, 127, false);
+  pistons.launchWings(false);
+  lemchassis.moveToPose(-66, -53, -180, 800, {.forwards = false, .chasePower = 12, .minSpeed = 127});
+  pistons.launchWings(true);
+  lemchassis.moveToPoint(-66 , -83, 1000, true, 127, false);
   pistons.launchWings(false);
 
-  lemchassis.moveToPose(-55, -62, -90, 2000, {.forwards = false, .chasePower = 18, .minSpeed = 100}, false);
+  lemchassis.moveToPoint(-69, -51, 1400, false);
+  lemchassis.turnToPID(250, 600);
   pistons.launchWings(true);
 
-  lemchassis.moveToPose(-100, -78, -114, 2000, {.chasePower = 18});
-  lemchassis.waitUntil(39);
-  intake.toggle(false, true);
+  lemchassis.moveToPose(-110, -65, 270, 2000, {.chasePower = 18, .minSpeed = 100}, false);
+  // pistons.launchWings(true);
 
-  lemchassis.swingToAngle(180, true, 1000, false, 127, false);
+  // lemchassis.moveToPose(-100, -78, -114, 2000, {.chasePower = 18});
+  // lemchassis.waitUntil(39);
+  // intake.toggle(false, true);
+
+  lemchassis.swingToAngle(140, true, 600, false, 127, false);
+  pistons.launchWings(true);
+
+  // // lemchassis.moveToPose(-122, -57, 0, 1000, {.chasePower = 18});
+  // // lemchassis.moveToPoint(-120, -70, 1000, false);
+
+  // // lemchassis.turnToPID(-30, 800);
+
+  lemchassis.moveToPose(-80, -95, 90, 2000, {.chasePower = 12, .minSpeed = 127});
+  lemchassis.waitUntil(15);
   pistons.launchWings(false);
+  intake.toggle(true, false);
 
-  // lemchassis.moveToPose(-122, -57, 0, 1000, {.chasePower = 18});
-  // lemchassis.moveToPoint(-120, -70, 1000, false);
-
-  // lemchassis.turnToPID(-30, 800);
-
-  lemchassis.moveToPose(-81, -107, -90, 2000, {.chasePower = 18, .minSpeed = 127});
-  lemchassis.moveToPose(-117, -87, -40, 1000, {.forwards = false, .chasePower = 18, .minSpeed = 127});
-  lemchassis.moveToPose(-81, -106, -90, 2000, {.chasePower = 18, .minSpeed = 127});
+  //lemchassis.swingToAngle(270, true, 2000);
+  lemchassis.moveToPose(-117, -87, -40, 1000, {.forwards = false, .chasePower = 18, .minSpeed = 127}, false);
+  lemchassis.moveToPose(-80, -95, 90, 3000, {.chasePower = 12, .minSpeed = 127});
+  //lemchassis.moveToPose(-81, -106, -90, 2000, {.chasePower = 18, .minSpeed = 127});
   
-  lemchassis.moveToPose(-117, -87, -40, 1000, {.chasePower = 18});
+  lemchassis.moveToPose(-117, -87, -40, 1000, {.forwards = false, .chasePower = 18, .minSpeed = 127});
+
+  lemchassis.moveToPose(-80, -95, -90, 2000, {.chasePower = 18, .minSpeed = 127});
+  lemchassis.moveToPose(-117, -87, -40, 1000, {.forwards = false, .chasePower = 18, .minSpeed = 127});
+
+
 
 
 
