@@ -146,6 +146,55 @@ struct MoveToPoseParams {
 };
 
 /**
+ * @brief Parameters for Chassis::moveToPoint
+ *
+ * We use a struct to simplify customization. Chassis::moveToPoint has many
+ * parameters and specifying them all just to set one optional param harms
+ * readability. By passing a struct to the function, we can have named
+ * parameters, overcoming the c/c++ limitation
+ *
+ * @param forwards whether the robot should move forwards or backwards. True by default
+ * @param maxSpeed the maximum speed the robot can travel at. Value between 0-127.
+ *  127 by default
+ * @param minSpeed the minimum speed the robot can travel at. If set to a non-zero value,
+ *  the exit conditions will switch to less accurate but smoother ones. Value between 0-127.
+ *  0 by default
+ * @param earlyExitRange distance between the robot and target point where the movement will
+ *  exit. Only has an effect if minSpeed is non-zero.
+ */
+struct MoveToPointParams {
+        bool forwards = true;
+        float maxSpeed = 127;
+        float minSpeed = 0;
+        float earlyExitRange = 0;
+};
+
+/**
+ * @brief Parameters for Chassis::turnTo
+ *
+ * We use a struct to simplify customization. Chassis::turnTo has many
+ * parameters and specifying them all just to set one optional param ruins
+ * readability. By passing a struct to the function, we can have named
+ * parameters, overcoming the c/c++ limitation
+ *
+ * @param forwards whether the robot should turn to face the point with the front of the robot.
+ * True by default
+ * @param maxSpeed the maximum speed the robot can turn at. Value between 0-127.
+ *  127 by default
+ * @param minSpeed the minimum speed the robot can turn at. If set to a non-zero value,
+ *  the exit conditions will switch to less accurate but smoother ones. Value between 0-127.
+ *  0 by default
+ * @param earlyExitRange angle between the robot and target point where the movement will
+ *  exit. Only has an effect if minSpeed is non-zero.
+ */
+struct TurnToParams {
+        bool forwards = true;
+        int maxSpeed = 127;
+        int minSpeed = 0;
+        float earlyExitRange = 0;
+};
+
+/**
  * @brief Function pointer type for drive curve functions.
  * @param input The control input in the range [-127, 127].
  * @param scale The scaling factor, which can be optionally ignored.
@@ -228,6 +277,17 @@ class Chassis {
         *
         */
         void setBrakeMode(pros::motor_brake_mode_e mode);
+         /**
+         * @brief Turn the chassis so it is facing the target point
+         *
+         * The PID logging id is "angularPID"
+         *
+         * @param x x location
+         * @param y y location
+         * @param timeout longest time the robot can spend moving
+         * @param async whether the function should be run asynchronously. true by default
+         */
+        void turnToPoint(float x, float y, int timeout, bool async = true);
         /**
          * @brief Turn the chassis so it is facing the target point
          *
@@ -236,25 +296,32 @@ class Chassis {
          * @param x x location
          * @param y y location
          * @param timeout longest time the robot can spend moving
-         * @param forwards whether the robot should turn to face the point with the front of the robot. true by
-         * default
-         * @param maxSpeed the maximum speed the robot can turn at. Default is 127
+         * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void turnTo(float x, float y, int timeout, bool forwards = true, float maxSpeed = 127, bool async = true);
+        void turnToPoint(float x, float y, int timeout, TurnToParams params, bool async = true);
         /**
-         * @brief Turn the chassis so it is facing the target angle
+         * @brief Turn the chassis so it is facing the target heading
          *
          * The PID logging id is "angularPID"
          *
-         * @param theta Target angle (in degrees)
+         * @param theta heading location
          * @param timeout longest time the robot can spend moving
-         * @param async whether the function should be run asynchronously. false by default
-         * @param reversed whether the robot should turn to face the point with the back of the robot. false by default
-         * @param maxSpeed the maximum speed the robot can turn at. Default is 200
+         * @param params struct to simulate named parameters
+         * @param async whether the function should be run asynchronously. true by default
          */
-        void turnToPID(float theta, int timeout, bool async = false, bool reversed = false, float maxSpeed = 127
-                    );
+        void turnToHeading(float theta, int timeout, bool async = true);
+        /**
+         * @brief Turn the chassis so it is facing the target heading
+         *
+         * The PID logging id is "angularPID"
+         *
+         * @param theta heading location
+         * @param timeout longest time the robot can spend moving
+         * @param params struct to simulate named parameters
+         * @param async whether the function should be run asynchronously. true by default
+         */
+        void turnToHeading(float theta, int timeout, TurnToParams params, bool async = true);
         /**
         * @brief Turn the chassis to face the target angle using a swing movement
         *
@@ -267,7 +334,7 @@ class Chassis {
         * @param maxSpeed The maximum speed the robot can turn at. Default is 200.
         * @param async Whether the function should be run asynchronously. false by default.
         */
-        void swingToAngle(float targetAngle, bool stopLeftSide, int timeout, bool swingLong = false, float maxSpeed = 127, bool async = true);
+        void swingToAngle(float targetAngle, bool stopLeftSide, int timeout, float maxSpeed = 127, bool async = true);
         /**
          * @brief Move the chassis towards the target pose
          *
@@ -287,10 +354,10 @@ class Chassis {
          * @param x x location
          * @param y y location
          * @param timeout longest time the robot can spend moving
-         * @param maxSpeed the maximum speed the robot can move at. 127 by default
+         * @param params struct to simulate named parameters
          * @param async whether the function should be run asynchronously. true by default
          */
-        void moveToPoint(float x, float y, int timeout, bool forwards = true, float maxSpeed = 127, bool async = true);
+        void moveToPoint(float x, float y, int timeout, MoveToPointParams params = {}, bool async = true);
         /**
          * @brief Move the chassis along a path
          *
