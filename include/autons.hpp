@@ -2,7 +2,6 @@
 
 #include "EZ-Template/api.hpp"
 #include "lemlib/chassis/chassis.hpp"
-#include "main.h"
 
 extern lemlib::Chassis lemchassis;
 extern lemlib::Drivetrain drivetrain;

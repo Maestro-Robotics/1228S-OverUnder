@@ -4,16 +4,43 @@
 
 // Constructor for the Pistons class
 // Initializes the ADI objects representing the pneumatic pistons
-Pistons::Pistons(uint8_t const elevationPort, uint8_t const wingsPort)
-    : actuateElevation(elevationPort),
-    actuateWings(wingsPort) {}
+Pistons::Pistons(uint8_t const bWingR, uint8_t const bWingL, uint8_t const fWingR, uint8_t const fWingL, uint8_t const hangRatchet)
+    : actuateBRightWings(bWingR),
+      actuateBLeftWings(bWingL),
+      actuateFRightWings(fWingR),
+      actuateFLeftWings(fWingL),
+      actuateRatchet(hangRatchet) {}
 
-// Function to control the pistons used to change the state of the Wings
-void Pistons::launchWings(bool tf) {
-    actuateWings.set_value(tf);
+void Pistons::launchBackWings(bool left, bool right) {
+    actuateBLeftWings.set_value(left);
+    actuateBRightWings.set_value(right);
 }
 
-// Function to control the piston used to launch the elevation state
-void Pistons::launchElevation() {
-    actuateElevation.set_value(true);
+void Pistons::launchFrontwings(bool left, bool right) {
+    actuateFLeftWings.set_value(left);
+    actuateFRightWings.set_value(right);
+}
+
+void Pistons::closeFrontWings(){
+    actuateFLeftWings.set_value(false);
+    actuateFRightWings.set_value(false);
+}
+
+void Pistons::closeFrontWings(bool left, bool right){
+    actuateFLeftWings.set_value(left);
+    actuateFRightWings.set_value(right);
+}
+
+void Pistons::closeBackWings(){
+    actuateBLeftWings.set_value(false);
+    actuateBRightWings.set_value(false);
+}
+
+void Pistons::closeBackWings(bool left, bool right){
+    actuateBLeftWings.set_value(left);
+    actuateBRightWings.set_value(right);
+}
+
+void Pistons::engageRatchet(bool trueFalse){
+    actuateRatchet.set_value(trueFalse);
 }

@@ -1,3 +1,4 @@
+#include "Subsystems.hpp"
 #include "pros/misc.h"
 #include "main.h"
 
@@ -8,66 +9,65 @@ bool l2pressed = false;
 
 bool firing = false;
 
-bool wingsState = false;
+bool PTOOn =false;
 
-bool prevWingsState = wingsState;
+bool frontWingsState = false;
 
-bool blockerState = false;
+bool prevFrontWingsState = frontWingsState;
+
+bool BackwingsState = false;
+
+bool prevBackWingsState = BackwingsState;
 
 bool GoalSide = true;
-
-bool matchLoadAuto = false;
 
 bool intakeState = true;
 
 // Constructor for the Subsystems class, initializing the subsystem objects
-Subsystems::Subsystems(Catapult Bot_Catapult, Intake Bot_Intake, Pistons Bot_Pistons) 
+Subsystems::Subsystems(Catapult Bot_Catapult, Intake Bot_Intake, Pistons Bot_Pistons, PTO Bot_PTO) 
     : Bot_Catapult(Bot_Catapult)
 	, Bot_Intake(Bot_Intake)
-	, Bot_Pistons(Bot_Pistons) {}
+	, Bot_Pistons(Bot_Pistons)
+	, Bot_PTO(Bot_PTO) {}
 
 // Update function for the Drivetrain subsystem
 void Subsystems::update_Drivetrain() {
-	lemchassis.curvature(Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 2.2);
+	lemchassis.arcade(Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 3.9);
 }
 
 
 // Update function for the Catapult subsystem
 void Subsystems::update_Catapult() {
 
-    // Check if the R1 button is pressed and activate the Bot_Catapult
-    if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) {
-		CataActive = true;
-		
-		// Toggle the Bot_Intake off to avoid any interference with the Bot_Catapult operation
-        Bot_Intake.toggle(false, true);
-		intakeToggle = false;
-        
-        // Move the Bot_Catapult to the firing position
-        Bot_Catapult.cataSpinToPosition(0, -200);
-		
-		CataActive = false;
-		
-    }
-
-	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)){
+	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){
 		if(firing == true){
 			Bot_Catapult.cataMatchLoad(0);
+		}
+		else if (PTOOn == true) {
+			Bot_Pistons.engageRatchet(true);
+			Bot_Catapult.cataMatchLoad(-200);
 		}
 		else{
 		Bot_Intake.toggle(false, true);
 		intakeToggle = false;
-		Bot_Catapult.cataMatchLoad(-200);
+		Bot_Catapult.cataMatchLoad(-140);
 		}
 
 		firing = !firing;
 	}
+	// if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
+	// 	if(firing == true){
+	// 		Bot_Catapult.cataMatchLoad(0);
+	// 	}
+	// 	else{
+	// 	Bot_Intake.toggle(false, true);
+	// 	intakeToggle = false;
+	// 	Bot_Catapult.cataMatchLoad(200);
+	// 	}
 
+	// 	firing = !firing;
+	// }
 
-	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)){
-		Bot_Intake.toggle(false, true);
-		Bot_Catapult.cataSpinToPosition(2, -200);
-	}
 }
 
 // Update function for the Intake Subsystem
@@ -102,16 +102,46 @@ void Subsystems::update_Intake() {
 // Update function for the Pistons subsystem
 void Subsystems::update_Pistons() {
 
-	wingsState = Bot_Controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
+	frontWingsState = Bot_Controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
 
-	if (wingsState != prevWingsState) {
-    	Bot_Pistons.launchWings(wingsState);
-    	prevWingsState = wingsState;
+	if (frontWingsState != prevFrontWingsState) {
+    	Bot_Pistons.launchFrontwings(frontWingsState, frontWingsState);
+    	prevFrontWingsState = frontWingsState;
+	}
+
+	
+	BackwingsState = Bot_Controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
+
+	if (BackwingsState != prevBackWingsState) {
+    	Bot_Pistons.launchBackWings(BackwingsState, BackwingsState);
+    	prevBackWingsState = BackwingsState;
+	}
+
+
 }
 
-	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-		Bot_Pistons.launchElevation();
+void Subsystems::update_PTO() {
+	if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
+		Bot_PTO.engagePTO(true);
+		PTOOn = true;
+		// PTOOn = true;
+		// if(firing == true){
+		// 	Bot_Catapult.cataMatchLoad(0);
+		// }
+		// else{
+		// Bot_Intake.toggle(false, true);
+		// intakeToggle = false;
+		// Bot_Catapult.cataMatchLoad(200);
+		// }
+
+		// firing = !firing;
+		// Bot_PTO.liftToAngle(-200, 80);
 	}
+
+	// if (Bot_Controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
+	// 	Bot_PTO.liftToAngle(-200, 0, 5);
+	// }
+
 
 }
 
@@ -121,4 +151,5 @@ void Subsystems::update() {
 	update_Catapult();
 	update_Intake();
 	update_Pistons();
+	update_PTO();
 }

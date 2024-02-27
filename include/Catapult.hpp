@@ -4,20 +4,16 @@
 #include "pros/rotation.hpp"
 #include "pros/distance.hpp"
 
-#include "EZ-Template/api.hpp"
-
 class Catapult {
 
 private:
-    pros::Motor CataMotor;
-    pros::Rotation CataRotationSensor;
+    pros::Motor fullMotor;
+    pros::Motor halfMotor;
 
 public:
 
-    Catapult(int8_t const CataPort, uint8_t const RotationPort);
+    Catapult(int8_t const fullMotorPort, int8_t const halfMotorPort);
 
     // Updated function signature with targetAngle and angleRange arguments
-    void spinToTarget(int targetAngle, int angleRange, int velocity);
-    void cataSpinToPosition(int positiontype, int velocity);
     void cataMatchLoad(int velocity);
 };

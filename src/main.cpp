@@ -2,36 +2,37 @@
 #include "main.h"
 #include "EZ-Template/auton.hpp"
 #include "autons.hpp"
+#include "lemlib/chassis/trackingWheel.hpp"
 #include "pros/motors.h"
 
 // drive motors
-pros::Motor lF(-7, pros::E_MOTOR_GEARSET_06); // left front motor. port 7, reversed
-pros::Motor lM(-8, pros::E_MOTOR_GEARSET_06); // left middle motor. port 8, reversed
-pros::Motor lB(10, pros::E_MOTOR_GEARSET_06); // left back motor. port 10
-pros::Motor rF(-2, pros::E_MOTOR_GEARSET_06); // right front motor. port 1, reversed
-pros::Motor rM(5, pros::E_MOTOR_GEARSET_06); // right middle motor. port 3
-pros::Motor rB(4, pros::E_MOTOR_GEARSET_06); // right back motor. port 4
+pros::Motor lF(-10, pros::E_MOTOR_GEARSET_06); // left front motor. port 7, reversed
+pros::Motor lM(-17, pros::E_MOTOR_GEARSET_06); // left middle motor. port 8, reversed
+pros::Motor lB(-19, pros::E_MOTOR_GEARSET_06); // left back motor. port 10
+pros::Motor rF(2, pros::E_MOTOR_GEARSET_06); // right front motor. port 1, reversed
+pros::Motor rM(4, pros::E_MOTOR_GEARSET_06); // right middle motor. port 3
+pros::Motor rB(9, pros::E_MOTOR_GEARSET_06); // right back motor. port 4
 
 // motor groups
 pros::MotorGroup leftMotors({lF, lM, lB}); // left motor group
 pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
 
 // Inertial Sensor on port 19
-pros::Imu imu(19);
+pros::Imu imu(11);
 
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
                               &rightMotors, // right motor group
-                              11, // 11 inch track width
-                              lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
-                              400, // drivetrain rpm is 400
+                              12, // 11 inch track width
+                              lemlib::Omniwheel::NEW_275, // using new 2.75" omnis
+                              450, // drivetrain rpm is 400
                               8 // chase power is 2. If we had traction wheels, it would have been 8
 );
 
 // lateral motion controller
-lemlib::ControllerSettings linearController(13, // proportional gain (kP)
+lemlib::ControllerSettings linearController(14, // proportional gain (kP)
                                             0, // integral gain (kI)
-                                            6, // derivative gain (kD)
+                                            5.5, // derivative gain (kD)
                                             0, // anti windup
                                             1, // small error range, in inches
                                             100, // small error range timeout, in milliseconds
@@ -42,22 +43,22 @@ lemlib::ControllerSettings linearController(13, // proportional gain (kP)
 
 
 // angular motion controller
-lemlib::ControllerSettings angularController(3.5, // proportional gain (kP)
+lemlib::ControllerSettings angularController(5, // proportional gain (kP)
                                              0, // integral gain (kI)
-                                             21, // derivative gain (kD)
+                                             27.95, // derivative gain (kD)
                                              0, // anti windup
                                              1, // small error range, in degrees
-                                             100, // small error range timeout, in milliseconds
+                                             50, // small error range timeout, in milliseconds
                                              2, // large error range, in degrees
-                                             200, // large error range timeout, in milliseconds
+                                             100, // large error range timeout, in milliseconds
                                              0 // maximum acceleration (slew)
 );
 // sensors for odometry
 // note that in this example we use internal motor encoders (IMEs), so we don't pass vertical tracking wheels
-lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to null
-                            nullptr, // vertical tracking wheel 2, set to nullptr as we are using IMEs
+lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1
+                            nullptr, // vertical tracking wheel 2
                             nullptr, // horizontal tracking wheel 1
-                            nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
+                            nullptr, // horizontal tracking wheel 2
                             &imu // inertial sensor
 );
 
@@ -74,30 +75,29 @@ lemlib::Chassis lemchassis(drivetrain, linearController, angularController, sens
 void initialize() {
   // Shows position of the bot (Used for creating auton)
   
-  // pros::lcd::initialize();
+  pros::lcd::initialize();
 
-  // pros::Task screenTask([=]() {
-  //       while (true) {
-  //           pros::lcd::print(0, "X: %f", lemchassis.getPose().x);
-  //           pros::lcd::print(1, "Y: %f", lemchassis.getPose().y);
-  //           pros::lcd::print(2, "Theta: %f", lemchassis.getPose().theta);
-  //           pros::delay(50);
-  //       }
-  //   });
+  pros::Task screenTask([=]() {
+        while (true) {
+            pros::lcd::print(0, "X: %f", lemchassis.getPose().x);
+            pros::lcd::print(1, "Y: %f", lemchassis.getPose().y);
+            pros::lcd::print(2, "Theta: %f", lemchassis.getPose().theta);
+            pros::delay(50);
+        }
+    });
 
   // Autonomous Selector using LLEMU
-  ez::as::auton_selector.add_autons({
+  ez::as::auton_selector.autons_add({
     Auton("Goal Side 6 Ball", testGoal),
     Auton("Pure lib\n Preload(5 Point)", preloadGoal),
     Auton("lib & PID Blended\n Far Side Safe (9 points), \n 2 tile, bar inwards", closeSideAWP),
-    Auton("Far Side auton, touch match load zone", closeSideElims),
     Auton("Disrupt Close, Elim", disruptClose),
-    Auton("Skills", Skills),
+    Auton("Skills", driverSkills),
   });
 
 // initialize Library and autonomous selector
   lemchassis.calibrate();
-  ez::as::initialize();
+  //ez::as::initialize();
 
 }
 
@@ -135,15 +135,17 @@ void competition_initialize() {}
 void autonomous() {
 
   //Calls Autonomous using autonomous selector
-  ez::as::auton_selector.call_selected_auton();
-  //twentyFiveGoal();
-  //closeSideAWP();
-  //Skills();
-  //testGoal();
-  //disruptClose();
   //driverSkills();
-  //pptest();
-
+  Skills();
+  //closeSideAWP();
+  //twentyFiveGoal();
+  //testGoal();
+  //preloadGoal();
+  //ez::as::auton_selector.selected_auton_call();
+  // lemchassis.moveToPoint(0, 20, 5000);
+  //lemchassis.turnToHeading(90, 3000);
+  // lemchassis.moveToPoint(10, 20, 5000);
+  // lemchassis.moveToPose(0, 0, 0, 4000, {.forwards = false, .chasePower = 15});
 }
 
 
@@ -162,24 +164,18 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-  Catapult catapult(15, 17);
-  Intake intake(11);
-  Pistons pistons('H', 'G');
-  Subsystems subsystems(catapult, intake, pistons);
+  Catapult catapult(12, 15);
+  Intake intake(6);
+  Pistons pistons('H', 'A', 'C', 'B', 'E');
+  PTO pto(15, 13, 3, 'G');
+  Subsystems subsystems(catapult, intake, pistons, pto);
 
   //Sets drivetrain brake mode to coast for smoother driving
   lemchassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 
   // applies all of these functions based on how different autonomouses ended  
-  pistons.launchWings(false);
-
-  if (GoalSide == true){
-    catapult.cataSpinToPosition(0, -200);
-  }
-
-  if (matchLoadAuto == true){
-    catapult.cataMatchLoad(-200);
-  }
+  pistons.closeFrontWings();
+  pistons.closeBackWings();
       
   while (true) {
     subsystems.update();

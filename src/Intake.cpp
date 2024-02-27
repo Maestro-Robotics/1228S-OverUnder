@@ -1,7 +1,8 @@
 #include "Intake.hpp"
 
 // Constructor for Intake class
-Intake::Intake(int8_t const Intakeport) : IntakeMotor{ Intakeport } {}
+Intake::Intake(int8_t const Intakeport) :
+ IntakeMotor{ Intakeport } {}
 
 int velocity = 600;
 
