@@ -1,6 +1,7 @@
 #include "Subsystems.hpp"
 #include "pros/misc.h"
 #include "main.h"
+#include "pros/motors.h"
 
 // Define variables
 bool l1pressed = false;
@@ -32,7 +33,7 @@ Subsystems::Subsystems(Catapult Bot_Catapult, Intake Bot_Intake, Pistons Bot_Pis
 
 // Update function for the Drivetrain subsystem
 void Subsystems::update_Drivetrain() {
-	lemchassis.arcade(Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 3.9);
+	lemchassis.curvature(Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), Bot_Controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 3.9);
 }
 
 
@@ -45,12 +46,13 @@ void Subsystems::update_Catapult() {
 		}
 		else if (PTOOn == true) {
 			Bot_Pistons.engageRatchet(true);
-			Bot_Catapult.cataMatchLoad(-200);
+			Bot_PTO.changeBrakeMode(pros::E_MOTOR_BRAKE_COAST);
+			Bot_Catapult.cataMatchLoad(200);
 		}
 		else{
 		Bot_Intake.toggle(false, true);
 		intakeToggle = false;
-		Bot_Catapult.cataMatchLoad(-140);
+		Bot_Catapult.cataMatchLoad(160);
 		}
 
 		firing = !firing;

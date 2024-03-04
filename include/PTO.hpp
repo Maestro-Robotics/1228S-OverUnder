@@ -20,6 +20,7 @@ class PTO{
 
         int currentAngle = liftRotation.get_position();
 
+        void changeBrakeMode(pros::motor_brake_mode_e);
         void engagePTO(bool trueFalse);
         void liftToAngle(int velocity, int fullRotations);
 };

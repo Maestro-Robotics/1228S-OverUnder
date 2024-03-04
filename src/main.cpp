@@ -38,7 +38,7 @@ lemlib::ControllerSettings linearController(14, // proportional gain (kP)
                                             100, // small error range timeout, in milliseconds
                                             2, // large error range, in inches
                                             200, // large error range timeout, in milliseconds
-                                            10 // maximum acceleration (slew)
+                                            0 // maximum acceleration (slew)
 );
 
 
@@ -165,9 +165,9 @@ void autonomous() {
  */
 void opcontrol() {
   Catapult catapult(12, 15);
-  Intake intake(6);
+  Intake intake(8);
   Pistons pistons('H', 'A', 'C', 'B', 'E');
-  PTO pto(15, 13, 3, 'G');
+  PTO pto(12, 15, 3, 'G');
   Subsystems subsystems(catapult, intake, pistons, pto);
 
   //Sets drivetrain brake mode to coast for smoother driving

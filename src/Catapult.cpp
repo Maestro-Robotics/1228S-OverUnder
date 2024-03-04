@@ -14,8 +14,8 @@ void Catapult::cataMatchLoad(int velocity){
         halfMotor.move_velocity(0);
     }
     else{
-        fullMotor.move_velocity(-velocity);
-        halfMotor.move_velocity(-velocity);
+        fullMotor.move_velocity(velocity);
+        halfMotor.move_velocity(velocity);
     }
 }
 

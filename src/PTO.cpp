@@ -1,5 +1,6 @@
 #include "PTO.hpp"
 #include "Pistons.hpp"
+#include "pros/motors.h"
 #include "pros/rtos.hpp"
 
 PTO::PTO(int8_t const fullMotorPort, int8_t const halfMotorPort, uint8_t const liftRotationPort, uint8_t const PTOPistonPort) :
@@ -8,11 +9,15 @@ PTO::PTO(int8_t const fullMotorPort, int8_t const halfMotorPort, uint8_t const l
  liftRotation{liftRotationPort},
  PTOPiston{PTOPistonPort} {}
 
+ void PTO::changeBrakeMode(pros::motor_brake_mode_e brakeMode){
+    fullMotor.set_brake_mode(brakeMode);
+    halfMotor.set_brake_mode(brakeMode);
+ }
 
  void PTO::engagePTO(bool trueFalse){
     fullMotor.move_velocity(200);
     halfMotor.move_velocity(200);
-    pros::Task::delay(200);
+    pros::Task::delay(450);
     PTOPiston.set_value(true);
     fullMotor.move_velocity(-200);
     halfMotor.move(-200);
@@ -28,6 +33,8 @@ PTO::PTO(int8_t const fullMotorPort, int8_t const halfMotorPort, uint8_t const l
   if (pros::millis() - start_time > timeout) {
         fullMotor.move_velocity(0);
         halfMotor.move_velocity(0);
+        fullMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+        halfMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
         break;
     }
   }
