@@ -52,7 +52,7 @@ void Subsystems::update_Catapult() {
 		else{
 		Bot_Intake.toggle(false, true);
 		intakeToggle = false;
-		Bot_Catapult.cataMatchLoad(160);
+		Bot_Catapult.cataMatchLoad(150);
 		}
 
 		firing = !firing;

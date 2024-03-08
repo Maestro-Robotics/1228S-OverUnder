@@ -176,6 +176,20 @@ void opcontrol() {
   // applies all of these functions based on how different autonomouses ended  
   pistons.closeFrontWings();
   pistons.closeBackWings();
+
+  // lemchassis.setPose(0, 0, 315);
+
+  // //Push preloads into Close Goal
+  // lemchassis.moveToPose(37, -24, 270, 2000, {.forwards = false, .minSpeed = 127, .earlyExitRange = 3});
+
+  // //Setup for Matchload position
+  // lemchassis.moveToPoint(18, -18, 800);
+  // lemchassis.turnToHeading(384, 800);
+  // lemchassis.moveToPose(13, -26, 384, 1000, {.forwards = false, .chasePower = 18, .lead = 0});
+  // lemchassis.waitUntilDone();
+  // pistons.launchBackWings(true, false);
+
+  // catapult.cataMatchLoad(160);
       
   while (true) {
     subsystems.update();
