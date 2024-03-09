@@ -3,6 +3,8 @@
 #include "EZ-Template/auton.hpp"
 #include "autons.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
+#include "pros/misc.h"
+#include "pros/misc.hpp"
 #include "pros/motors.h"
 
 // drive motors
@@ -75,29 +77,29 @@ lemlib::Chassis lemchassis(drivetrain, linearController, angularController, sens
 void initialize() {
   // Shows position of the bot (Used for creating auton)
   
-  pros::lcd::initialize();
+  // pros::lcd::initialize();
 
-  pros::Task screenTask([=]() {
-        while (true) {
-            pros::lcd::print(0, "X: %f", lemchassis.getPose().x);
-            pros::lcd::print(1, "Y: %f", lemchassis.getPose().y);
-            pros::lcd::print(2, "Theta: %f", lemchassis.getPose().theta);
-            pros::delay(50);
-        }
-    });
+  // pros::Task screenTask([=]() {
+  //       while (true) {
+  //           pros::lcd::print(0, "X: %f", lemchassis.getPose().x);
+  //           pros::lcd::print(1, "Y: %f", lemchassis.getPose().y);
+  //           pros::lcd::print(2, "Theta: %f", lemchassis.getPose().theta);
+  //           pros::delay(50);
+  //       }
+  //   });
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-    Auton("Goal Side 6 Ball", testGoal),
+    Auton("Goal Side 6 Ball", twentyFiveGoal),
     Auton("Pure lib\n Preload(5 Point)", preloadGoal),
     Auton("lib & PID Blended\n Far Side Safe (9 points), \n 2 tile, bar inwards", closeSideAWP),
     Auton("Disrupt Close, Elim", disruptClose),
-    Auton("Skills", driverSkills),
+    Auton("Skills", Skills),
   });
 
 // initialize Library and autonomous selector
   lemchassis.calibrate();
-  //ez::as::initialize();
+  ez::as::initialize();
 
 }
 
@@ -136,12 +138,12 @@ void autonomous() {
 
   //Calls Autonomous using autonomous selector
   //driverSkills();
-  Skills();
+  //Skills();
   //closeSideAWP();
   //twentyFiveGoal();
   //testGoal();
   //preloadGoal();
-  //ez::as::auton_selector.selected_auton_call();
+  ez::as::auton_selector.selected_auton_call();
   // lemchassis.moveToPoint(0, 20, 5000);
   //lemchassis.turnToHeading(90, 3000);
   // lemchassis.moveToPoint(10, 20, 5000);
@@ -177,21 +179,13 @@ void opcontrol() {
   pistons.closeFrontWings();
   pistons.closeBackWings();
 
-  // lemchassis.setPose(0, 0, 315);
-
-  // //Push preloads into Close Goal
-  // lemchassis.moveToPose(37, -24, 270, 2000, {.forwards = false, .minSpeed = 127, .earlyExitRange = 3});
-
-  // //Setup for Matchload position
-  // lemchassis.moveToPoint(18, -18, 800);
-  // lemchassis.turnToHeading(384, 800);
-  // lemchassis.moveToPose(13, -26, 384, 1000, {.forwards = false, .chasePower = 18, .lead = 0});
-  // lemchassis.waitUntilDone();
-  // pistons.launchBackWings(true, false);
-
-  // catapult.cataMatchLoad(160);
+  pros::Controller ct(pros::E_CONTROLLER_MASTER);
       
   while (true) {
+
+    if (ct.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)){
+      driverSkills();
+    }
     subsystems.update();
     pros::delay(ez::util::DELAY_TIME);
   }
